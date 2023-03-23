@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nico
+namespace Nico.Components
 {
-    public class ProgressBarUI : MonoBehaviour
+    public class ProgressBar : MonoBehaviour
     {
         private Image _image;
         public event Action onSetProgress;
@@ -37,7 +37,7 @@ namespace Nico
             {
                 gameObject.SetActive(false);
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 //ignore
             }
