@@ -1,0 +1,32 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace Nico.Util
+{
+    public class {containerName} : ScriptableObject, IMetaDataContainer
+    {
+        protected HashSet<int> metaSet = new ();
+        [SerializeField] protected List<{dataName}> metaList = new ();
+
+        public void AddData({dataName} metaData)
+        {
+            if (metaSet.Contains(metaData.id))
+            {
+                Debug.LogWarning($"{metaData}->重复的id:{metaData.id}");
+                return;
+            }
+
+            metaSet.Add(metaData.id);
+            metaList.Add(metaData);
+        }
+
+        public {dataName} GetData(int idx)
+        {
+            return metaList[idx];
+        }
+        public void AddData(IMetaData metaData)
+        {
+            AddData(({dataName})metaData);
+        }
+    }
+}

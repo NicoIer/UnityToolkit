@@ -1,0 +1,10 @@
+﻿using UnityEngine;
+
+namespace Nico.Util
+{
+    public class {dataName} : IMetaData 
+    {
+        [field: SerializeField] public int id { get; private set; }
+{filedContent}
+    }
+}
