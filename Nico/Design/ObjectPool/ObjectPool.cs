@@ -1,30 +1,74 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nico.Network.Singleton
+namespace Nico.Design
 {
-    public class ObjectPool : MonoBehaviour
+    public class ObjectPool : MonoBehaviour, IPool
     {
-        public GameObject prefab;
-        private readonly Queue<GameObject> _pool = new();
+        private GameObject _prefab;
+        private Type _objType;
+        private readonly LinkedList<GameObject> _pool = new LinkedList<GameObject>();
 
-        public GameObject Get()
+        public void SetPrefab(GameObject prefab, Type objType)
         {
-            GameObject obj=null;
-            obj = _pool.Count == 0 ? Instantiate(prefab) : _pool.Dequeue();
-            if (obj.TryGetComponent(out IPoolObject poolObject))
-            {
-                poolObject.Get();
-            }
-            obj.SetActive(true);
-            return obj;
+            _prefab = prefab;
+            _objType = objType;
         }
 
-        public void Return(GameObject go)
+
+        public void Return<T>(T obj) where T :  IPoolObj
         {
-            go.transform.SetParent(transform);
-            go.SetActive(false);
-            _pool.Enqueue(go);
+            obj.OnReturn();
+            //将obj放回对象池
+            _pool.AddLast(obj as GameObject);
+        }
+
+        public T Get<T>() where T : IPoolObj
+        {
+            if (typeof(T) != _objType)
+                throw new DesignException($"ObjectPool中的对象类型为{_objType} 与要获取的对象类型{typeof(T)}不一致");
+            //如果对象池中有对象 则直接从对象池中获取
+            if (_pool.Count > 0)
+            {
+                var node = _pool.First;
+                _pool.RemoveFirst();
+                var obj = node.Value.GetComponent<T>();
+                obj.OnGet();
+                return obj;
+            }
+
+            //如果对象池中没有对象 则创建一个新的对象
+            IPoolObj o = _CreateObj();
+            o.OnGet();
+            return (T)o;
+        }
+
+        public IPoolObj Get(Type objType)
+        {
+            if (objType != _objType)
+                throw new DesignException($"ObjectPool中的对象类型为{_objType} 与要获取的对象类型{objType}不一致");
+            //如果对象池中有对象 则直接从对象池中获取
+            if (_pool.Count > 0)
+            {
+                var node = _pool.First;
+                _pool.RemoveFirst();
+                var obj = node.Value.GetComponent(objType);
+                IPoolObj poolObj = (IPoolObj)Convert.ChangeType(obj, objType);
+                poolObj.OnGet();
+                return poolObj;
+            }
+
+            IPoolObj o = _CreateObj();
+            o.OnGet();
+            return o;
+        }
+
+        private IPoolObj _CreateObj()
+        {
+            var newObj = Instantiate(_prefab, transform).GetComponent(_objType);
+            IPoolObj poolObj = (IPoolObj)Convert.ChangeType(newObj, _objType);
+            return poolObj;
         }
     }
 }

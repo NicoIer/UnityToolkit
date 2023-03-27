@@ -1,5 +1,4 @@
 ﻿using System;
-using Nico.Exception;
 
 namespace Nico.Design
 {
@@ -7,7 +6,7 @@ namespace Nico.Design
     /// 通用单例模式 它是线程安全的 且会全局存在一份
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class Singleton<T> : ISingleton where T : Singleton<T>, new()
+    public abstract class Singleton<T> : ISingleton,IInitializable, IDisposable where T : Singleton<T>, new()
     {
         private static readonly object _lock = typeof(T);
         private static T _instance;
@@ -25,12 +24,9 @@ namespace Nico.Design
                         {
                             _instance = new T();
                         }
-
-                        if (_instance == null)
-                        {
-                            _instance = System.Activator.CreateInstance<T>();
-                        }
+                        
                     }
+                    _instance.Init();
                 }
 
                 return _instance;
@@ -44,16 +40,24 @@ namespace Nico.Design
         {
         }
 
-        public static void Init()
-        {
-            if (_instance != null)
-                throw new SingletonException($"{typeof(T)}already has an instance!!!");
-            _instance = new T();
-        }
 
-        public static void Dispose()
+        /// <summary>
+        /// 单例资源释放函数
+        /// </summary>
+        public virtual void Dispose()
         {
             _instance = null;
+        }
+
+        /// <summary>
+        /// 单例初始化函数
+        /// </summary>
+        /// <exception cref="DesignException"></exception>
+        public virtual void Init()
+        {
+            if (_instance != null)
+                throw new DesignException($"{typeof(T)}already has an instance!!!");
+            _instance = new T();
         }
     }
 }

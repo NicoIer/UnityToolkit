@@ -1,6 +1,5 @@
 ﻿using System;
 using Nico.Design;
-using Nico.Exception;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -25,7 +24,7 @@ namespace Nico.Network
                             _instance = FindObjectOfType<T>(); //从场景中寻找一个T类型的组件
                             if (_instance == null)
                             {
-                                throw new SingletonException($"{typeof(T)} can not find in scene");
+                                throw new DesignException($"{typeof(T)} can not find in scene");
                             }
                             //TODO Awake的具体执行位置有待商榷
                             _instance.Awake();

@@ -1,12 +1,12 @@
-﻿namespace Nico.Exception
+﻿namespace Nico.Design
 {
-    public class SingletonException: System.Exception
+    public class DesignException: System.Exception
     {
-        public SingletonException()
+        public DesignException()
         {
         }
 
-        public SingletonException(string msg) : base(msg)
+        public DesignException(string msg) : base(msg)
         {
             
         }

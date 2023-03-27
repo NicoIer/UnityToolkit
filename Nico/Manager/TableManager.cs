@@ -14,24 +14,22 @@ namespace Nico.Manager
         public string dataPath = "Asset/Test/";
         private Dictionary<Type, IMetaDataContainer> _containers = new Dictionary<Type, IMetaDataContainer>();
 
-        public void Initialize()
+        public void Init()
         {
             // 获取当前程序集中所有IMetaDataContainer的实现类
-            var types = ReflectUtil.GetTypesByInterface<IMetaDataContainer>(AppDomain.CurrentDomain);
-#if UNITY_EDITOR
-            //查询指定文件夹下的所有Container资产
-            var assetPaths = AssetUtil.GetScriptableObject<IMetaDataContainer>(dataPath);
-            foreach (var type in types)
-            {
-                Debug.Log(type.Name);
-            }
-            //查询指定文件夹下的所有表格  
-#endif
+            
         }
 
         public T1 GetMetaData<T1>(int idx) where T1 : IMetaData
         {
-            throw new NotImplementedException();
+            var type = typeof(T1);
+            if (!_containers.ContainsKey(type))
+            {
+                Debug.LogError($"TableManager: 未找到类型{type.Name}的表格");
+                return default;
+            }
+
+            return (T1)_containers[type].GetMetaData(idx);
         }
     }
 }

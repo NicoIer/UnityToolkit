@@ -1,6 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
-using Nico.Exception;
+using Nico.Design;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,7 +10,7 @@ namespace Nico.Design
     /// 基于MonoBehaviour的单例模式 仅场景内单例 不会跨场景 切换场景会被销毁
     /// 这个单例是线程安全的 
     /// </summary>
-    public abstract class SceneSingleton<T> : MonoBehaviour, ISingleton where T : SceneSingleton<T>
+    public abstract class SceneSingleton<T> : MonoBehaviour, ISingleton,IDisposable  where T : SceneSingleton<T>
     {
         private static readonly object _lock = typeof(T);
         private static T _instance;
@@ -32,11 +32,12 @@ namespace Nico.Design
                             _instance = FindObjectOfType<T>(); //从场景中寻找一个T类型的组件
                             if (_instance is null)
                             {
-                                throw new SingletonException("Can not find " + typeof(T).Name + " in scene");
+                                throw new DesignException("Can not find " + typeof(T).Name + " in scene");
                             }
-                            _instance.Awake();
                         }
                     }
+                    //如果在Awake前被访问 则 Awake将在此处调用一次
+                    _instance.Awake();
                 }
 
                 return _instance;
@@ -71,6 +72,16 @@ namespace Nico.Design
             {
                 _instance = null;
             }
+        }
+        
+        public virtual void Dispose()
+        {
+            if (_instance == this)
+            {
+                _instance = null;
+                Destroy(gameObject);
+            }
+           
         }
     }
 }

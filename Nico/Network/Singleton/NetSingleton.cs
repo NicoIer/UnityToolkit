@@ -1,7 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Nico.Design;
-using Nico.Exception;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -38,7 +37,7 @@ namespace Nico.Network
                                 // //网络物体需要添加NetworkObject组件
                                 // obj.AddComponent<NetworkObject>();
                                 // _instance = obj.AddComponent<T>();
-                                throw new SingletonException("can find " + typeof(T).Name + " in scene");
+                                throw new DesignException("can find " + typeof(T).Name + " in scene");
                             }
                             _instance.Awake();
                         }
