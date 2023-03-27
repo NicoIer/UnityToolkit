@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Runtime.Remoting.Contexts;
-using System.Runtime.Remoting.Messaging;
 
-namespace Nico.Util.Attribute
+
+namespace Nico.Util
 {
-    public class ProfilerAttribute
+    public class PrintAttribute
     {
+        //参数是函数,函数的参数
     }
-    
 }

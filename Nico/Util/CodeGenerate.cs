@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEditor;
+
+#if UNITY_EDITOR
 namespace Nico.Util
 {
     /// <summary>
@@ -97,3 +100,4 @@ namespace Nico.Util
         }
     }
 }
+#endif

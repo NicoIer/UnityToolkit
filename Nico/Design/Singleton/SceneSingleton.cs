@@ -34,6 +34,7 @@ namespace Nico.Design
                             {
                                 throw new SingletonException("Can not find " + typeof(T).Name + " in scene");
                             }
+                            _instance.Awake();
                         }
                     }
                 }
@@ -52,7 +53,7 @@ namespace Nico.Design
             else if (_instance != this)
             {
                 //如果已经被访问过了 代表已经有一个对应的单例对象存在了 那么就会在Awake中销毁自己
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
 

@@ -27,7 +27,10 @@ namespace Nico.Network
                             {
                                 throw new SingletonException($"{typeof(T)} can not find in scene");
                             }
+                            //TODO Awake的具体执行位置有待商榷
+                            _instance.Awake();
                         }
+                       
                     }
                 }
 

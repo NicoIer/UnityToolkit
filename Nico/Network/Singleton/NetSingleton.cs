@@ -40,6 +40,7 @@ namespace Nico.Network
                                 // _instance = obj.AddComponent<T>();
                                 throw new SingletonException("can find " + typeof(T).Name + " in scene");
                             }
+                            _instance.Awake();
                         }
                     }
                 }

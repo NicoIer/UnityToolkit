@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 namespace Nico.Util
 {
     public static class AssetUtil
@@ -29,3 +28,4 @@ namespace Nico.Util
         }
     }
 }
+#endif
