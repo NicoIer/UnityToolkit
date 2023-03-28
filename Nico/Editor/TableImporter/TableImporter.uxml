@@ -1,12 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
-<engine:UXML
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:engine="UnityEngine.UIElements"
-    xmlns:editor="UnityEditor.UIElements"
-    xsi:noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd"
->
-    <Style src="project://database/Assets/Plugins/Nico/Editor/TableImporter.uss?fileID=7433441132597879392&amp;guid=ad744858112e54845a37f0ffeb647d3e&amp;type=3#TableImporter" />
-	<engine:Label text="Hello World! From UXML" />
-	<engine:Label class="custom-label" text="Hello World! With Style" />
-
-</engine:UXML>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Top" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); align-items: stretch; flex-direction: row; align-self: auto; justify-content: space-around; -unity-text-align: upper-left;">
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: column;">
+            <ui:TextField picking-mode="Ignore" label="Excel文件路径" value="Excels/Weapon.xlsx" name="excelPath" style="flex-direction: column;" />
+            <ui:TextField picking-mode="Ignore" label="代码保存路径" value="Assets/ExcelCode/" name="codePath" style="flex-direction: column;" />
+            <ui:TextField picking-mode="Ignore" label="数据保存路径" value="Assets/ExcelCode/" name="dataPath" style="flex-direction: column;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: center;">
+            <ui:Button text="读取数据" display-tooltip-when-elided="true" name="readBtn" />
+            <ui:Button text="生成代码" display-tooltip-when-elided="true" name="codeGenBtn" />
+            <ui:Button text="生成数据" display-tooltip-when-elided="true" name="dataGenBtn" />
+            <ui:EnumField label="数据保存类型" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" value="Center" name="typeEnum" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="Center" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
+    <ui:VisualElement name="Bottom" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-start;" />
+</ui:UXML>

@@ -1,4 +1,4 @@
-﻿namespace Nico.Util
+﻿namespace Nico.Data
 {
     public interface IMetaDataContainer
     {

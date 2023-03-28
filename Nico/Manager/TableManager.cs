@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nico.Data;
 using Nico.Design;
 using Nico.Util;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace Nico.Manager
 {
     /// <summary>
     /// 表管理器
+    /// TODO 有待完成
     /// </summary>
     public sealed class TableManager : GlobalSingleton<TableManager>, IInitializable
     {

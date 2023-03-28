@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nico.Util
+namespace Nico.Data
 {
     public class {containerName} : ScriptableObject, IMetaDataContainer
     {
@@ -27,6 +27,10 @@ namespace Nico.Util
         public void AddData(IMetaData metaData)
         {
             AddData(({dataName})metaData);
+        }
+        public IMetaData GetMetaData(int idx)
+        {
+            return GetData(idx);
         }
     }
 }

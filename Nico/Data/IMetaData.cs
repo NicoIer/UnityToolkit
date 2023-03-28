@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Nico.Util
+namespace Nico.Data
 {
     public interface IMetaData
     {
