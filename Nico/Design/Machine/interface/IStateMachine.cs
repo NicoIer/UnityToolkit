@@ -17,7 +17,9 @@ namespace Nico.Design
 
         // public void AddState<TState>() where TState : IState<TOwner>;
         public void AddState(IState<TOwner> state);
+        
         public void ChangeState<TState>() where TState : IState<TOwner>;
+        
         public void Update();
     }
 }

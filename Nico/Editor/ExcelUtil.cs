@@ -56,6 +56,7 @@ namespace Nico.Editor
             {
                 for (int c = 1; c <= sheet.Dimension.End.Column; c++)
                 {
+                    Debug.Log($"r:{r} c:{c} value:{sheet.Cells[r, c].Value}");
                     table.data[r - 4, c - 1] = sheet.Cells[r, c].Value.ToString();
                 }
             }

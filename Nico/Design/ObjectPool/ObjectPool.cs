@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nico.Design
@@ -8,7 +9,7 @@ namespace Nico.Design
     {
         private GameObject _prefab;
         private Type _objType;
-        private readonly LinkedList<GameObject> _pool = new LinkedList<GameObject>();
+        [ShowInInspector]private readonly LinkedList<GameObject> _pool = new LinkedList<GameObject>();
 
         public void SetPrefab(GameObject prefab, Type objType)
         {
@@ -17,11 +18,15 @@ namespace Nico.Design
         }
 
 
-        public void Return<T>(T obj) where T :  IPoolObj
+        public void Return<T>(T poolObj) where T : IPoolObj
         {
-            obj.OnReturn();
+            poolObj.OnReturn();
             //将obj放回对象池
-            _pool.AddLast(obj as GameObject);
+           
+            var obj = poolObj.GetGameObject();
+            obj.SetActive(false);
+            obj.transform.SetParent(transform);
+            _pool.AddLast(obj);
         }
 
         public T Get<T>() where T : IPoolObj

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nico.Design
@@ -9,7 +10,7 @@ namespace Nico.Design
         //对象池配置SO -> 或许可以用配置文件代替
         [field: SerializeField] public PoolSetting poolSetting;
         [field: SerializeReference] private List<GameObject> prefabs = new();
-        Dictionary<Type, IPool> _poolDict = new Dictionary<Type, IPool>();
+        [field: SerializeReference,ShowInInspector] Dictionary<Type, IPool> _poolDict = new Dictionary<Type, IPool>();
 
         protected override void Awake()
         {
@@ -32,7 +33,6 @@ namespace Nico.Design
                     //如果对应的对象池还不存在 则创建一个对应对象的对象池
                     if (!_poolDict.ContainsKey(objType))
                     {
-                        Debug.Log($"{nameof(ObjectPoolManager)} -> Create ObjPool of{objType}");
                         var pool = new GameObject($"{objType.Name}-Pool");
                         pool.transform.SetParent(transform);
                         // 创建对象池
