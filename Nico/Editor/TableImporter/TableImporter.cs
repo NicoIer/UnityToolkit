@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using Nico.Data;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -85,15 +84,8 @@ namespace Nico.Editor
             {
                 return;
             }
-
             string excelPath = _excelPathField.value;
             _excelTables = ExcelUtil.GetTables(excelPath);
-            foreach (var table in _excelTables)
-            {
-                Debug.Log($"读取到表:{table.tableName},行数:{table.rowCount},列数:{table.colCount}");
-                Debug.Log($"成员变量名:{string.Join(",", table.memberNames)}");
-                Debug.Log($"成员变量类型:{string.Join(",", table.memberTypes)}");
-            }
             //TODO 后续根据枚举类型生成代码 
         }
 
@@ -111,11 +103,8 @@ namespace Nico.Editor
             {
                 CodeGenerator.Create(table, codeSavePath);
             }
-
-            Debug.Log("代码生成完毕,刷新资源....");
+            
             AssetDatabase.Refresh();
-            //请求Unity重新编译
-            Debug.Log("重新编译......");
         }
 
         public void OnDataGenBtnClick()
@@ -127,28 +116,29 @@ namespace Nico.Editor
 
             string namespaceStr = typeof(IMetaData).Namespace;
             Assembly assembly = Assembly.Load("Assembly-CSharp");
-
+            string containerSubFix = "Container";
             foreach (var table in _excelTables)
             {
                 var tableName = table.tableName;
                 var metaClassName = $"{tableName}";
                 var metaContainerName = $"{tableName}Container";
                 //在程序集里查找对应的Type
-                Debug.Log($"查找类型:{namespaceStr}.{metaClassName}");
                 Type metaDataType = assembly.GetType($"{namespaceStr}.{metaClassName}");
-                Debug.Log($"查找类型:{namespaceStr}.{metaContainerName}");
                 Type metaContainerType = assembly.GetType($"{namespaceStr}.{metaContainerName}");
                 Debug.Log($"生成数据容器:{metaContainerType},数据类型:{metaDataType}");
-                IMetaDataContainer container = DataGenerator.Create(table, metaDataType, metaContainerType,assembly);
+                IMetaDataContainer container = DataGenerator.Create(table, metaDataType, metaContainerType, assembly);
                 if (container == null)
                 {
                     Debug.Log("生成失败");
                     continue;
                 }
+
                 //将生成的数据保存到Asset
-                Debug.Log($"保存数据到:{dataSavePath}/{tableName}.asset");
-                AssetDatabase.CreateAsset(container as ScriptableObject, $"{dataSavePath}/{tableName}.asset");
+                Debug.Log($"保存数据到:{dataSavePath}/{tableName}{containerSubFix}.asset");
+                AssetDatabase.CreateAsset(container as ScriptableObject,
+                    $"{dataSavePath}/{tableName}{containerSubFix}.asset");
             }
+
             AssetDatabase.Refresh();
         }
 
@@ -185,11 +175,7 @@ namespace Nico.Editor
 
             return true;
         }
-
-        private void OnDestroy()
-        {
-            
-        }
+        
     }
 }
 #endif

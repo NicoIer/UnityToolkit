@@ -9,15 +9,24 @@ namespace Nico.Design
     public class LookAtCameraSystem : SceneSingleton<LookAtCameraSystem>
     {
         readonly List<Transform> lookAtCameras = new();
-        private Camera mainCamera;
+        public Camera mainCamera;
 
         private void Start()
         {
-            mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
+
             foreach (var component in FindObjectsOfType<LookAtCameraComponent>())
             {
                 lookAtCameras.Add(component.transform);
             }
+        }
+
+        public void SetCamera(Camera maincamera)
+        {
+            this.mainCamera = maincamera;
         }
 
         #region 注册 取消 注册
@@ -39,7 +48,7 @@ namespace Nico.Design
             // 1. 获取摄像机的位置
             // 2. 获取所有挂载了 LookAtCamera 的物体
             // 3. 让所有物体的朝向都是摄像机的位置
-            if (mainCamera is null) return;
+            if (mainCamera == null) return;
 
             var cameraTransform = mainCamera.transform;
             //开启Job 执行任务
@@ -48,8 +57,11 @@ namespace Nico.Design
                 cameraPosition = cameraTransform.position,
                 cameraRotation = cameraTransform.rotation
             };
-            var handle = job.Schedule(new TransformAccessArray(lookAtCameras.ToArray()));
+            var array = new TransformAccessArray(lookAtCameras.ToArray());
+            var handle = job.Schedule(array);
+            array.Dispose();
             handle.Complete();
+            
         }
     }
 }

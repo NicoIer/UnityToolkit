@@ -1,4 +1,4 @@
-﻿namespace Nico.Data
+﻿namespace Nico
 {
     /// <summary>
     /// 用于TableImporter的数据类型枚举

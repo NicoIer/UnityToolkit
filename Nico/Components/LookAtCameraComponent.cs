@@ -1,5 +1,4 @@
-﻿using System;
-using Nico.Design;
+﻿using Nico.Design;
 using UnityEngine;
 
 namespace Nico.Components

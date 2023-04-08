@@ -1,7 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
-using Nico.Design;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Nico.Design

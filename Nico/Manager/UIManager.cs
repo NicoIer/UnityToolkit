@@ -7,8 +7,6 @@ namespace Nico.Manager
     /// </summary>
     public class UIManager : GlobalSingleton<UIManager>
     {
-        public void ShowUI<T>() where T : IUIPanel
-        {
-        }
+        
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Nico.Data;
 using UnityEngine;
 using UnityEditor;
 

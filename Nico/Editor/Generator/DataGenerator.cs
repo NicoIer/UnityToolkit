@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Nico.Data;
 using UnityEngine;
 
 namespace Nico.Editor

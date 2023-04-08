@@ -1,4 +1,4 @@
-﻿namespace Nico.Design
+﻿namespace Nico
 {
     public class DesignException: System.Exception
     {

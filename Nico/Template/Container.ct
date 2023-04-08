@@ -32,5 +32,9 @@ namespace Nico.Data
         {
             return GetData(idx);
         }
+        public Type GetMetaType()
+        {
+            return typeof({dataName}});
+        }
     }
 }
