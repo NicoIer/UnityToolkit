@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Nico.Data;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -123,6 +124,7 @@ namespace Nico.Editor
                 var metaClassName = $"{tableName}";
                 var metaContainerName = $"{tableName}Container";
                 //在程序集里查找对应的Type
+                Debug.Log($"查找类型:{namespaceStr}.{metaClassName} 和 {namespaceStr}.{metaContainerName}");
                 Type metaDataType = assembly.GetType($"{namespaceStr}.{metaClassName}");
                 Type metaContainerType = assembly.GetType($"{namespaceStr}.{metaContainerName}");
                 Debug.Log($"生成数据容器:{metaContainerType},数据类型:{metaDataType}");

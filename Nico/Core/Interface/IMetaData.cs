@@ -1,6 +1,6 @@
 ﻿
 
-namespace Nico
+namespace Nico.Data
 {
     public interface IMetaData
     {

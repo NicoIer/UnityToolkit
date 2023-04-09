@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nico
+namespace Nico.Data
 {
     public interface IMetaDataContainer
     {

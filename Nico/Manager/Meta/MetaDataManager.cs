@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nico.Data;
 using Nico.Design;
 using Nico.Util;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace Nico.Manager
     public  class MetaDataManager : GlobalSingleton<MetaDataManager>
     {
 
-        [field: SerializeReference] private Dictionary<Type, IMetaDataContainer> _containers = new();
+        [field: SerializeReference] private readonly Dictionary<Type, IMetaDataContainer> _containers = new();
 
         protected override void Awake()
         {
@@ -35,7 +36,7 @@ namespace Nico.Manager
                 }
             }
         }
-        public T1 GetMetaData<T1>(int idx) where T1 : IMetaData
+        public T1 Get<T1>(int idx) where T1 : IMetaData
         {
             var type = typeof(T1);
             return (T1)_containers[type].GetMetaData(idx) ;

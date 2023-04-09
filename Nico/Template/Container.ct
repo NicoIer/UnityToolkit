@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 namespace Nico.Data
 {
     public class {containerName} : ScriptableObject, IMetaDataContainer
@@ -34,7 +34,7 @@ namespace Nico.Data
         }
         public Type GetMetaType()
         {
-            return typeof({dataName}});
+            return typeof({dataName});
         }
     }
 }

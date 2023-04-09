@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nico.Manager
+namespace Nico.Data
 {
     [Serializable]
     public abstract class ContainerData

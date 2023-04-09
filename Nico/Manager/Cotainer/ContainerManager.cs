@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Nico.Data;
 using Nico.Design;
 using Nico.Util;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace Nico.Manager
                 if (container != null)
                 {
                     var dataType = container.GetDataType();
-                    containers.Add(dataType, container);
+                    containers.TryAdd(dataType, container);
                 }
             }
         }

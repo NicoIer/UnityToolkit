@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Nico.Manager
+namespace Nico.Data
 {
     public abstract class Container : ScriptableObject
     {

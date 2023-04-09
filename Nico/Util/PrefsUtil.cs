@@ -1,23 +1,24 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Nico.Util
 {
-    public static class FileUtil
+    public static class PrefsUtil
     {
         public static readonly string ReadOnlyDataPath = Application.dataPath;
         public static readonly string ReadWriteDataPath = Application.persistentDataPath;
 
-        public static void SaveJson<T>(T obj, string fileName, EncryptionEnum encryptionEnum = EncryptionEnum.None)
+        public static void SaveJson<T>(T obj, string fileName, Formatting formatting = Formatting.Indented,
+            EncryptionEnum encryptionEnum = EncryptionEnum.None)
         {
             //文件名必须包含后缀.json 否则报错
             if (!fileName.EndsWith(".json"))
             {
-                throw new Exception("文件名必须包含后缀.json");
+                fileName += ".json";
             }
-
-            var json = JsonUtility.ToJson(obj);
+            var json = JsonConvert.SerializeObject(obj, formatting);
             string savePath = Path.Combine(ReadWriteDataPath, fileName);
             TryCreateFile(savePath);
             File.WriteAllText(savePath, json);
@@ -27,12 +28,21 @@ namespace Nico.Util
         {
             if (!fileName.EndsWith(".json"))
             {
-                throw new Exception("文件名必须包含后缀.json");
+                fileName += ".json";
             }
 
             string savePath = Path.Combine(ReadWriteDataPath, fileName);
+            if (!File.Exists(savePath)) return default;
             var json = File.ReadAllText(savePath);
-            return JsonUtility.FromJson<T>(json);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (Exception)
+            {
+                Debug.LogWarning($"{nameof(PrefsUtil)}加载{fileName}失败");
+                return default;
+            }
         }
 
         public static void TryCreateFile(string filePath)
