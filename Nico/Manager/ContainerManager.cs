@@ -20,7 +20,7 @@ namespace Nico.Manager
             foreach (var type in types)
             {
                 // Container container = Resources.Load<Container>(type.Name);
-                string key = $"{type.Name}";//TODO 这里有重名的危险
+                string key = $"Nico-Data/{type.Name}";//TODO 这里有重名的危险
                 Container container =
                     Addressables.LoadAssetAsync<ScriptableObject>(key).WaitForCompletion() as Container;
                 if (container != null)

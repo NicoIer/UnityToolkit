@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Top" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+        <ui:TextField picking-mode="Ignore" label="Addressable资源文件夹" value="Assets/_AddressableData" name="addressableFolderText" />
+        <ui:VisualElement name="VisualElement" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row; visibility: visible; overflow: hidden;">
+            <ui:TextField picking-mode="Ignore" label="DataFolder" value="Nico-Data" name="dataFolderText" is-delayed="false" readonly="true" />
+            <ui:Button text="DataUpdate" display-tooltip-when-elided="true" name="dataUpdateBtn" style="flex-direction: column; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; align-items: flex-end; align-self: flex-end; justify-content: center;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -12,7 +12,7 @@ namespace Nico.Manager
     /// 表数据管理器
     /// TODO 有待完成 
     /// </summary>
-    public  class MetaDataManager : GlobalSingleton<MetaDataManager>
+    public  class MetaManager : GlobalSingleton<MetaManager>
     {
 
         [field: SerializeReference] private readonly Dictionary<Type, IMetaDataContainer> _containers = new();
@@ -26,7 +26,7 @@ namespace Nico.Manager
             foreach (var type in types)
             {
                 //TODO 这里的查找方式需要优化 做一个编辑器拓展来存储所有的表格的路径 比较好 且表格是只读的 因此 可以使用AssetBundle||Resources来加载
-                var key = $"{type.Name}";//TODO 这里可能有重名的危险
+                var key = $"Nico-Data/{type.Name}";//TODO 这里可能有重名的危险
                 //使用 addressable 加载资源
                 if (Addressables.LoadAssetAsync<ScriptableObject>(key).WaitForCompletion() is IMetaDataContainer container)
                 {

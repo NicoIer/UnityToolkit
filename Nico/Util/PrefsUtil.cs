@@ -18,6 +18,7 @@ namespace Nico.Util
             {
                 fileName += ".json";
             }
+
             var json = JsonConvert.SerializeObject(obj, formatting);
             string savePath = Path.Combine(ReadWriteDataPath, fileName);
             TryCreateFile(savePath);
