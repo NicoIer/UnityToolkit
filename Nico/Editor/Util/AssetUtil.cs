@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -28,6 +29,39 @@ namespace Nico.Editor
             }
 
             return resultPath;
+        }
+
+        public static void SaveScriptableObject<T>(T so, in string path) where T : ScriptableObject
+        {
+            if (so == null)
+            {
+                Debug.LogError("保存的资源为空");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(path))
+            {
+                Debug.LogError("保存的路径为空");
+                return;
+            }
+
+            if (AssetDatabase.LoadAssetAtPath<T>(path))
+            {
+                AssetDatabase.DeleteAsset(path);
+            }
+
+            //检查文件夹是否存在
+            var folderPath = Path.GetDirectoryName(path);
+            if (AssetDatabase.IsValidFolder(folderPath) == false)
+            {
+                AssetDatabase.CreateFolder(Path.GetDirectoryName(folderPath), Path.GetFileName(folderPath));
+            }
+            AssetDatabase.CreateAsset(so, path);
+        }
+
+        public static T LoadScriptableObject<T>(string path)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -128,7 +128,7 @@ namespace Nico.Editor
                 Type metaDataType = assembly.GetType($"{namespaceStr}.{metaClassName}");
                 Type metaContainerType = assembly.GetType($"{namespaceStr}.{metaContainerName}");
                 Debug.Log($"生成数据容器:{metaContainerType},数据类型:{metaDataType}");
-                IMetaDataContainer container = DataGenerator.Create(table, metaDataType, metaContainerType, assembly);
+                ScriptableObject container = DataGenerator.Create(table, metaDataType, metaContainerType, assembly) as ScriptableObject;
                 if (container == null)
                 {
                     Debug.Log("生成失败");
@@ -137,7 +137,7 @@ namespace Nico.Editor
 
                 //将生成的数据保存到Asset
                 Debug.Log($"保存数据到:{dataSavePath}/{tableName}{containerSubFix}.asset");
-                AssetDatabase.CreateAsset(container as ScriptableObject,
+                AssetDatabase.CreateAsset(container,
                     $"{dataSavePath}/{tableName}{containerSubFix}.asset");
             }
 

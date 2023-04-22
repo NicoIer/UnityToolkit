@@ -17,19 +17,18 @@ namespace Nico.Design
         {
             get
             {
-                if (_instance is null)
+                if (_instance == null)
                 {
                     //双重检查锁
                     lock (_lock)
                     {
-                        if (_instance is null)
+                        if (_instance == null)
                         {
                             _instance = FindObjectOfType<T>(); //从场景中寻找一个T类型的组件
-                            if (_instance is null)
+                            if (_instance == null)
                             {
                                 Debug.LogWarning($"Can not find {typeof(T)} in scene");
                                 return null;
-                                throw new DesignException($"{typeof(T)} can not find in scene");
                             }
                         }
                     }

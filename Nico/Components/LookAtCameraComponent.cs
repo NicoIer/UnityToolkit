@@ -1,4 +1,5 @@
-﻿using Nico.Design;
+﻿using System;
+using Nico.Design;
 using UnityEngine;
 
 namespace Nico.Components
@@ -12,13 +13,8 @@ namespace Nico.Components
 
         private void OnDisable()
         {
-            try
-            {
-                LookAtCameraSystem.Instance.UnRegister(transform);
-            }
-            catch (DesignException)
-            {
-            }
+            if (LookAtCameraSystem.Instance == null) return;
+            LookAtCameraSystem.Instance.UnRegister(transform);
         }
     }
 }

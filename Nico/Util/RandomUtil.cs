@@ -14,5 +14,9 @@ namespace Nico.Util
             throw new NotImplementedException();
         }
 
+        public static Color GetRandomColor()
+        {
+            return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+        }
     }
 }

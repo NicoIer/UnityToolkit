@@ -129,7 +129,15 @@ namespace Nico.Editor
         {
             switch (typeStr)
             {
-                case "int": return int.Parse(value);
+                case "int":
+                {
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return -1;
+                    }
+
+                    return int.Parse(value);
+                }
                 case "string": return value;
                 case "float": return float.Parse(value);
                 case "bool": return bool.Parse(value);
@@ -150,6 +158,11 @@ namespace Nico.Editor
         public static T[] StringToObjArray<T>(string value, string typeStr, string sep = ",")
         {
             string[] strings = value.Split(sep);
+            if (strings.Length == 0)
+            {
+                return null;
+            }
+
             T[] objs = new T[strings.Length];
             for (int i = 0; i != strings.Length; ++i)
             {

@@ -2,7 +2,7 @@
 using System.IO;
 using OfficeOpenXml;
 using UnityEngine;
-
+#if UNITY_EDITOR
 namespace Nico.Editor
 {
     public static class ExcelUtil
@@ -56,7 +56,12 @@ namespace Nico.Editor
             {
                 for (int c = 1; c <= sheet.Dimension.End.Column; c++)
                 {
-                    Debug.Log($"r:{r} c:{c} value:{sheet.Cells[r, c].Value}");
+                    var value = sheet.Cells[r, c].Value;
+                    if (value == null)
+                    {
+                        table.data[r - 4, c - 1]= "";
+                        continue;
+                    }
                     table.data[r - 4, c - 1] = sheet.Cells[r, c].Value.ToString();
                 }
             }
@@ -77,3 +82,4 @@ namespace Nico.Editor
         public string[,] data;
     }
 }
+#endif
