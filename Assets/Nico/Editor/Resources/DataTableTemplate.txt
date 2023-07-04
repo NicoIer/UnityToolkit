@@ -1,0 +1,57 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System;
+
+namespace Nico
+{
+    public class DataTableNameTemplate : ScriptableObject, IDataTable
+    {
+        [SerializeField]private SerializableDictionary<int, TableDataNameTemplate> _dataDict = new SerializableDictionary<int, TableDataNameTemplate>();
+
+        public ITableData Get(int id)
+        {
+            return _dataDict[id];
+        }
+        
+#if UNITY_EDITOR
+        public void Add(ITableData tableData)
+        {
+            if (tableData == null)
+            {
+                Debug.LogWarning($"{GetType().Name} can not add null");
+                return;
+            }
+            if (tableData is not TableDataNameTemplate data)
+            {
+                Debug.LogWarning($"Type mismatch {tableData.GetType()} can not add to {GetType()}");
+                return;
+            }
+
+            if (_dataDict.ContainsKey(data.id))
+            {
+                Debug.LogWarning($"{GetType().Name} has already contains key: " + data.id);
+            }
+            else
+            {
+                _dataDict.Add(data.id, data);
+            }
+
+            Debug.LogWarning($"{tableData.GetType()} can added to {GetType()}");
+        }
+#endif
+    }
+
+    [Serializable]
+    public struct TableDataNameTemplate : ITableData
+    {
+
+//fieldsTemplate
+#if UNITY_EDITOR
+        public bool Parse(string[] values)
+        {
+//parseFieldsTemplate
+            return true;
+        }
+#endif
+    }
+}

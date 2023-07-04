@@ -1,0 +1,11 @@
+namespace Nico
+{
+#if UNITY_EDITOR
+using Nico.Editor;
+    [Parse]
+#endif
+    public enum EnumNameTemplate
+    {
+//fieldsTemplate
+    }
+}

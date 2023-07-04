@@ -1,0 +1,17 @@
+{
+    "name": "DataTable",
+    "rootNamespace": "Nico",
+    "references": [
+        "GUID:b963bc3b082558e40ba09a4faf942e10",
+        "GUID:129daa1c923867a4f9571deb2b70e763"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

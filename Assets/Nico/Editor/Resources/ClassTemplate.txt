@@ -1,0 +1,13 @@
+using UnityEngine;
+namespace Nico
+{
+#if UNITY_EDITOR
+using Nico.Editor;
+    [Parse]
+#endif
+    [System.Serializable]
+    public class ClassTemplateName
+    {
+//fieldsTemplate
+    }
+}
