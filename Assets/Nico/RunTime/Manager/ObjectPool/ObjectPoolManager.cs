@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace Nico
 {
@@ -30,7 +30,8 @@ namespace Nico
         }
 
 
-        public static void Register(GameObject prefab, string prefabName = null)
+        public static void Register(GameObject prefab, string prefabName = null, OnSpawnDelegate onSpawn = null,
+           OnRecycleDelegate onRecycle = null)
         {
             if (prefab == null)
             {
@@ -49,7 +50,7 @@ namespace Nico
                 return;
             }
 
-            _pool.Add(prefabName, new PrefabPool(prefab, prefabName));
+            _pool.Add(prefabName, new PrefabPool(prefab, prefabName, onSpawn, onRecycle));
         }
 
 
@@ -62,7 +63,7 @@ namespace Nico
             }
 
             Debug.LogError(
-                $"ObjectPoolManager.Get({prefabName}) failed. it has not been register into addressables yet. please using label{GlobalConst.POOL_OBJECT_PREFAB_LABEL} to tag it.");
+                $"ObjectPoolManager.Get({prefabName}) failed. it has not been register into addressables yet. please register it first.");
             return null;
         }
 
@@ -74,7 +75,7 @@ namespace Nico
             else
             {
                 Debug.LogWarning(
-                    $"ObjectPoolManager.Return({gameObject.name}). it has not been register into addressables yet. please using label{GlobalConst.POOL_OBJECT_PREFAB_LABEL} to tag it. now will create a temp pool to store it.");
+                    $"ObjectPoolManager.Return({gameObject.name}). it has not been register yet. please register it first. now will create a temp pool to store it.");
                 var pool = new PrefabPool(gameObject, gameObject.name);
                 pool.Return(gameObject);
                 _pool.Add(gameObject.name, pool);

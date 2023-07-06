@@ -5,7 +5,7 @@ namespace Nico
     internal static class ObjectPool<T> where T : IPoolObject, new()
     {
         private static readonly Queue<T> _objects = new Queue<T>();
-
+        
         internal static T Get()
         {
             if (_objects.Count == 0)
