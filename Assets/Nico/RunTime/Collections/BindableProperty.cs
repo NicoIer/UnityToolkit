@@ -52,5 +52,12 @@ namespace Nico
         // {
         //     return _value.GetHashCode();
         // }
+        
+        //重写 = 
+        public static implicit operator T(BindableProperty<T> property)
+        {
+            return property.Value;
+        }
+        
     }
 }
