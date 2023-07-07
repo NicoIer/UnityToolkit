@@ -38,5 +38,13 @@ namespace Nico
                 writer.Write(content);
             }
         }
+
+        public static bool TryReadAllText(string path, out string str)
+        {
+            str = null;
+            if (!System.IO.File.Exists(path)) return false;
+            str = System.IO.File.ReadAllText(path);
+            return true;
+        }
     }
 }

@@ -4,7 +4,9 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Nico.RunTime"
+        "Nico.RunTime",
+        "UniTask.Editor",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
