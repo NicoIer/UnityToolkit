@@ -68,17 +68,24 @@ namespace Nico
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Return(GameObject gameObject)
+        public static void Return(GameObject gameObject,string name=null)
         {
-            if (_pool.TryGetValue(gameObject.name, out var value))
+            if (name == null)
+            {
+                name = gameObject.name;
+            }
+
+            if (_pool.TryGetValue(name, out var value))
+            {
                 value.Return(gameObject);
+            }
             else
             {
                 Debug.LogWarning(
                     $"ObjectPoolManager.Return({gameObject.name}). it has not been register yet. please register it first. now will create a temp pool to store it.");
                 var pool = new PrefabPool(gameObject, gameObject.name);
                 pool.Return(gameObject);
-                _pool.Add(gameObject.name, pool);
+                _pool.Add(name, pool);
             }
         }
     }
