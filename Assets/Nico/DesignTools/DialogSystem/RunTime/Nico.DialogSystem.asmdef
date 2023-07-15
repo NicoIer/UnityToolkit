@@ -1,11 +1,11 @@
 {
-    "name": "Nico.DataTable",
-    "rootNamespace": "",
+    "name": "Nico.DialogSystem",
+    "rootNamespace": "Nico.DialogSystem",
     "references": [
-        "GUID:9e24947de15b9834991c9d8411ea37cf",
-        "GUID:84651a3751eca9349aac36a66bba901b",
-        "GUID:d1c3785ca42773945961fc2ef6c7fb7f",
-        "GUID:497649f9bac14adba1cad3e892d2e6f1"
+        "GUID:b963bc3b082558e40ba09a4faf942e10",
+        "GUID:497649f9bac14adba1cad3e892d2e6f1",
+        "GUID:976630cbf5c04e66ba586699dafb496c",
+        "GUID:1bdb38ea2f844f7aa2a4725e389ee753"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

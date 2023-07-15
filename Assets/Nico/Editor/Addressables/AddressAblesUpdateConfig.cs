@@ -17,18 +17,18 @@ namespace Nico.Editor
         {
             // { GlobalConst.DATATABLE_FOLDER_NAME, GlobalConst.DATATABLE_LABEL },
             // { GlobalConst.POOL_OBJECT_PREFAB_FOLDER_NAME, GlobalConst.POOL_OBJECT_PREFAB_LABEL },
-            { GlobalConst.HOTUPDATE_DLL_FOLDER_NAME, GlobalConst.HOTUPDATE_DLL_LABEL },
-            { GlobalConst.AOT_DLL_FOLDER_NAME, GlobalConst.AOT_DLL_LABEL }
+            { AddressablesConst.HOTUPDATE_DLL_FOLDER_NAME, AddressablesConst.HOTUPDATE_DLL_LABEL },
+            { AddressablesConst.AOT_DLL_FOLDER_NAME, AddressablesConst.AOT_DLL_LABEL }
         };
 
         [HideInInspector] public string resourcesPath =
             "Assets/AddressablesResources";
 
         public readonly string dataTableAssetFolderPath =
-            $"Assets/AddressablesResources/{GlobalConst.DATATABLE_FOLDER_NAME}";
+            $"Assets/AddressablesResources/{AddressablesConst.DATATABLE_FOLDER_NAME}";
 
         public readonly string dataTableScriptsPath =
-            $"Assets/Assemblies/{GlobalConst.DATATABLE_FOLDER_NAME}/";
+            $"Assets/Assemblies/{AddressablesConst.DATATABLE_FOLDER_NAME}/";
 
         public AddressableAssetSettings settings => AddressableAssetSettingsDefaultObject.GetSettings(true);
         [SerializeField] public VisualTreeAsset uxml;

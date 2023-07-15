@@ -121,7 +121,7 @@ namespace Nico.Editor
             Assembly assembly = null;
             try
             {
-                assembly = Assembly.Load(GlobalConst.DATATABLE_FOLDER_NAME);
+                assembly = Assembly.Load(AddressablesConst.DATATABLE_FOLDER_NAME);
             }
             catch (FileNotFoundException e)
             {

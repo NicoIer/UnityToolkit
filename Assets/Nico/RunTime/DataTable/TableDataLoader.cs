@@ -6,7 +6,6 @@ namespace Nico
 {
     public static class TableDataLoader
     {
-
         public static bool LoadFromResources<TDataTable>(string address,out TDataTable dataTable) where TDataTable : IDataTable
         {
             dataTable = default;
