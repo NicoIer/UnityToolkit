@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1380.8
     height: 916.8
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Inspector
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 23
+  controlID: 77
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 79
+  controlID: 18
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Builder
+  m_Name: SceneView
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -168,10 +168,10 @@ MonoBehaviour:
   m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
-  - {fileID: 13}
   - {fileID: 14}
   - {fileID: 15}
-  m_Selected: 1
+  - {fileID: 16}
+  m_Selected: 0
   m_LastSelected: 2
 --- !u!114 &8
 MonoBehaviour:
@@ -197,7 +197,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 30
+  controlID: 25
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -208,7 +208,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: AddressableEditorWindow
+  m_Name: SceneHierarchyWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
@@ -217,16 +217,16 @@ MonoBehaviour:
     y: 0
     width: 357.6
     height: 252.39996
-  m_MinSize: {x: 101, y: 121}
+  m_MinSize: {x: 201, y: 221}
   m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 17}
   m_Panes:
-  - {fileID: 16}
   - {fileID: 17}
   - {fileID: 18}
   - {fileID: 19}
-  m_Selected: 1
-  m_LastSelected: 2
+  - {fileID: 20}
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -248,9 +248,10 @@ MonoBehaviour:
     height: 252.39996
   m_MinSize: {x: 232, y: 271}
   m_MaxSize: {x: 10002, y: 10021}
-  m_ActualView: {fileID: 20}
+  m_ActualView: {fileID: 21}
   m_Panes:
-  - {fileID: 20}
+  - {fileID: 21}
+  - {fileID: 13}
   - {fileID: 12}
   m_Selected: 0
   m_LastSelected: 1
@@ -275,12 +276,900 @@ MonoBehaviour:
     height: 866.8
   m_MinSize: {x: 276, y: 71}
   m_MaxSize: {x: 4001, y: 4021}
-  m_ActualView: {fileID: 21}
+  m_ActualView: {fileID: 22}
   m_Panes:
-  - {fileID: 21}
+  - {fileID: 22}
   m_Selected: 0
   m_LastSelected: 0
 --- !u!114 &12
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 13401, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Test Runner
+    m_Image: {fileID: 0}
+    m_Tooltip: 
+  m_Pos:
+    serializedVersion: 2
+    x: 357.6
+    y: 688
+    width: 703.6
+    height: 231.39996
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+  m_Spl:
+    ID: 874
+    splitterInitialOffset: 0
+    currentActiveSplitter: -1
+    realSizes:
+    - 120.8
+    - 40
+    relativeSizes:
+    - 0.75
+    - 0.25
+    minSizes:
+    - 32
+    - 32
+    maxSizes:
+    - 0
+    - 0
+    lastTotalSize: 160.8
+    splitSize: 6
+    xOffset: 0
+    m_Version: 1
+    oldRealSizes: 
+    oldMinSizes: 
+    oldMaxSizes: 
+    oldSplitSize: 0
+  m_TestTypeToolbarIndex: 0
+  m_PlayModeTestListGUI:
+    m_Window: {fileID: 12}
+    m_NewResultList:
+    - id: 1036
+      uniqueId: '[HybridCLRTutorial][suite]'
+      name: HybridCLRTutorial
+      fullName: HybridCLRTutorial
+      resultStatus: 1
+      duration: 0.1380951
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    - id: 1046
+      uniqueId: '[Nico.RunTime.Tests.dll][suite]'
+      name: Nico.RunTime.Tests.dll
+      fullName: C:/Users/wepie/Desktop/Projects/UnityUtil/Library/ScriptAssemblies/Nico.RunTime.Tests.dll
+      resultStatus: 1
+      duration: 0.1113168
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1036
+      parentUniqueId: '[HybridCLRTutorial][suite]'
+    - id: 1047
+      uniqueId: Nico.RunTime.Tests.dll/[Nico][suite]
+      name: Nico
+      fullName: Nico
+      resultStatus: 1
+      duration: 0.0996056
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1046
+      parentUniqueId: '[Nico.RunTime.Tests.dll][suite]'
+    - id: 1048
+      uniqueId: Nico.RunTime.Tests.dll/Nico/[Nico.RunTime.Tests][Nico.Tests][suite]
+      name: Tests
+      fullName: Nico.Tests
+      resultStatus: 1
+      duration: 0.0933802
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1047
+      parentUniqueId: Nico.RunTime.Tests.dll/[Nico][suite]
+    - id: 1037
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.EventTest][suite]
+      name: EventTest
+      fullName: Nico.Tests.EventTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1048
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/[Nico.RunTime.Tests][Nico.Tests][suite]
+    - id: 1038
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/EventTest/[Nico.RunTime.Tests][Nico.Tests.EventTest.EventExist]
+      name: EventExist
+      fullName: Nico.Tests.EventTest.EventExist
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1037
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.EventTest][suite]
+    - id: 1039
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.ModelTest][suite]
+      name: ModelTest
+      fullName: Nico.Tests.ModelTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1048
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/[Nico.RunTime.Tests][Nico.Tests][suite]
+    - id: 1040
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/ModelTest/[Nico.RunTime.Tests][Nico.Tests.ModelTest.TestModelExist]
+      name: TestModelExist
+      fullName: Nico.Tests.ModelTest.TestModelExist
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1039
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.ModelTest][suite]
+    - id: 1041
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.ObjectPoolTest][suite]
+      name: ObjectPoolTest
+      fullName: Nico.Tests.ObjectPoolTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1048
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/[Nico.RunTime.Tests][Nico.Tests][suite]
+    - id: 1042
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/ObjectPoolTest/[Nico.RunTime.Tests][Nico.Tests.ObjectPoolTest.TestPrefabPool]
+      name: TestPrefabPool
+      fullName: Nico.Tests.ObjectPoolTest.TestPrefabPool
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1041
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.ObjectPoolTest][suite]
+    - id: 1043
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/ObjectPoolTest/[Nico.RunTime.Tests][Nico.Tests.ObjectPoolTest.TestReturnPrefab]
+      name: TestReturnPrefab
+      fullName: Nico.Tests.ObjectPoolTest.TestReturnPrefab
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1041
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.ObjectPoolTest][suite]
+    - id: 1044
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.TimerTests][suite]
+      name: TimerTests
+      fullName: Nico.Tests.TimerTests
+      resultStatus: 1
+      duration: 0.079251
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1048
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/[Nico.RunTime.Tests][Nico.Tests][suite]
+    - id: 1045
+      uniqueId: Nico.RunTime.Tests.dll/Nico/Tests/TimerTests/[Nico.RunTime.Tests][Nico.Tests.TimerTests.Test1]
+      name: Test1
+      fullName: Nico.Tests.TimerTests.Test1
+      resultStatus: 1
+      duration: 0.0488904
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1044
+      parentUniqueId: Nico.RunTime.Tests.dll/Nico/Tests/[Nico.RunTime.Tests][Nico.Tests.TimerTests][suite]
+    m_ResultText: Test1 (0.049s)
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 91}
+      m_SelectedIDs: 6ff9ea1b
+      m_LastClickedID: 468384111
+      m_ExpandedIDs: 932dca8b3a5420db60acf71e37c53c327958ee342a5bfb5fbc917566d378bc6effffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategoryMask: 0
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+  m_EditModeTestListGUI:
+    m_Window: {fileID: 12}
+    m_NewResultList:
+    - id: 1000
+      uniqueId: '[HybridCLRTutorial][suite]'
+      name: HybridCLRTutorial
+      fullName: HybridCLRTutorial
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    - id: 1030
+      uniqueId: '[Nico.Editor.Tests.dll][suite]'
+      name: Nico.Editor.Tests.dll
+      fullName: C:/Users/wepie/Desktop/Projects/UnityUtil/Library/ScriptAssemblies/Nico.Editor.Tests.dll
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1000
+      parentUniqueId: '[HybridCLRTutorial][suite]'
+    - id: 1031
+      uniqueId: Nico.Editor.Tests.dll/[Nico][suite]
+      name: Nico
+      fullName: Nico
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1030
+      parentUniqueId: '[Nico.Editor.Tests.dll][suite]'
+    - id: 1032
+      uniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+      name: Tests
+      fullName: Nico.Tests
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1031
+      parentUniqueId: Nico.Editor.Tests.dll/[Nico][suite]
+    - id: 1001
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest][suite]
+      name: DefineCreateTest
+      fullName: Nico.Tests.DefineCreateTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1005
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/DefineCreateTest/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest.AssemblyDefineCreateTest]
+      name: AssemblyDefineCreateTest
+      fullName: Nico.Tests.DefineCreateTest.AssemblyDefineCreateTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest][suite]
+    - id: 1002
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/DefineCreateTest/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest.CreateClass]
+      name: CreateClass
+      fullName: Nico.Tests.DefineCreateTest.CreateClass
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest][suite]
+    - id: 1003
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/DefineCreateTest/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest.CreateEnum]
+      name: CreateEnum
+      fullName: Nico.Tests.DefineCreateTest.CreateEnum
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest][suite]
+    - id: 1004
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/DefineCreateTest/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest.CreateTable]
+      name: CreateTable
+      fullName: Nico.Tests.DefineCreateTest.CreateTable
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.DefineCreateTest][suite]
+    - id: 1006
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest][suite]
+      name: ExcelImportTest
+      fullName: Nico.Tests.ExcelImportTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1007
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ExcelImportTest/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest.Import]
+      name: Import
+      fullName: Nico.Tests.ExcelImportTest.Import
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1006
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest][suite]
+    - id: 1009
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ExcelImportTest/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest.ImportData]
+      name: ImportData
+      fullName: Nico.Tests.ExcelImportTest.ImportData
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1006
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest][suite]
+    - id: 1008
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ExcelImportTest/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest.ImportTable]
+      name: ImportTable
+      fullName: Nico.Tests.ExcelImportTest.ImportTable
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1006
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ExcelImportTest][suite]
+    - id: 1010
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.GeneratedCodeTest][suite]
+      name: GeneratedCodeTest
+      fullName: Nico.Tests.GeneratedCodeTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1011
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.HeapTest][suite]
+      name: HeapTest
+      fullName: Nico.Tests.HeapTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1013
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/HeapTest/[Nico.Editor.Tests][Nico.Tests.HeapTest.MaxHeapTest]
+      name: MaxHeapTest
+      fullName: Nico.Tests.HeapTest.MaxHeapTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1011
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.HeapTest][suite]
+    - id: 1012
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/HeapTest/[Nico.Editor.Tests][Nico.Tests.HeapTest.MinHeapTest]
+      name: MinHeapTest
+      fullName: Nico.Tests.HeapTest.MinHeapTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1011
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.HeapTest][suite]
+    - id: 1014
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ObjectPoolTest][suite]
+      name: ObjectPoolTest
+      fullName: Nico.Tests.ObjectPoolTest
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1015
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ObjectPoolTest/[Nico.Editor.Tests][Nico.Tests.ObjectPoolTest.TestPoolObject]
+      name: TestPoolObject
+      fullName: Nico.Tests.ObjectPoolTest.TestPoolObject
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1014
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ObjectPoolTest][suite]
+    - id: 1016
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ObjectPoolTest/[Nico.Editor.Tests][Nico.Tests.ObjectPoolTest.TestPrefabPool]
+      name: TestPrefabPool
+      fullName: Nico.Tests.ObjectPoolTest.TestPrefabPool
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1014
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ObjectPoolTest][suite]
+    - id: 1017
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+      name: ParseTests
+      fullName: Nico.Tests.ParseTests
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1032
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/[Nico.Editor.Tests][Nico.Tests][suite]
+    - id: 1018
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseArrayExist]
+      name: ParseArrayExist
+      fullName: Nico.Tests.ParseTests.ParseArrayExist
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1024
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseBool]
+      name: ParseBool
+      fullName: Nico.Tests.ParseTests.ParseBool
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1020
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseEnum]
+      name: ParseEnum
+      fullName: Nico.Tests.ParseTests.ParseEnum
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1022
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseFloat]
+      name: ParseFloat
+      fullName: Nico.Tests.ParseTests.ParseFloat
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1026
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseFloatArray]
+      name: ParseFloatArray
+      fullName: Nico.Tests.ParseTests.ParseFloatArray
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1021
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseInt]
+      name: ParseInt
+      fullName: Nico.Tests.ParseTests.ParseInt
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1025
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseIntArray]
+      name: ParseIntArray
+      fullName: Nico.Tests.ParseTests.ParseIntArray
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1019
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseListExist]
+      name: ParseListExist
+      fullName: Nico.Tests.ParseTests.ParseListExist
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1023
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseString]
+      name: ParseString
+      fullName: Nico.Tests.ParseTests.ParseString
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1027
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.ParseStringArray]
+      name: ParseStringArray
+      fullName: Nico.Tests.ParseTests.ParseStringArray
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1028
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.TestParseBuildinInClass]
+      name: TestParseBuildinInClass
+      fullName: Nico.Tests.ParseTests.TestParseBuildinInClass
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    - id: 1029
+      uniqueId: Nico.Editor.Tests.dll/Nico/Tests/ParseTests/[Nico.Editor.Tests][Nico.Tests.ParseTests.TestParseClass]
+      name: TestParseClass
+      fullName: Nico.Tests.ParseTests.TestParseClass
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1017
+      parentUniqueId: Nico.Editor.Tests.dll/Nico/Tests/[Nico.Editor.Tests][Nico.Tests.ParseTests][suite]
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 59a583aa3f65cad9136981ff37c53c32ffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategoryMask: 0
+      availableCategories:
+      - Uncategorized
+--- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -300,15 +1189,15 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 623
-    y: 1061
-    width: 1227
-    height: 338
+    x: 357.6
+    y: 688
+    width: 703.6
+    height: 231.39996
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
     m_SaveData: []
---- !u!114 &13
+--- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -329,9 +1218,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 73
-    width: 1851
-    height: 967
+    y: 73.6
+    width: 1062.2
+    height: 593.4
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
@@ -341,8 +1230,8 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: -101, y: -26}
+      snapOffset: {x: -101, y: -26}
+      snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 3
       id: Tool Settings
       index: 0
@@ -668,7 +1557,7 @@ MonoBehaviour:
   m_SceneVisActive: 1
   m_LastLockedObject: {fileID: 0}
   m_ViewIsLockedToObject: 0
---- !u!114 &14
+--- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -696,7 +1585,7 @@ MonoBehaviour:
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
     m_SaveData: []
---- !u!114 &15
+--- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -719,7 +1608,7 @@ MonoBehaviour:
     x: 0
     y: 73.6
     width: 1062.2
-    height: 614.2
+    height: 593.4
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
@@ -730,7 +1619,7 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1062.2, y: 593.2}
+  m_TargetSize: {x: 1062.2, y: 572.4}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
   m_RenderIMGUI: 1
@@ -747,8 +1636,8 @@ MonoBehaviour:
     vZoomLockedByDefault: 0
     m_HBaseRangeMin: -424.87997
     m_HBaseRangeMax: 424.87997
-    m_VBaseRangeMin: -237.28001
-    m_VBaseRangeMax: 237.28001
+    m_VBaseRangeMin: -228.96
+    m_VBaseRangeMax: 228.96
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -757,7 +1646,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -767,9 +1656,9 @@ MonoBehaviour:
       x: 0
       y: 21
       width: 1062.2
-      height: 593.2
+      height: 572.4
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 531.1, y: 296.6}
+    m_Translation: {x: 531.1, y: 286.2}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
@@ -777,18 +1666,18 @@ MonoBehaviour:
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
       x: -531.1
-      y: -296.6
+      y: -286.2
       width: 1062.2
-      height: 593.2
+      height: 572.4
     m_MinimalGUI: 1
   m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 1327.75, y: 767.75}
+  m_LastWindowPixelSize: {x: 1327.75, y: 741.75}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
---- !u!114 &16
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -809,9 +1698,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 1061
-    width: 925
-    height: 338
+    y: 688
+    width: 356.6
+    height: 231.39996
   m_ViewDataDictionary: {fileID: 0}
   m_OverlayCanvas:
     m_LastAppliedPresetName: Default
@@ -821,7 +1710,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 24fbffff
+      m_ExpandedIDs: 98dfffffb4e0fffffce2ffff32e4ffff10fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -845,7 +1734,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: c663f743c4168524e82a95dc19292d08
---- !u!114 &17
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -874,7 +1763,7 @@ MonoBehaviour:
     m_LastAppliedPresetName: Default
     m_SaveData: []
   config: {fileID: 11400000, guid: edb369ab236dde64a8a173417c71e2ff, type: 2}
---- !u!114 &18
+--- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -989,9 +1878,9 @@ MonoBehaviour:
         userData: 0
       m_VisibleColumns: 00000000010000000200000003000000
       m_SortedColumns: 
-    window: {fileID: 18}
+    window: {fileID: 19}
     m_VerticalSplitterPercent: 0.8
---- !u!114 &19
+--- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1024,7 +1913,7 @@ MonoBehaviour:
   m_ServicesScrollPos: {x: 0, y: 0}
   m_VerticalSplitterRatio: 0.67
   m_Settings: {fileID: 11400000, guid: 58026caa6b724a6429d8ea6b9c7ef843, type: 2}
---- !u!114 &20
+--- !u!114 &21
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1065,22 +1954,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Nico/Editor.Tests
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets
+  - Assets/Nico/Editor.Tests
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\wepie\Desktop\Projects\UnityUtil
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ae730000
-    m_LastClickedID: 29614
-    m_ExpandedIDs: 00000000ae73000000ca9a3b
+    scrollPos: {x: 0, y: 44.600037}
+    m_SelectedIDs: 76740000
+    m_LastClickedID: 29814
+    m_ExpandedIDs: 00000000c2730000ce73000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1108,7 +1997,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ae730000
+    m_ExpandedIDs: 00000000c2730000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1152,7 +2041,7 @@ MonoBehaviour:
       m_IsRenaming: 0
       m_OriginalEventType: 11
       m_IsRenamingFilename: 1
-      m_ClientGUIView: {fileID: 0}
+      m_ClientGUIView: {fileID: 10}
     m_CreateAssetUtility:
       m_EndAction: {fileID: 0}
       m_InstanceID: 0
@@ -1164,7 +2053,7 @@ MonoBehaviour:
     m_GridSize: 16
   m_SkipHiddenPackages: 0
   m_DirectoriesAreaWidth: 278
---- !u!114 &21
+--- !u!114 &22
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
