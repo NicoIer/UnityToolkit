@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using UnityEngine;
 
 namespace Nico
@@ -53,7 +54,6 @@ namespace Nico
             _pool.Add(prefabName, new PrefabPool(prefab, prefabName, onSpawn, onRecycle));
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static GameObject Get(string prefabName)
         {
@@ -67,6 +67,12 @@ namespace Nico
             return null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Return(MonoBehaviour behaviour, string name = null)
+        {
+            Return(behaviour.gameObject,name);
+        }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Return(GameObject gameObject,string name=null)
         {

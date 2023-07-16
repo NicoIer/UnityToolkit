@@ -8,7 +8,7 @@ namespace Nico
     /// <summary>
     /// 游戏中的射线检测管理器
     /// </summary>
-    public static class RayCastManager
+    public static class RayCaster
     {
         const int MAX_COUNT = 25;
         private static readonly Collider[] _colliders = new Collider[MAX_COUNT];
@@ -46,10 +46,10 @@ namespace Nico
             LayerMask layerMask)
         {
             //将原来的colliders全部变成null
-            var hitCount = Physics.OverlapSphereNonAlloc(origin, radius, RayCastManager._colliders, layerMask);
+            var hitCount = Physics.OverlapSphereNonAlloc(origin, radius, RayCaster._colliders, layerMask);
             if (hitCount > 0)
             {
-                cols = RayCastManager._colliders;
+                cols = RayCaster._colliders;
                 count = hitCount;
                 return true;
             }
@@ -61,7 +61,7 @@ namespace Nico
 
         public static bool OverLabSphereTarget<T>(out List<T> objs, Vector3 origin, float radius, LayerMask layerMask)
         {
-            int count = Physics.OverlapSphereNonAlloc(origin,radius,RayCastManager._colliders,layerMask);
+            int count = Physics.OverlapSphereNonAlloc(origin,radius,RayCaster._colliders,layerMask);
             objs = new List<T>();
             for (int i = 0; i < count; i++)
             {

@@ -1,9 +1,10 @@
 using System;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Nico
 {
-    public sealed class Timer : IDisposable
+    public sealed class Timer
     {
         internal float duration { get; set; }
         public float leftTime { get; internal set; }
@@ -52,9 +53,10 @@ namespace Nico
             return true;
         }
 
-        public void Dispose()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Start()
         {
-            TimerManager.Stop(this);
+            TimerManager.Start(this);
         }
     }
 }

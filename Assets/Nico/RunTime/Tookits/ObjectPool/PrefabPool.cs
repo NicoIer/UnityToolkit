@@ -42,6 +42,7 @@ namespace Nico
             }
 
             var obj2 = _gameObjects.Dequeue();
+            obj2.SetActive(true);
             obj2.name = _prefabName;
             _onSpawn?.Invoke(obj2);
             return obj2;
@@ -50,6 +51,7 @@ namespace Nico
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Return(GameObject gameObject)
         {
+            gameObject.SetActive(false);
             gameObject.name = _prefabName;
             _onRecycle?.Invoke(gameObject);
             _gameObjects.Enqueue(gameObject);

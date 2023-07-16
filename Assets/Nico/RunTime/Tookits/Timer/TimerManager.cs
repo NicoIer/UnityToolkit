@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Nico
@@ -29,6 +30,7 @@ namespace Nico
         private static GameObject _timerGameObject;
         private static Queue<Timer> _timers = new Queue<Timer>();
         private static readonly HashSet<Timer> _runningTimers = new HashSet<Timer>();
+        private static readonly List<Timer> _removeList = new List<Timer>();
 
         // private static CancellationTokenSource _tickToken;
 
@@ -53,33 +55,41 @@ namespace Nico
             UnityEngine.Object.DestroyImmediate(_timerGameObject); // MonoBehaviour Tick
             _timers.Clear();
             _runningTimers.Clear();
+            _removeList.Clear();
         }
 
         public static Timer Get(float duration, TimerType type)
         {
             if (_timers.Count == 0)
             {
+                Debug.Log("Timer Get");
                 return new Timer(duration, type);
             }
 
             var timer = _timers.Dequeue();
             timer.duration = duration;
+            timer.leftTime = duration;
             timer.type = type;
             timer.state = TimerState.OnGet;
+            timer.onCompleted = null;
+            timer.onStopped = null;
+            timer.onPaused = null;
+            timer.onResumed = null;
             return timer;
         }
 
+        internal static void Return(Timer timer)
+        {
+            timer.state = TimerState.Stopped;
+            _removeList.Add(timer);
+        }
         public static void Stop(Timer timer)
         {
             if (timer.state == TimerState.Stopped)
             {
                 return;
             }
-
-            timer.state = TimerState.Stopped;
-            timer.onStopped?.Invoke();
-            _runningTimers.Remove(timer);
-            _timers.Enqueue(timer);
+            Return(timer);
         }
 
         public static bool Start(Timer timer)
@@ -114,6 +124,13 @@ namespace Nico
 
         internal static void Tick(float deltaTime)
         {
+            foreach (var timer in _removeList)
+            {
+                _runningTimers.Remove(timer);
+                _timers.Enqueue(timer);
+            }
+            _removeList.Clear();
+            // Debug.Log(_runningTimers.Count);
             foreach (var runningTimer in _runningTimers)
             {
                 if (runningTimer.Tick(deltaTime))
@@ -122,13 +139,5 @@ namespace Nico
                 }
             }
         }
-
-        // internal static async UniTask TickTask(float deltaTime)
-        // {
-        //     while (!_tickToken.IsCancellationRequested)
-        //     {
-        //         await UniTask
-        //     }
-        // }
     }
 }
