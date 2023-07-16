@@ -59,14 +59,7 @@ namespace Nico
                 Destroy(this);
             }
         }
-
-        protected virtual void OnEnable()
-        {
-            if (_instance == null)
-            {
-                _instance = this as T;
-            }
-        }
+        
 
         protected virtual void OnDestroy()
         {

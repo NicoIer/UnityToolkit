@@ -4,28 +4,6 @@ using UnityEngine;
 
 namespace Nico
 {
-    public abstract class State<T>
-    {
-        protected T owner;
-
-        public State(T owner)
-        {
-            this.owner = owner;
-        }
-
-        public virtual void OnEnter()
-        {
-        }
-
-        public virtual void OnUpdate()
-        {
-        }
-
-        public virtual void OnExit()
-        {
-        }
-    }
-
     public class StateMachine<TOwner>// where TOwner : MonoBehaviour
     {
         private TOwner _owner;
