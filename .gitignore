@@ -59,4 +59,5 @@ sysinfo.txt
 crashlytics-build.properties
 *.meta
 /Nico/Plugins/UniTask/
+.idea/
 
