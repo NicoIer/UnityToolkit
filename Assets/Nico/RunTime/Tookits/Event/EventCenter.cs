@@ -48,6 +48,10 @@ namespace Nico
             _triggering = true;
             foreach (var listener in _listeners)
             {
+                if (listener == null)
+                {
+                    continue;
+                }
                 listener.OnReceiveEvent(e);
             }
 

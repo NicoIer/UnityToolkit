@@ -54,6 +54,18 @@ namespace Nico
             return property.Value;
         }
         
+        //重写 += T
+        public static BindableProperty<T> operator +(BindableProperty<T> property, T value)
+        {
+            property.Value = value;
+            return property;
+        }
+        //重写 -= T
+        public static BindableProperty<T> operator -(BindableProperty<T> property, T value)
+        {
+            property.Value = value;
+            return property;
+        }
 
     }
 }

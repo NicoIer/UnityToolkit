@@ -33,7 +33,7 @@ namespace Nico
             currentState.OnEnter();
         }
 
-        public void Change<T>() where T : State<T>
+        public void Change<T>() where T : State<TOwner>
         {
             currentState.OnExit();
             currentState = _stateDic[typeof(T)];

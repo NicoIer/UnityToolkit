@@ -10,7 +10,15 @@ namespace Nico
     public static class ModelManager 
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Get<T>() where T : IModel => Models<T>.Instance;
+        public static T Get<T>() where T : class,IModel, new()
+        {
+            if (Models<T>.Instance == null)
+            {
+                Register<T>();
+            }
+
+            return Models<T>.Instance;
+        } 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Save<T>() where T : IModel

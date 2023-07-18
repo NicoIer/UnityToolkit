@@ -58,15 +58,15 @@ namespace Nico.VirtualControl
         private void OnDragEvent(Vector2 obj)
         {
             Vector3 direction = ReadAxis();
-
+        
             float distance = Vector3.Distance(knob.transform.position, transform.position);
-
+        
             //Only allow the knob to go so far
             if (distance > _requireDistance)
             {
                 knob.transform.position = transform.position + direction * _requireDistance;
             }
-
+        
             // axis update
             OnAxisEvent?.Invoke(direction);
             // angel update
