@@ -72,6 +72,7 @@ namespace Nico
                 Debug.LogWarning($"Model<{typeof(T)}> is null");
                 return;
             }
+            Debug.Log($"Model<{typeof(T)}> is saved");
             Models<T>.Instance.OnSave();
             Models<T>.Instance = default;
         }

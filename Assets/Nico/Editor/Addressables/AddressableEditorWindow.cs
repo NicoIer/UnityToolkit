@@ -88,7 +88,7 @@ namespace Nico.Edotor
             _configObjectField = initAddressable.Q<ObjectField>();
             _configObjectField.objectType = typeof(AddressAblesUpdateConfig);
             _configObjectField.value = config;
-            _configObjectField.SetEnabled(false);
+            _configObjectField.SetEnabled(true);
         }
 
         private void QueryAddressableUpdate()
@@ -115,7 +115,8 @@ namespace Nico.Edotor
             _hotUpdateTargetSelect = hotUpdate.Q<DropdownField>("target");
             //获取BuildTarget的所有枚举值
             _hotUpdateTargetSelect.choices = System.Enum.GetNames(typeof(BuildTarget)).ToList();
-            _hotUpdateTargetSelect.value = BuildTarget.StandaloneWindows64.ToString();
+            //拿到当前的BuildTarget
+            _hotUpdateTargetSelect.value = EditorUserBuildSettings.activeBuildTarget.ToString();
         }
 
         private void QueryImportDataTable()
@@ -170,8 +171,12 @@ namespace Nico.Edotor
             string folderPath = AssetDatabase.GUIDToAssetPath(folderGuid);
             //获取文件夹的名字
             string folderName = folderPath.Substring(folderPath.LastIndexOf('/') + 1);
-            //判断组存在不存在
-            // 为这个文件夹创建组
+            //搜集这个文件夹下的资源
+            var paths = SearchAssetsByFolder(folderPath, true);
+            //空文件夹 跳过
+            if(paths.Count == 0) return;
+            
+            //若这个文件夹不存在组 则创建组
             if (!config.groups.TryGetValue(folderName, out var group))
             {
                 group = config.settings.CreateGroup(folderName, false, false, false, null);
@@ -180,8 +185,7 @@ namespace Nico.Edotor
 
             bool hasLabel = config.folderToLabel.TryGetValue(folderName, out var label);
 
-            //遍历资源 添加到组中
-            var paths = SearchAssetsByFolder(folderPath, true);
+
             foreach (var assetPath in paths)
             {
                 // Debug.Log(assetPath);
@@ -236,6 +240,7 @@ namespace Nico.Edotor
             _hotUpdateButton.SetEnabled(false);
             var target = _hotUpdateTargetSelect.value;
             BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), target);
+            Debug.Log($"target:{target},buildTarget:{buildTarget}");
             //通知HybirdCLR编译热更程序集
             CompileDllCommand.CompileDll(buildTarget);
             //

@@ -179,6 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21768dbebb334ecaa5a3bbdc5fa60720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  knob: {fileID: 1159707669635793494}
   knobSizePercent: 0.362
   knobDistance: 1
-  knob: {fileID: 1159707669635793494}
+  deltaThreshold: 1

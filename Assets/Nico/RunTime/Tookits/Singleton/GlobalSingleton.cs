@@ -55,7 +55,7 @@ namespace Nico
             else if (_instance != this) //这一步比较很重要
             {
                 //如果已经被访问过了 代表已经有一个对应的单例对象存在了 那么就会在Awake中销毁自己
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
         

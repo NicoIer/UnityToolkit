@@ -8,6 +8,9 @@ namespace Nico
     internal class EventCenter<TEvent> where TEvent : IEvent
     {
         private readonly HashSet<IEventListener<TEvent>> _listeners;
+        private readonly List<IEventListener<TEvent>> _removeList = new List<IEventListener<TEvent>>();
+
+        private readonly List<IEventListener<TEvent>> _addList = new List<IEventListener<TEvent>>();
 
         // 之所以这里加锁 是因为 EventCenter 不一定只在主线程访问 它是 MonoBehavior无关的
         private bool _triggering;
@@ -22,8 +25,8 @@ namespace Nico
         {
             if (_triggering)
             {
-                throw new ArgumentException(
-                    "EventCenter is triggering, please don't add listener in event trigger");
+                _addList.Add(listener);
+                return;
             }
 
             _listeners.Add(listener);
@@ -34,9 +37,8 @@ namespace Nico
         {
             if (_triggering)
             {
-                throw new ArgumentException(
-                    "EventCenter is triggering, please don't add listener in event trigger");
-                // return;
+                _removeList.Add(listener);
+                return;
             }
 
             _listeners.Remove(listener);
@@ -52,10 +54,28 @@ namespace Nico
                 {
                     continue;
                 }
+
                 listener.OnReceiveEvent(e);
             }
 
             _triggering = false;
+            if(_removeList.Count > 0)
+            {
+                foreach (var listener in _removeList)
+                {
+                    _listeners.Remove(listener);
+                }
+                _removeList.Clear();
+            }
+            
+            if(_addList.Count > 0)
+            {
+                foreach (var listener in _addList)
+                {
+                    _listeners.Add(listener);
+                }
+                _addList.Clear();
+            }
         }
     }
 }

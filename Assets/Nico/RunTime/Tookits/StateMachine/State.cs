@@ -2,13 +2,11 @@
 {
     public abstract class State<T>
     {
-        protected T owner;
-
+        public T owner { get; private set; }
         public State(T owner)
         {
             this.owner = owner;
         }
-
         public virtual void OnEnter()
         {
         }

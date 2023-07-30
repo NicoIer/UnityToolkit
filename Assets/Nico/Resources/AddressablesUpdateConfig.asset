@@ -17,12 +17,8 @@ MonoBehaviour:
   uss: {fileID: 7433441132597879392, guid: 0afa6931b9ef9c44fa666929c66e15bb, type: 3}
   folderToLabel:
     list:
-    - key: HotUpdateScene
-      value: hot_update_scene
     - key: DataTable
       value: data_table
-    - key: PoolObjectPrefab
-      value: pool_object_prefab
     - key: HotUpdateDll
       value: hot_update_dll
     - key: AOTDll
@@ -30,31 +26,22 @@ MonoBehaviour:
   groups:
     list:
     - key: Built In Data
-      value: {fileID: 11400000, guid: 5934eeebff435d343bec7b0f6db58103, type: 2}
+      value: {fileID: 11400000, guid: a1e3e7159eb5f624d990c975222b0fcb, type: 2}
     - key: Default Local Group
-      value: {fileID: 11400000, guid: cb5f2deedcdcc8c41a23fd229738b8d1, type: 2}
-    - key: AOTDll
-      value: {fileID: 11400000, guid: f70f16c8ca4937b4b8161df386100391, type: 2}
-    - key: HotUpdateDll
-      value: {fileID: 11400000, guid: d1d2724b9e8b69547ade7e1eef33349d, type: 2}
+      value: {fileID: 11400000, guid: e6ef9ee752e007445a1b0ac63b4539dd, type: 2}
     - key: Prefabs
-      value: {fileID: 11400000, guid: dc560dee08426fa4f8617b7dfda17003, type: 2}
-    - key: Scene
-      value: {fileID: 11400000, guid: 4602525cf40a8ec40b05b4321193aa97, type: 2}
-    - key: HotUpdateScene
-      value: {fileID: 11400000, guid: 9d3d94eff7925c943b21e4aff0f9f968, type: 2}
-    - key: DialogSystem
-      value: {fileID: 11400000, guid: bb734bb0e1b489e46bdc2cf85d3230df, type: 2}
-    - key: DataTable
-      value: {fileID: 11400000, guid: e1f37a24ecf4fd94ab3b150ac7b83b75, type: 2}
+      value: {fileID: 11400000, guid: 135495f8edcf04049919f922af17082b, type: 2}
+    - key: AOTDll
+      value: {fileID: 11400000, guid: afb306d835e08e3438bff5f48d1ed056, type: 2}
+    - key: HotUpdateDll
+      value: {fileID: 11400000, guid: 37e5b11812dd95d4daabb5ec51e067f0, type: 2}
   labels:
   - default
-  - hot_update_dll
-  - aot_dll
   - hot_update_scene
   - data_table
-  - pool_obj_prefab
   - pool_object_prefab
+  - hot_update_dll
+  - aot_dll
   defaultHotUpdateLabel:
     m_LabelString: hot_update_dll
   tableDataConfig: {fileID: 11400000, guid: daa32568e2996204ca23670d3a1288ab, type: 2}
