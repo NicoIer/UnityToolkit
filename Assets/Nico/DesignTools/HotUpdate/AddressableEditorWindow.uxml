@@ -21,16 +21,6 @@
                 <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="label" style="width: initial; height: initial; max-width: 120px; max-height: 40px;" />
                 <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="target" style="max-width: none; min-width: 160px; flex-direction: column;" />
             </ui:VisualElement>
-            <ui:VisualElement style="flex-direction: row;">
-                <ui:VisualElement name="import_datatable" style="flex-direction: row;">
-                    <ui:Label text="导入数据表" display-tooltip-when-elided="true" />
-                    <ui:Button text="import" display-tooltip-when-elided="true" />
-                </ui:VisualElement>
-                <ui:VisualElement name="code_generate" style="flex-direction: row; align-items: flex-start;">
-                    <ui:Label text="代码生成" display-tooltip-when-elided="true" />
-                    <ui:Button text="generate" display-tooltip-when-elided="true" />
-                </ui:VisualElement>
-            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement style="flex-direction: column; flex-grow: 1; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; align-items: auto; min-width: 400px; justify-content: flex-start; min-height: 220px; opacity: 1;" />
     </ui:VisualElement>

@@ -50,24 +50,25 @@ namespace Nico.Editor
     // CodeGenerator
     public static class DefineCreator
     {
-        private static TableDataConfig _config = Resources.Load<TableDataConfig>("TableDataConfig");
-
-        public static string CreateEnum(string enumName, IEnumerable<string> enumValues)
+        public static string CreateEnum(TableDataConfig _config, string enumName, IEnumerable<string> enumValues)
         {
             return CreateEnum(_config.TEnumTemplate, enumName, enumValues);
         }
 
-        public static string CreateClass(string className, string[] fieldNames, string[] fieldTypes)
+        public static string CreateClass(TableDataConfig _config, string className, string[] fieldNames,
+            string[] fieldTypes)
         {
             return CreateClass(_config.TClassTemplate, className, fieldNames, fieldTypes);
         }
 
-        public static string CreateStruct(string structName, string[] fieldNames, string[] fieldTypes)
+        public static string CreateStruct(TableDataConfig _config, string structName, string[] fieldNames,
+            string[] fieldTypes)
         {
             return CreateStruct(_config.TStructTemplate, structName, fieldNames, fieldTypes);
         }
 
-        public static string CreateDataTable(string tableName, string[] fieldNames, string[] fieldTypes)
+        public static string CreateDataTable(TableDataConfig _config, string tableName, string[] fieldNames,
+            string[] fieldTypes)
         {
             return CreateDataTable(_config.DataTableTemplate, tableName, fieldNames, fieldTypes);
         }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿
+#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
-#if UNITY_EDITOR
 namespace Nico.Editor
 {
     public static class UIElementUtil

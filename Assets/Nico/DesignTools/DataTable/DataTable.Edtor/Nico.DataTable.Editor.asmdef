@@ -1,11 +1,13 @@
 {
-    "name": "DataTable",
-    "rootNamespace": "Nico",
+    "name": "Nico.DataTable.Editor",
+    "rootNamespace": "",
     "references": [
-        "GUID:b963bc3b082558e40ba09a4faf942e10",
-        "GUID:129daa1c923867a4f9571deb2b70e763"
+        "GUID:129daa1c923867a4f9571deb2b70e763",
+        "GUID:497649f9bac14adba1cad3e892d2e6f1"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

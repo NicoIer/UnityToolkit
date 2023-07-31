@@ -1,10 +1,11 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-#if UNITY_EDITOR
+
 namespace Nico.Editor
 {
     /// <summary>

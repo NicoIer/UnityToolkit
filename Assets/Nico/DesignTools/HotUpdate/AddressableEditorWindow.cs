@@ -16,10 +16,10 @@ namespace Nico.Edotor
 {
     public partial class AddressableEditorWindow : EditorWindow
     {
-        public AddressAblesUpdateConfig config;
+        [SerializeField] private AddressAblesUpdateConfig config;
 
-        private VisualTreeAsset uxml => config.uxml;
-        private StyleSheet uss => config.uss;
+        [SerializeField] private VisualTreeAsset uxml;
+        [SerializeField] private StyleSheet uss;
 
         private ObjectField _configObjectField;
         private Button _initAddressableButton;
@@ -33,10 +33,6 @@ namespace Nico.Edotor
         private DropdownField _hotUpdateTargetSelect;
 
 
-        private Button _importDataTableButton;
-
-        private Button _codeGenButton;
-
         [MenuItem("Tools/Nico/AddressableEditorWindow")]
         public static void ShowExample()
         {
@@ -46,7 +42,6 @@ namespace Nico.Edotor
 
         public void CreateGUI()
         {
-            config = Resources.Load<AddressAblesUpdateConfig>("AddressablesUpdateConfig");
             VisualElement root = rootVisualElement;
             VisualElement labelFromUxml = uxml.Instantiate();
             labelFromUxml.styleSheets.Add(uss);
@@ -61,8 +56,6 @@ namespace Nico.Edotor
             QueryAddressableInit();
             QueryAddressableUpdate();
             QueryHotUpdate();
-            QueryImportDataTable();
-            QueryCodeGenerate();
         }
 
 
@@ -88,6 +81,10 @@ namespace Nico.Edotor
             _configObjectField = initAddressable.Q<ObjectField>();
             _configObjectField.objectType = typeof(AddressAblesUpdateConfig);
             _configObjectField.value = config;
+            _configObjectField.RegisterValueChangedCallback(evt =>
+            {
+                config = evt.newValue as AddressAblesUpdateConfig;
+            });
             _configObjectField.SetEnabled(true);
         }
 
@@ -117,20 +114,6 @@ namespace Nico.Edotor
             _hotUpdateTargetSelect.choices = System.Enum.GetNames(typeof(BuildTarget)).ToList();
             //拿到当前的BuildTarget
             _hotUpdateTargetSelect.value = EditorUserBuildSettings.activeBuildTarget.ToString();
-        }
-
-        private void QueryImportDataTable()
-        {
-            VisualElement dataTable = rootVisualElement.Q<VisualElement>("import_datatable");
-            _importDataTableButton = dataTable.Q<Button>();
-            _importDataTableButton.clickable.clicked += ImportDataTable;
-        }
-
-        private void QueryCodeGenerate()
-        {
-            VisualElement codeGen = rootVisualElement.Q<VisualElement>("code_generate");
-            _codeGenButton = codeGen.Q<Button>();
-            _codeGenButton.clickable.clicked += CodeGenerate;
         }
 
         #endregion
@@ -174,8 +157,8 @@ namespace Nico.Edotor
             //搜集这个文件夹下的资源
             var paths = SearchAssetsByFolder(folderPath, true);
             //空文件夹 跳过
-            if(paths.Count == 0) return;
-            
+            if (paths.Count == 0) return;
+
             //若这个文件夹不存在组 则创建组
             if (!config.groups.TryGetValue(folderName, out var group))
             {
@@ -280,52 +263,6 @@ namespace Nico.Edotor
             AssetDatabase.Refresh();
             // Debug.Log("热更dll完成");
             _hotUpdateButton.SetEnabled(true);
-        }
-
-        private void CodeGenerate()
-        {
-            _codeGenButton.SetEnabled(false);
-            string projectPath = Application.dataPath; //从Assets 回退到工程目录
-            projectPath = projectPath.Substring(0, projectPath.Length - 6);
-            string excelPath = EditorUtility.OpenFilePanelWithFilters("select excel", projectPath,
-                new string[] { "Excel Files", "csv,xlsx,xls" });
-            if (string.IsNullOrEmpty(excelPath))
-            {
-                _codeGenButton.SetEnabled(true);
-                return;
-            }
-
-            TableImporter.ImportExcel(excelPath);
-            _codeGenButton.SetEnabled(true);
-            AssetDatabase.Refresh();
-        }
-
-        private void ImportDataTable()
-        {
-            _importDataTableButton.SetEnabled(false);
-            string projectPath = Application.dataPath; //从Assets 回退到工程目录
-            projectPath = projectPath.Substring(0, projectPath.Length - 6);
-            string excelPath = EditorUtility.OpenFilePanelWithFilters("select excel", projectPath,
-                new string[] { "Excel Files", "csv,xlsx,xls" });
-            if (string.IsNullOrEmpty(excelPath))
-            {
-                _importDataTableButton.SetEnabled(true);
-                return;
-            }
-
-            try
-            {
-                TableImporter.ImportData(excelPath);
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.LogError("找不到文件:" + e.FileName);
-            }
-            finally
-            {
-                AssetDatabase.Refresh();
-                _importDataTableButton.SetEnabled(true);
-            }
         }
 
         #endregion
