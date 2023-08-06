@@ -61,3 +61,4 @@ crashlytics-build.properties
 /Nico/Plugins/UniTask/
 .idea/
 
+*.DS_Store

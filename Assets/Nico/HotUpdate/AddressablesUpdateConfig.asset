@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d8720507f4644ecb238cfd2b84e6acd, type: 3}
+  m_Name: AddressablesUpdateConfig
+  m_EditorClassIdentifier: Nico.HotUpdateEditor:Nico.Editor:AddressAblesUpdateConfig
+  resourcesPath: Assets/AddressablesResources
+  folderToLabel:
+    list:
+    - key: HotUpdateDll
+      value: hot_update_dll
+    - key: AOTDll
+      value: aot_dll
+  groups:
+    list:
+    - key: Built In Data
+      value: {fileID: 11400000, guid: a1e3e7159eb5f624d990c975222b0fcb, type: 2}
+    - key: Default Local Group
+      value: {fileID: 11400000, guid: a3a7a67c08f1e4521aabf63c0b4e3c98, type: 2}
+    - key: AOTDll
+      value: {fileID: 11400000, guid: afb306d835e08e3438bff5f48d1ed056, type: 2}
+    - key: Config
+      value: {fileID: 11400000, guid: a652051acb0dbe643b2acfb5c7dc53fe, type: 2}
+    - key: Effect
+      value: {fileID: 11400000, guid: 42cb0bb8e21b7d04c94b25e22c07a727, type: 2}
+    - key: Font
+      value: {fileID: 11400000, guid: 17d0e7e287a92914ea1fb0fc7e129719, type: 2}
+    - key: HotUpdateDll
+      value: {fileID: 11400000, guid: 37e5b11812dd95d4daabb5ec51e067f0, type: 2}
+    - key: Prefabs
+      value: {fileID: 11400000, guid: 346389e1ef2595343b9cee13d4e0e0f3, type: 2}
+    - key: Scenes
+      value: {fileID: 11400000, guid: 71f298778178e7f419f6c2177bee2775, type: 2}
+    - key: Title
+      value: {fileID: 11400000, guid: eb5a29a45f4ca3a4197473e81e73a101, type: 2}
+    - key: UIComponent
+      value: {fileID: 11400000, guid: 83d0f4370ecb1234aafcb750a77b5991, type: 2}
+    - key: UIDebug
+      value: {fileID: 11400000, guid: 941a85da6c4ad8a4bb1fcb5a464c1395, type: 2}
+    - key: UIPanel
+      value: {fileID: 11400000, guid: c74327ef4a8dc9c478b06218d331b7fd, type: 2}
+  labels:
+  - default
+  - data_table
+  - hot_update_dll
+  - aot_dll
+  defaultHotUpdateLabel:
+    m_LabelString: 

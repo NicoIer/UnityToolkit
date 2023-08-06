@@ -1,0 +1,16 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace {#Namespace#}
+{
+    public partial class {#ClassName#}
+    {
+{#Fields#}
+        
+        protected override void OnPartialBind()
+        {
+{#Bindings#}
+        }
+    }
+}

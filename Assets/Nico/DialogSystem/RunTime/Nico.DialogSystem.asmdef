@@ -1,0 +1,16 @@
+{
+    "name": "Nico.DialogSystem",
+    "rootNamespace": "Nico.DialogSystem",
+    "references": [
+        "GUID:1bdb38ea2f844f7aa2a4725e389ee753"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
