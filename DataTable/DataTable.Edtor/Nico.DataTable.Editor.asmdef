@@ -1,0 +1,20 @@
+{
+    "name": "Nico.DataTable.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a3ee5cd9bc3c84e2381af47edb481f8e",
+        "GUID:811f9c2ae5d5b4a46b82b6325fdf9514",
+        "GUID:411278be43f6249efa8654bc36bfabec"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

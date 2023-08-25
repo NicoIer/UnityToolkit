@@ -1,0 +1,16 @@
+{
+    "name": "Nico.UIFramework",
+    "rootNamespace": "",
+    "references": [
+        "GUID:411278be43f6249efa8654bc36bfabec"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

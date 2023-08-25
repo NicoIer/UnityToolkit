@@ -1,0 +1,17 @@
+{
+    "name": "ColliderEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:811f9c2ae5d5b4a46b82b6325fdf9514",
+        "GUID:782a151754d0d403fbb8dc17b38bbfd9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

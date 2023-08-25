@@ -1,0 +1,18 @@
+{
+    "name": "Nico.UIFramework.Editor",
+    "rootNamespace": "Nico",
+    "references": [
+        "GUID:0aaec3ade56794e58b3bc4efffa6a60c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
