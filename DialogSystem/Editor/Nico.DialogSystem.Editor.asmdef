@@ -2,9 +2,9 @@
     "name": "Nico.DialogSystem.Editor",
     "rootNamespace": "Nico.DialogSystem.Editor",
     "references": [
-        "GUID:411278be43f6249efa8654bc36bfabec",
-        "GUID:6c282fef3067d43188a4c6861b4beb96",
-        "GUID:811f9c2ae5d5b4a46b82b6325fdf9514"
+        "Nico.Toolkits",
+        "Nico.DialogSystem",
+        "Nico.Editor"
     ],
     "includePlatforms": [
         "Editor"

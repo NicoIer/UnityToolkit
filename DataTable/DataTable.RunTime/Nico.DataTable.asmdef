@@ -1,11 +1,11 @@
 {
     "name": "Nico.DataTable",
-    "rootNamespace": "",
+    "rootNamespace": "Nico",
     "references": [
-        "GUID:9e24947de15b9834991c9d8411ea37cf",
-        "GUID:84651a3751eca9349aac36a66bba901b",
-        "GUID:811f9c2ae5d5b4a46b82b6325fdf9514",
-        "GUID:411278be43f6249efa8654bc36bfabec"
+        "Unity.Addressables",
+        "Unity.ResourceManager",
+        "Nico.Editor",
+        "Nico.Toolkits"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

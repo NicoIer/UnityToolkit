@@ -1,10 +1,7 @@
 {
-    "name": "ColliderEditor",
-    "rootNamespace": "ColliderEditor",
-    "references": [
-        "Nico.Editor",
-        "ConcaveHull"
-    ],
+    "name": "Nico.Toolkits",
+    "rootNamespace": "Nico",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

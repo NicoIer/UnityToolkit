@@ -1,28 +1,23 @@
 {
-    "name": "Nico.Editor",
-    "rootNamespace": "Nico.Editor",
-    "references": [
-        "GUID:9e24947de15b9834991c9d8411ea37cf",
-        "GUID:69448af7b92c7f342b298e06a37122aa",
-        "GUID:b963bc3b082558e40ba09a4faf942e10",
-        "GUID:2373f786d14518f44b0f475db77ba4de",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:2ac80992ce2e6af4194b32ea8d1d052c",
-        "GUID:129daa1c923867a4f9571deb2b70e763",
-        "GUID:d1c3785ca42773945961fc2ef6c7fb7f",
-        "GUID:497649f9bac14adba1cad3e892d2e6f1"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": true,
-    "precompiledReferences": [
-        "EPPlus.dll"
-    ],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Nico.Editor",
+  "rootNamespace": "Nico.Editor",
+  "references": [
+    "Unity.Addressables",
+    "Unity.Addressables.Editor",
+    "HybridCLR.Editor",
+    "UniTask"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "EPPlus.dll"
+  ],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

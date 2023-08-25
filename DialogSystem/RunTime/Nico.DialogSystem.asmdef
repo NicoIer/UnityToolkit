@@ -2,7 +2,7 @@
     "name": "Nico.DialogSystem",
     "rootNamespace": "Nico.DialogSystem",
     "references": [
-        "GUID:411278be43f6249efa8654bc36bfabec"
+        "Nico.Toolkits"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

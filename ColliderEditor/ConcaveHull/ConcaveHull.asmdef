@@ -1,6 +1,6 @@
 {
     "name": "ConcaveHull",
-    "rootNamespace": "",
+    "rootNamespace": "ConcaveHull",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
