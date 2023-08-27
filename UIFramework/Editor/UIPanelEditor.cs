@@ -61,7 +61,7 @@ namespace Nico.Editor
                 if (child == null)
                 {
                     throw new ArgumentException($"{child} is not child of {parent}");
-                    break;
+                    // break;
                 }
             }
 

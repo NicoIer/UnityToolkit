@@ -30,7 +30,7 @@ namespace Nico
             if (Models<T>.Instance == null)
             {
                 throw new ArgumentException($"Model:{typeof(T)} is not registered");
-                return;
+                // return;
             }
 
             Models<T>.Instance.OnSave();
