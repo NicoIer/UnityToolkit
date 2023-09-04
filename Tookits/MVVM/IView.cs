@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Nico
 {
-    public interface IView<TViewModel> : IBindable
+    public interface IView<TViewModel>
     {
         public TViewModel Model { get; set; }
     }
@@ -16,12 +16,7 @@ namespace Nico
         public void OnBind(TView view);
         public void OnUnbind(TView view);
     }
-
-    public interface IBindable
-    {
-        public void OnBind();
-        public void OnUnbind();
-    }
+    
 
     public interface IModel
     {
