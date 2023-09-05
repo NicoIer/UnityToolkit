@@ -1,0 +1,17 @@
+{
+    "name": "Nico.Network",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6806a62c384838046a3c66c44f06d75f",
+        "GUID:411278be43f6249efa8654bc36bfabec"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
