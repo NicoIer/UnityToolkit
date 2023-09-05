@@ -83,6 +83,9 @@ namespace Nico
             transport.OnError += OnError;
             transport.OnDisconnected += OnDisconnected;
             transport.OnConnected += OnConnected;
+            transport.OnDataSent += OnDataSent;
+            transport.OnDataReceived += OnDataReceived;
+            
         }
 
         #region Transport Event
@@ -100,6 +103,22 @@ namespace Nico
         public void OnConnected(int connectId)
         {
             Debug.Log($"NetServer:{connectId}, Connected");
+        }
+        
+        public void OnDataSent(int connectId, ArraySegment<byte> data, int channel)
+        {
+            Debug.Log($"NetServer:{connectId}, DataSent: {data.Count} bytes");
+        }
+        
+        public void OnDataReceived(int connectId, ArraySegment<byte> data, int channel)
+        {
+            Debug.Log($"NetServer:{connectId}, DataReceived: {data.Count} bytes");
+
+            using (NetReader reader = NetReader.Get(data))
+            {
+                int msgId = reader.Read<int>();
+                Debug.Log($"NetServer:{connectId}, msgId: {msgId}");
+            }
         }
 
         #endregion

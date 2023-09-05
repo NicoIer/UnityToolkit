@@ -79,6 +79,22 @@ namespace Nico
                 *(T*)ptr = value;
 #endif
             }
+            Position += size;
+        }
+
+        static NetWriter()
+        {
+            Writer<int>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<uint>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<short>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<ushort>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<long>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<ulong>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<float>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<double>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<bool>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<char>.write = (writer, value) => writer.WriteBlittable(value);
+            Writer<byte>.write = (writer, value) => writer.WriteBlittable(value);
         }
 
         public override string ToString() =>

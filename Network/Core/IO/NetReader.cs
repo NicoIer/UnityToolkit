@@ -61,7 +61,7 @@ namespace Nico
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Return(NetReader reader) => Pool.Return(reader);
-        
+
 
         private NetReader(ArraySegment<byte> segment)
         {
@@ -110,6 +110,21 @@ namespace Nico
 
         public override string ToString() =>
             $"[{buffer.ToHexString()} @ {Position}/{Capacity}]";
+
+        static NetReader()
+        {
+            Reader<int>.read = reader => reader.ReadBlittable<int>();
+            Reader<uint>.read = reader => reader.ReadBlittable<uint>();
+            Reader<short>.read = reader => reader.ReadBlittable<short>();
+            Reader<ushort>.read = reader => reader.ReadBlittable<ushort>();
+            Reader<long>.read = reader => reader.ReadBlittable<long>();
+            Reader<ulong>.read = reader => reader.ReadBlittable<ulong>();
+            Reader<float>.read = reader => reader.ReadBlittable<float>();
+            Reader<double>.read = reader => reader.ReadBlittable<double>();
+            Reader<bool>.read = reader => reader.ReadBlittable<bool>();
+            Reader<char>.read = reader => reader.ReadBlittable<char>();
+            Reader<byte>.read = reader => reader.ReadBlittable<byte>();
+        }
 
         public T Read<T>()
         {

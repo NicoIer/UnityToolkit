@@ -91,6 +91,7 @@ namespace Nico
             using (NetWriter writer = NetWriter.Get())
             {
                 writer.Write(msg);
+                Debug.Log(writer);
                 transport.Send(writer, channelId);
             }
         }
