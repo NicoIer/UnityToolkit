@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+// 消息头 
+message PacketHeader{
+  int32  id = 1; // 消息id 标识payload对应的消息是什么
+  uint32 type = 2; // 消息类型 1:请求 2:响应
+  bytes body = 3; //消息体
+}
+
+message StringMessage{
+  string msg = 1;
+}
+
+message PingMessage{
+  int64 serverTime = 1;
+  int64 clientTime = 2;
+}
+
+message PonMessage{
+  int64 serverTime = 1;
+  int64 clientTime = 2;
+}

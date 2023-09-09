@@ -1,4 +1,5 @@
 using System;
+using Google.Protobuf;
 using UnityEngine;
 
 namespace Nico
@@ -70,7 +71,7 @@ namespace Nico
         [HideInInspector] public ServerTransport transport;
         [SerializeField] KcpComponent _kcpComponent;
 
-        protected  void Awake()
+        protected void Awake()
         {
             if (!_init_singleton()) return;
             if (singleton != this) return;
@@ -85,7 +86,6 @@ namespace Nico
             transport.OnConnected += OnConnected;
             transport.OnDataSent += OnDataSent;
             transport.OnDataReceived += OnDataReceived;
-            
         }
 
         #region Transport Event
@@ -104,21 +104,15 @@ namespace Nico
         {
             Debug.Log($"NetServer:{connectId}, Connected");
         }
-        
+
         public void OnDataSent(int connectId, ArraySegment<byte> data, int channel)
         {
             Debug.Log($"NetServer:{connectId}, DataSent: {data.Count} bytes");
         }
-        
+
         public void OnDataReceived(int connectId, ArraySegment<byte> data, int channel)
         {
             Debug.Log($"NetServer:{connectId}, DataReceived: {data.Count} bytes");
-
-            using (NetReader reader = NetReader.Get(data))
-            {
-                int msgId = reader.Read<int>();
-                Debug.Log($"NetServer:{connectId}, msgId: {msgId}");
-            }
         }
 
         #endregion
@@ -140,32 +134,32 @@ namespace Nico
 
         #region Function
 
-        public  void NetStart()
+        public void NetStart()
         {
             transport.Start();
         }
 
-        public  void NetStop()
+        public void NetStop()
         {
             transport.Stop();
             transport.Shutdown();
         }
 
-        public void Send<T>(int connectId, T msg, int channelId = Channels.Reliable)
+        public void Send<T>(int connectId, T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {
-            using (NetWriter writer = NetWriter.Get())
+            using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                writer.Write(msg);
-                transport.Send(connectId, writer, channelId);
+                buffer.WriteProto(msg);
+                transport.Send(connectId, buffer.ToArraySegment(), channelId);
             }
         }
 
-        public void SendToAll<T>(T msg, int channelId = Channels.Reliable)
+        public void SendToAll<T>(T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {
-            using (NetWriter writer = NetWriter.Get())
+            using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                writer.Write(msg);
-                transport.SendToAll(writer, channelId);
+                buffer.WriteProto(msg);
+                transport.SendToAll(buffer.ToArraySegment(), channelId);
             }
         }
 

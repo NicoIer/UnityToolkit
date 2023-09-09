@@ -1,4 +1,5 @@
 using System;
+using Google.Protobuf;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -23,10 +24,9 @@ namespace Nico
             GUILayout.EndArea();
         }
 
-        [Button]
-        public void SendInt()
+
+        private void Start()
         {
-            NetClient.singleton.Send(123);
         }
     }
 }

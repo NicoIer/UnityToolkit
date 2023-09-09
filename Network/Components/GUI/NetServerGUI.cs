@@ -1,3 +1,6 @@
+using System;
+using Google.Protobuf;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nico
@@ -19,6 +22,17 @@ namespace Nico
             }
 
             GUILayout.EndArea();
+        }
+
+        [Button]
+        public void SendTest()
+        {
+            PacketHeader header = new PacketHeader();
+            header.Id = TypeId<StringMessage>.id;
+            StringMessage stringMessage = new StringMessage();
+            stringMessage.Msg = "Hello World";
+            header.Body = stringMessage.ToByteString();
+            NetServer.singleton.SendToAll(header);
         }
     }
 }

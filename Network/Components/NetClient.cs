@@ -1,4 +1,5 @@
 using System;
+using Google.Protobuf;
 using UnityEngine;
 
 namespace Nico
@@ -72,6 +73,7 @@ namespace Nico
         [SerializeField] KcpComponent _kcpComponent;
         public string address = "localhost";
 
+
         protected void Awake()
         {
             if (!_init_singleton()) return;
@@ -81,22 +83,28 @@ namespace Nico
 
             NetworkLoop.onEarlyUpdate += OnEarlyUpdate;
             NetworkLoop.onLateUpdate += OnLateUpdate;
+
             transport.OnError += OnError;
             transport.OnDisconnected += OnDisconnected;
             transport.OnConnected += OnConnected;
-        }
-
-        public void Send<T>(T msg, int channelId = Channels.Reliable)
-        {
-            using (NetWriter writer = NetWriter.Get())
-            {
-                writer.Write(msg);
-                Debug.Log(writer);
-                transport.Send(writer, channelId);
-            }
+            transport.OnDataReceived += OnDataReceived;
+            transport.OnDataSent += OnDataSent;
         }
 
         #region Transport Event
+
+        public void OnDataSent(ArraySegment<byte> data, int channelId)
+        {
+        }
+
+        public void OnDataReceived(ArraySegment<byte> data, int channelId)
+        {
+            Debug.Log($"NetClient Received: {data.Count} bytes");
+            PacketHeader header = PacketHeader.Parser.ParseFrom(data);
+            Debug.Log(header.Id);
+            StringMessage stringMessage = StringMessage.Parser.ParseFrom(header.Body);
+            Debug.Log(stringMessage.Msg);
+        }
 
         public void OnConnected()
         {
@@ -110,17 +118,16 @@ namespace Nico
 
         public void OnDisconnected()
         {
-            Debug.Log($"NetClient Disconnected");
         }
 
         #endregion
 
-        public void OnEarlyUpdate()
+        private void OnEarlyUpdate()
         {
             transport?.TickIncoming();
         }
 
-        public void OnLateUpdate()
+        private void OnLateUpdate()
         {
             transport?.TickOutgoing();
         }
@@ -138,22 +145,14 @@ namespace Nico
             transport.Shutdown();
         }
 
-        private void OnGUI()
+
+        public void Send<T>(T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {
-            if (singleton != this) return;
-            //右上角绘制启动等信息
-            GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, 200));
-            if (GUILayout.Button("Start"))
+            using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                NetStart();
+                buffer.WriteProto(msg);
+                transport.Send(buffer, channelId);
             }
-
-            if (GUILayout.Button("Stop"))
-            {
-                NetStop();
-            }
-
-            GUILayout.EndArea();
         }
     }
 }
