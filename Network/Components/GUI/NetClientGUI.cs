@@ -1,6 +1,5 @@
 using System;
 using Google.Protobuf;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Nico
@@ -24,9 +23,39 @@ namespace Nico
             GUILayout.EndArea();
         }
 
+        public float pingInterval = 1f;
+        public float pingTime = 0f;
 
         private void Start()
         {
+            NetClient.singleton.onDisconnected += () =>
+            {
+                Debug.Log("onDisconnected");
+            };
+            
+            NetClient.singleton.onConnected += () =>
+            {
+                Debug.Log("onConnected");
+            };
+            kcp2k.Log.Info = Debug.Log;
+        }
+
+        private void Update()
+        {
+            if (!NetClient.singleton.connected) return;
+            pingTime += Time.deltaTime;
+            if (pingTime >= pingInterval)
+            {
+                pingTime = 0f;
+                PingMessage ping = new PingMessage
+                {
+                    ClientTime = Time.frameCount
+                };
+                PacketHeader header = new PacketHeader();
+                header.Id = TypeId<PingMessage>.id;
+                header.Body = ping.ToByteString();
+                NetClient.singleton.Send(header);
+            }
         }
     }
 }

@@ -69,10 +69,24 @@ namespace Nico
         #endregion
 
 
-        [HideInInspector] public ClientTransport transport;
+        public ClientTransport transport { get; private set; }
         [SerializeField] KcpComponent _kcpComponent;
         public string address = "localhost";
+        public ClientCenter center { get; private set; } = new ClientCenter();
+        public bool connected => transport.connected;
 
+        #region Net Events
+
+        public event Action onDisconnected;
+        public event Action onConnected;
+
+        public event Action<TransportError, string> onError;
+
+        public event Action<ArraySegment<byte>, int> onDataReceived;
+
+        public event Action<ArraySegment<byte>, int> onDataSent;
+
+        #endregion
 
         protected void Awake()
         {
@@ -93,34 +107,49 @@ namespace Nico
 
         #region Transport Event
 
-        public void OnDataSent(ArraySegment<byte> data, int channelId)
+        private void OnDataSent(ArraySegment<byte> data, int channelId)
         {
+            onDataSent?.Invoke(data, channelId);
         }
 
-        public void OnDataReceived(ArraySegment<byte> data, int channelId)
+        private void OnDataReceived(ArraySegment<byte> data, int channelId)
         {
-            Debug.Log($"NetClient Received: {data.Count} bytes");
-            PacketHeader header = PacketHeader.Parser.ParseFrom(data);
-            Debug.Log(header.Id);
-            StringMessage stringMessage = StringMessage.Parser.ParseFrom(header.Body);
-            Debug.Log(stringMessage.Msg);
+            center.OnData(PacketHeader.Parser.ParseFrom(data), channelId);
+            onDataReceived?.Invoke(data, channelId);
         }
 
-        public void OnConnected()
+        private void OnConnected()
         {
-            Debug.Log($"NetClient Connected");
+            onConnected?.Invoke();
         }
 
-        public void OnError(TransportError error, string msg)
+        private void OnError(TransportError error, string msg)
         {
-            Debug.LogError($"NetClient Error: {error} {msg}");
+            onError?.Invoke(error, msg);
         }
 
-        public void OnDisconnected()
+        private void OnDisconnected()
         {
+            onDisconnected?.Invoke();
         }
 
         #endregion
+
+
+        #region NetLoop
+
+        public void NetStart()
+        {
+            transport.Connect(address);
+            Application.runInBackground = runInBackground;
+        }
+
+
+        public void NetStop()
+        {
+            transport.Disconnect();
+            transport.Shutdown();
+        }
 
         private void OnEarlyUpdate()
         {
@@ -132,19 +161,20 @@ namespace Nico
             transport?.TickOutgoing();
         }
 
-
-        public void NetStart()
+        private void OnDestroy()
         {
-            transport.Connect(address);
-        }
-
-
-        public void NetStop()
-        {
+            if (singleton != this) return;
+            NetworkLoop.onEarlyUpdate -= OnEarlyUpdate;
+            NetworkLoop.onLateUpdate -= OnLateUpdate;
             transport.Disconnect();
             transport.Shutdown();
+
+            singleton = null;
         }
 
+        #endregion
+
+        #region Function
 
         public void Send<T>(T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {
@@ -154,5 +184,7 @@ namespace Nico
                 transport.Send(buffer, channelId);
             }
         }
+
+        #endregion
     }
 }

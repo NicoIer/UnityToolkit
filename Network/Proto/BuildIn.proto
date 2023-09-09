@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+message StringMessage{
+  string msg = 1;
+}
+
+message PingMessage{
+  int64 serverTime = 1;
+  int64 clientTime = 2;
+}
+
+message PongMessage{
+  int64 serverTime = 1;
+  int64 clientTime = 2;
+}
+
+message RpcRequestMessage{
+  int64 methodHash = 1;
+  bytes payload = 2;
+}
+
+message RpcResponseMessage{
+  int64 methodHash = 1;
+  bytes payload = 2;
+}

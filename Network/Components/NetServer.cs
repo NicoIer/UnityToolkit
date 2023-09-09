@@ -68,8 +68,24 @@ namespace Nico
 
         #endregion
 
-        [HideInInspector] public ServerTransport transport;
+        public ServerTransport transport { get; private set; }
         [SerializeField] KcpComponent _kcpComponent;
+
+
+        public ServerCenter center { get; private set; } = new ServerCenter();
+        public bool isRunning => transport.Active();
+
+        #region Net Events
+
+        public event Action<int, TransportError, string> onError;
+        public event Action<int> onDisconnected;
+        public event Action<int> onConnected;
+
+        public Action<int, ArraySegment<byte>, int> onDataReceived;
+
+        public Action<int, ArraySegment<byte>, int> onDataSent;
+
+        #endregion
 
         protected void Awake()
         {
@@ -90,34 +106,47 @@ namespace Nico
 
         #region Transport Event
 
-        public void OnError(int connectId, TransportError error, string msg)
+        private void OnError(int connectId, TransportError error, string msg)
         {
-            Debug.Log($"NetServer:{connectId}, Error: {error} {msg}");
+            onError?.Invoke(connectId, error, msg);
         }
 
-        public void OnDisconnected(int connectId)
+        private void OnDisconnected(int connectId)
         {
-            Debug.LogError($"NetServer:{connectId}, Disconnected");
+            onDisconnected?.Invoke(connectId);
         }
 
-        public void OnConnected(int connectId)
+        private void OnConnected(int connectId)
         {
-            Debug.Log($"NetServer:{connectId}, Connected");
+            onConnected?.Invoke(connectId);
         }
 
-        public void OnDataSent(int connectId, ArraySegment<byte> data, int channel)
+        private void OnDataSent(int connectId, ArraySegment<byte> data, int channel)
         {
-            Debug.Log($"NetServer:{connectId}, DataSent: {data.Count} bytes");
+            onDataSent?.Invoke(connectId, data, channel);
         }
 
-        public void OnDataReceived(int connectId, ArraySegment<byte> data, int channel)
+        private void OnDataReceived(int connectId, ArraySegment<byte> data, int channel)
         {
-            Debug.Log($"NetServer:{connectId}, DataReceived: {data.Count} bytes");
+            center.OnData(connectId, PacketHeader.Parser.ParseFrom(data), channel);
+            onDataReceived?.Invoke(connectId, data, channel);
         }
 
         #endregion
 
         #region NetLoop
+
+        public void NetStart()
+        {
+            transport.Start();
+            Application.runInBackground = runInBackground;
+        }
+
+        public void NetStop()
+        {
+            transport.Stop();
+            transport.Shutdown();
+        }
 
         public void OnEarlyUpdate()
         {
@@ -129,21 +158,20 @@ namespace Nico
             transport?.TickOutgoing();
         }
 
+        private void OnDestroy()
+        {
+            if (singleton != this) return;
+            NetworkLoop.onEarlyUpdate -= OnEarlyUpdate;
+            NetworkLoop.onLateUpdate -= OnLateUpdate;
+            transport.Shutdown();
+
+            singleton = null;
+        }
+
         #endregion
 
 
         #region Function
-
-        public void NetStart()
-        {
-            transport.Start();
-        }
-
-        public void NetStop()
-        {
-            transport.Stop();
-            transport.Shutdown();
-        }
 
         public void Send<T>(int connectId, T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {

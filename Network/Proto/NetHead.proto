@@ -7,16 +7,15 @@ message PacketHeader{
   bytes body = 3; //消息体
 }
 
-message StringMessage{
-  string msg = 1;
+// 错误消息
+message ErrorMessage{
+  ProtoErrorCode code = 1;
+  string info = 2;
 }
 
-message PingMessage{
-  int64 serverTime = 1;
-  int64 clientTime = 2;
+// 错误码
+enum ProtoErrorCode{
+  SUCCESS = 0;
+  ERROR = 1;
 }
 
-message PonMessage{
-  int64 serverTime = 1;
-  int64 clientTime = 2;
-}

@@ -53,7 +53,12 @@ namespace Nico
         {
             return _value.ToString();
         }
-        
+
+        public override int GetHashCode()
+        {
+            return _value.GetHashCode();
+        }
+
         //重写 T x = property; 的隐式转换 
         public static implicit operator T(BindableProperty<T> property)
         {
