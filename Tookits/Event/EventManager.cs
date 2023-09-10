@@ -19,10 +19,11 @@ namespace Nico
                 Debug.LogWarning("EventCenter should not be used in edit mode");
                 return;
             }
-
+            
             if (EventCenters<TEvent>.center == null)
             {
                 EventCenters<TEvent>.center = new EventCenter<TEvent>();
+                // 这里必须清理 不清空的情况下会 Null Ref
                 Application.quitting -= ClearEventCenter<TEvent>;
                 Application.quitting += ClearEventCenter<TEvent>;
             }

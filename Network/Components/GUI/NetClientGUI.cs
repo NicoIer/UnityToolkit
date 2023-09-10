@@ -49,7 +49,7 @@ namespace Nico
                 pingTime = 0f;
                 PingMessage ping = new PingMessage
                 {
-                    ClientTime = Time.unscaledTimeAsDouble
+                    ClientTime = DateTime.Now.ToUniversalTime().Ticks
                 };
                 NetClient.singleton.Send(ping);
             }

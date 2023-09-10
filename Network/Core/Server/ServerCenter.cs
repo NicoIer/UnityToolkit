@@ -15,12 +15,17 @@ namespace Nico
             _handlers[header.Id](connectId, header.Body, channel);
         }
 
-        public void Register<T>(Action<int, T, int> handler) where T : IMessage<T>
+        public void Register<T>(Action<int, T, int> handler, bool replace = false) where T : IMessage<T>
         {
-            int id = TypeId<T>.id;
+            int id = TypeId<T>.ID;
+            if (_handlers.ContainsKey(id) && !replace)
+            {
+                throw new InvalidDataException($"handler for {typeof(T).Name} already exists");
+            }
+
             _handlers[id] = (connectId, data, channel) =>
             {
-                T msg = ProtoReader.Reader<T>.reader(data);
+                T msg = ProtoHandler.Reader<T>.reader(data);
                 handler(connectId, msg, channel);
             };
         }

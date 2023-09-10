@@ -22,16 +22,21 @@ public static partial class BuildInReflection {
   static BuildInReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "Cg1CdWlsZEluLnByb3RvIhwKDVN0cmluZ01lc3NhZ2USCwoDbXNnGAEgASgJ",
-          "IjUKC1BpbmdNZXNzYWdlEhIKCnNlcnZlclRpbWUYASABKAESEgoKY2xpZW50",
-          "VGltZRgCIAEoASI1CgtQb25nTWVzc2FnZRISCgpzZXJ2ZXJUaW1lGAEgASgB",
-          "EhIKCmNsaWVudFRpbWUYAiABKAEiOAoRUnBjUmVxdWVzdE1lc3NhZ2USEgoK",
-          "bWV0aG9kSGFzaBgBIAEoAxIPCgdwYXlsb2FkGAIgASgMIjkKElJwY1Jlc3Bv",
-          "bnNlTWVzc2FnZRISCgptZXRob2RIYXNoGAEgASgDEg8KB3BheWxvYWQYAiAB",
-          "KAxiBnByb3RvMw=="));
+          "Cg1CdWlsZEluLnByb3RvIjYKDFBhY2tldEhlYWRlchIKCgJpZBgBIAEoBRIM",
+          "CgR0eXBlGAIgASgNEgwKBGJvZHkYAyABKAwiOwoMRXJyb3JNZXNzYWdlEh0K",
+          "BGNvZGUYASABKA4yDy5Qcm90b0Vycm9yQ29kZRIMCgRpbmZvGAIgASgJIhwK",
+          "DVN0cmluZ01lc3NhZ2USCwoDbXNnGAEgASgJIjUKC1BpbmdNZXNzYWdlEhIK",
+          "CnNlcnZlclRpbWUYASABKAMSEgoKY2xpZW50VGltZRgCIAEoAyI1CgtQb25n",
+          "TWVzc2FnZRISCgpzZXJ2ZXJUaW1lGAEgASgDEhIKCmNsaWVudFRpbWUYAiAB",
+          "KAMiOAoRUnBjUmVxdWVzdE1lc3NhZ2USEgoKbWV0aG9kSGFzaBgBIAEoAxIP",
+          "CgdwYXlsb2FkGAIgASgMIjkKElJwY1Jlc3BvbnNlTWVzc2FnZRISCgptZXRo",
+          "b2RIYXNoGAEgASgDEg8KB3BheWxvYWQYAiABKAwqKAoOUHJvdG9FcnJvckNv",
+          "ZGUSCwoHU1VDQ0VTUxAAEgkKBUVSUk9SEAFiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+        new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ProtoErrorCode), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(typeof(global::PacketHeader), global::PacketHeader.Parser, new[]{ "Id", "Type", "Body" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(typeof(global::ErrorMessage), global::ErrorMessage.Parser, new[]{ "Code", "Info" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::StringMessage), global::StringMessage.Parser, new[]{ "Msg" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PingMessage), global::PingMessage.Parser, new[]{ "ServerTime", "ClientTime" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PongMessage), global::PongMessage.Parser, new[]{ "ServerTime", "ClientTime" }, null, null, null, null),
@@ -42,7 +47,485 @@ public static partial class BuildInReflection {
   #endregion
 
 }
+#region Enums
+/// <summary>
+/// 错误码
+/// </summary>
+public enum ProtoErrorCode {
+  [pbr::OriginalName("SUCCESS")] Success = 0,
+  [pbr::OriginalName("ERROR")] Error = 1,
+}
+
+#endregion
+
 #region Messages
+/// <summary>
+/// 消息头 
+/// </summary>
+public sealed partial class PacketHeader : pb::IMessage<PacketHeader>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<PacketHeader> _parser = new pb::MessageParser<PacketHeader>(() => new PacketHeader());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<PacketHeader> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::BuildInReflection.Descriptor.MessageTypes[0]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PacketHeader() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PacketHeader(PacketHeader other) : this() {
+    id_ = other.id_;
+    type_ = other.type_;
+    body_ = other.body_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public PacketHeader Clone() {
+    return new PacketHeader(this);
+  }
+
+  /// <summary>Field number for the "id" field.</summary>
+  public const int IdFieldNumber = 1;
+  private int id_;
+  /// <summary>
+  /// 消息id 标识payload对应的消息是什么
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int Id {
+    get { return id_; }
+    set {
+      id_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "type" field.</summary>
+  public const int TypeFieldNumber = 2;
+  private uint type_;
+  /// <summary>
+  /// 消息类型 1:请求 2:响应
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public uint Type {
+    get { return type_; }
+    set {
+      type_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "body" field.</summary>
+  public const int BodyFieldNumber = 3;
+  private pb::ByteString body_ = pb::ByteString.Empty;
+  /// <summary>
+  ///消息体
+  /// </summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public pb::ByteString Body {
+    get { return body_; }
+    set {
+      body_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as PacketHeader);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(PacketHeader other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Id != other.Id) return false;
+    if (Type != other.Type) return false;
+    if (Body != other.Body) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (Id != 0) hash ^= Id.GetHashCode();
+    if (Type != 0) hash ^= Type.GetHashCode();
+    if (Body.Length != 0) hash ^= Body.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (Id != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(Id);
+    }
+    if (Type != 0) {
+      output.WriteRawTag(16);
+      output.WriteUInt32(Type);
+    }
+    if (Body.Length != 0) {
+      output.WriteRawTag(26);
+      output.WriteBytes(Body);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (Id != 0) {
+      output.WriteRawTag(8);
+      output.WriteInt32(Id);
+    }
+    if (Type != 0) {
+      output.WriteRawTag(16);
+      output.WriteUInt32(Type);
+    }
+    if (Body.Length != 0) {
+      output.WriteRawTag(26);
+      output.WriteBytes(Body);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    if (Id != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+    }
+    if (Type != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Type);
+    }
+    if (Body.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeBytesSize(Body);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(PacketHeader other) {
+    if (other == null) {
+      return;
+    }
+    if (other.Id != 0) {
+      Id = other.Id;
+    }
+    if (other.Type != 0) {
+      Type = other.Type;
+    }
+    if (other.Body.Length != 0) {
+      Body = other.Body;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          Id = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Type = input.ReadUInt32();
+          break;
+        }
+        case 26: {
+          Body = input.ReadBytes();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          Id = input.ReadInt32();
+          break;
+        }
+        case 16: {
+          Type = input.ReadUInt32();
+          break;
+        }
+        case 26: {
+          Body = input.ReadBytes();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
+/// <summary>
+/// 错误消息
+/// </summary>
+public sealed partial class ErrorMessage : pb::IMessage<ErrorMessage>
+#if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    , pb::IBufferMessage
+#endif
+{
+  private static readonly pb::MessageParser<ErrorMessage> _parser = new pb::MessageParser<ErrorMessage>(() => new ErrorMessage());
+  private pb::UnknownFieldSet _unknownFields;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pb::MessageParser<ErrorMessage> Parser { get { return _parser; } }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public static pbr::MessageDescriptor Descriptor {
+    get { return global::BuildInReflection.Descriptor.MessageTypes[1]; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  pbr::MessageDescriptor pb::IMessage.Descriptor {
+    get { return Descriptor; }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ErrorMessage() {
+    OnConstruction();
+  }
+
+  partial void OnConstruction();
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ErrorMessage(ErrorMessage other) : this() {
+    code_ = other.code_;
+    info_ = other.info_;
+    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public ErrorMessage Clone() {
+    return new ErrorMessage(this);
+  }
+
+  /// <summary>Field number for the "code" field.</summary>
+  public const int CodeFieldNumber = 1;
+  private global::ProtoErrorCode code_ = global::ProtoErrorCode.Success;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public global::ProtoErrorCode Code {
+    get { return code_; }
+    set {
+      code_ = value;
+    }
+  }
+
+  /// <summary>Field number for the "info" field.</summary>
+  public const int InfoFieldNumber = 2;
+  private string info_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public string Info {
+    get { return info_; }
+    set {
+      info_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override bool Equals(object other) {
+    return Equals(other as ErrorMessage);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public bool Equals(ErrorMessage other) {
+    if (ReferenceEquals(other, null)) {
+      return false;
+    }
+    if (ReferenceEquals(other, this)) {
+      return true;
+    }
+    if (Code != other.Code) return false;
+    if (Info != other.Info) return false;
+    return Equals(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override int GetHashCode() {
+    int hash = 1;
+    if (Code != global::ProtoErrorCode.Success) hash ^= Code.GetHashCode();
+    if (Info.Length != 0) hash ^= Info.GetHashCode();
+    if (_unknownFields != null) {
+      hash ^= _unknownFields.GetHashCode();
+    }
+    return hash;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public override string ToString() {
+    return pb::JsonFormatter.ToDiagnosticString(this);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void WriteTo(pb::CodedOutputStream output) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    output.WriteRawMessage(this);
+  #else
+    if (Code != global::ProtoErrorCode.Success) {
+      output.WriteRawTag(8);
+      output.WriteEnum((int) Code);
+    }
+    if (Info.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Info);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(output);
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+    if (Code != global::ProtoErrorCode.Success) {
+      output.WriteRawTag(8);
+      output.WriteEnum((int) Code);
+    }
+    if (Info.Length != 0) {
+      output.WriteRawTag(18);
+      output.WriteString(Info);
+    }
+    if (_unknownFields != null) {
+      _unknownFields.WriteTo(ref output);
+    }
+  }
+  #endif
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public int CalculateSize() {
+    int size = 0;
+    if (Code != global::ProtoErrorCode.Success) {
+      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Code);
+    }
+    if (Info.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Info);
+    }
+    if (_unknownFields != null) {
+      size += _unknownFields.CalculateSize();
+    }
+    return size;
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(ErrorMessage other) {
+    if (other == null) {
+      return;
+    }
+    if (other.Code != global::ProtoErrorCode.Success) {
+      Code = other.Code;
+    }
+    if (other.Info.Length != 0) {
+      Info = other.Info;
+    }
+    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+  }
+
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public void MergeFrom(pb::CodedInputStream input) {
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    input.ReadRawMessage(this);
+  #else
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+          break;
+        case 8: {
+          Code = (global::ProtoErrorCode) input.ReadEnum();
+          break;
+        }
+        case 18: {
+          Info = input.ReadString();
+          break;
+        }
+      }
+    }
+  #endif
+  }
+
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+    uint tag;
+    while ((tag = input.ReadTag()) != 0) {
+      switch(tag) {
+        default:
+          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+          break;
+        case 8: {
+          Code = (global::ProtoErrorCode) input.ReadEnum();
+          break;
+        }
+        case 18: {
+          Info = input.ReadString();
+          break;
+        }
+      }
+    }
+  }
+  #endif
+
+}
+
 public sealed partial class StringMessage : pb::IMessage<StringMessage>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -55,7 +538,7 @@ public sealed partial class StringMessage : pb::IMessage<StringMessage>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::BuildInReflection.Descriptor.MessageTypes[0]; }
+    get { return global::BuildInReflection.Descriptor.MessageTypes[2]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -227,7 +710,7 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::BuildInReflection.Descriptor.MessageTypes[1]; }
+    get { return global::BuildInReflection.Descriptor.MessageTypes[3]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -256,9 +739,9 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
 
   /// <summary>Field number for the "serverTime" field.</summary>
   public const int ServerTimeFieldNumber = 1;
-  private double serverTime_;
+  private long serverTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public double ServerTime {
+  public long ServerTime {
     get { return serverTime_; }
     set {
       serverTime_ = value;
@@ -267,9 +750,9 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
 
   /// <summary>Field number for the "clientTime" field.</summary>
   public const int ClientTimeFieldNumber = 2;
-  private double clientTime_;
+  private long clientTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public double ClientTime {
+  public long ClientTime {
     get { return clientTime_; }
     set {
       clientTime_ = value;
@@ -289,16 +772,16 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ServerTime, other.ServerTime)) return false;
-    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ClientTime, other.ClientTime)) return false;
+    if (ServerTime != other.ServerTime) return false;
+    if (ClientTime != other.ClientTime) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override int GetHashCode() {
     int hash = 1;
-    if (ServerTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ServerTime);
-    if (ClientTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ClientTime);
+    if (ServerTime != 0L) hash ^= ServerTime.GetHashCode();
+    if (ClientTime != 0L) hash ^= ClientTime.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -315,13 +798,13 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (ServerTime != 0D) {
-      output.WriteRawTag(9);
-      output.WriteDouble(ServerTime);
+    if (ServerTime != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ServerTime);
     }
-    if (ClientTime != 0D) {
-      output.WriteRawTag(17);
-      output.WriteDouble(ClientTime);
+    if (ClientTime != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -332,13 +815,13 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (ServerTime != 0D) {
-      output.WriteRawTag(9);
-      output.WriteDouble(ServerTime);
+    if (ServerTime != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ServerTime);
     }
-    if (ClientTime != 0D) {
-      output.WriteRawTag(17);
-      output.WriteDouble(ClientTime);
+    if (ClientTime != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -349,11 +832,11 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public int CalculateSize() {
     int size = 0;
-    if (ServerTime != 0D) {
-      size += 1 + 8;
+    if (ServerTime != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ServerTime);
     }
-    if (ClientTime != 0D) {
-      size += 1 + 8;
+    if (ClientTime != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ClientTime);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -366,10 +849,10 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
     if (other == null) {
       return;
     }
-    if (other.ServerTime != 0D) {
+    if (other.ServerTime != 0L) {
       ServerTime = other.ServerTime;
     }
-    if (other.ClientTime != 0D) {
+    if (other.ClientTime != 0L) {
       ClientTime = other.ClientTime;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -386,12 +869,12 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 9: {
-          ServerTime = input.ReadDouble();
+        case 8: {
+          ServerTime = input.ReadInt64();
           break;
         }
-        case 17: {
-          ClientTime = input.ReadDouble();
+        case 16: {
+          ClientTime = input.ReadInt64();
           break;
         }
       }
@@ -408,12 +891,12 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 9: {
-          ServerTime = input.ReadDouble();
+        case 8: {
+          ServerTime = input.ReadInt64();
           break;
         }
-        case 17: {
-          ClientTime = input.ReadDouble();
+        case 16: {
+          ClientTime = input.ReadInt64();
           break;
         }
       }
@@ -435,7 +918,7 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::BuildInReflection.Descriptor.MessageTypes[2]; }
+    get { return global::BuildInReflection.Descriptor.MessageTypes[4]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -464,9 +947,9 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
   /// <summary>Field number for the "serverTime" field.</summary>
   public const int ServerTimeFieldNumber = 1;
-  private double serverTime_;
+  private long serverTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public double ServerTime {
+  public long ServerTime {
     get { return serverTime_; }
     set {
       serverTime_ = value;
@@ -475,9 +958,9 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
   /// <summary>Field number for the "clientTime" field.</summary>
   public const int ClientTimeFieldNumber = 2;
-  private double clientTime_;
+  private long clientTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public double ClientTime {
+  public long ClientTime {
     get { return clientTime_; }
     set {
       clientTime_ = value;
@@ -497,16 +980,16 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ServerTime, other.ServerTime)) return false;
-    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ClientTime, other.ClientTime)) return false;
+    if (ServerTime != other.ServerTime) return false;
+    if (ClientTime != other.ClientTime) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override int GetHashCode() {
     int hash = 1;
-    if (ServerTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ServerTime);
-    if (ClientTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ClientTime);
+    if (ServerTime != 0L) hash ^= ServerTime.GetHashCode();
+    if (ClientTime != 0L) hash ^= ClientTime.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -523,13 +1006,13 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (ServerTime != 0D) {
-      output.WriteRawTag(9);
-      output.WriteDouble(ServerTime);
+    if (ServerTime != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ServerTime);
     }
-    if (ClientTime != 0D) {
-      output.WriteRawTag(17);
-      output.WriteDouble(ClientTime);
+    if (ClientTime != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -540,13 +1023,13 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (ServerTime != 0D) {
-      output.WriteRawTag(9);
-      output.WriteDouble(ServerTime);
+    if (ServerTime != 0L) {
+      output.WriteRawTag(8);
+      output.WriteInt64(ServerTime);
     }
-    if (ClientTime != 0D) {
-      output.WriteRawTag(17);
-      output.WriteDouble(ClientTime);
+    if (ClientTime != 0L) {
+      output.WriteRawTag(16);
+      output.WriteInt64(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -557,11 +1040,11 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public int CalculateSize() {
     int size = 0;
-    if (ServerTime != 0D) {
-      size += 1 + 8;
+    if (ServerTime != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ServerTime);
     }
-    if (ClientTime != 0D) {
-      size += 1 + 8;
+    if (ClientTime != 0L) {
+      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ClientTime);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -574,10 +1057,10 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
     if (other == null) {
       return;
     }
-    if (other.ServerTime != 0D) {
+    if (other.ServerTime != 0L) {
       ServerTime = other.ServerTime;
     }
-    if (other.ClientTime != 0D) {
+    if (other.ClientTime != 0L) {
       ClientTime = other.ClientTime;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -594,12 +1077,12 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 9: {
-          ServerTime = input.ReadDouble();
+        case 8: {
+          ServerTime = input.ReadInt64();
           break;
         }
-        case 17: {
-          ClientTime = input.ReadDouble();
+        case 16: {
+          ClientTime = input.ReadInt64();
           break;
         }
       }
@@ -616,12 +1099,12 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 9: {
-          ServerTime = input.ReadDouble();
+        case 8: {
+          ServerTime = input.ReadInt64();
           break;
         }
-        case 17: {
-          ClientTime = input.ReadDouble();
+        case 16: {
+          ClientTime = input.ReadInt64();
           break;
         }
       }
@@ -643,7 +1126,7 @@ public sealed partial class RpcRequestMessage : pb::IMessage<RpcRequestMessage>
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::BuildInReflection.Descriptor.MessageTypes[3]; }
+    get { return global::BuildInReflection.Descriptor.MessageTypes[5]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -851,7 +1334,7 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public static pbr::MessageDescriptor Descriptor {
-    get { return global::BuildInReflection.Descriptor.MessageTypes[4]; }
+    get { return global::BuildInReflection.Descriptor.MessageTypes[6]; }
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

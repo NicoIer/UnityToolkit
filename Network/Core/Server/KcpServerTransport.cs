@@ -23,10 +23,10 @@ namespace Nico
             this.port = port;
             this._config = config;
             _server = new KcpServer(
-                (connectId) => OnConnected?.Invoke(connectId),
-                (connectId, data, channel) => OnDataReceived?.Invoke(connectId, data, KcpUtil.FromKcpChannel(channel)),
-                (connectionId) => OnDisconnected?.Invoke(connectionId),
-                (connectionId, error, msg) => OnError?.Invoke(connectionId, KcpUtil.ToTransportError(error), msg),
+                (connectId) => onConnected?.Invoke(connectId),
+                (connectId, data, channel) => onDataReceived?.Invoke(connectId, data, KcpUtil.FromKcpChannel(channel)),
+                (connectionId) => onDisconnected?.Invoke(connectionId),
+                (connectionId, error, msg) => onError?.Invoke(connectionId, KcpUtil.ToTransportError(error), msg),
                 this._config
             );
         }
@@ -50,7 +50,7 @@ namespace Nico
         public override void Send(int connectionId, ArraySegment<byte> segment, int channelId = Channels.Reliable)
         {
             _server.Send(connectionId, segment, KcpUtil.ToKcpChannel(channelId));
-            OnDataSent?.Invoke(connectionId, segment, channelId);
+            onDataSent?.Invoke(connectionId, segment, channelId);
         }
 
         public override void SendToAll(ArraySegment<byte> segment, int channelId = Channels.Reliable)
@@ -58,7 +58,7 @@ namespace Nico
             foreach (var conn in _server.connections)
             {
                 _server.Send(conn.Key, segment, KcpUtil.ToKcpChannel(channelId));
-                OnDataSent?.Invoke(conn.Key, segment, channelId);
+                onDataSent?.Invoke(conn.Key, segment, channelId);
             }
         }
 

@@ -14,10 +14,10 @@ namespace Nico
             _config = config;
             this.port = port;
             _client = new KcpClient(
-                () => OnConnected.Invoke(),
-                (data, channel) => OnDataReceived.Invoke(data, KcpUtil.FromKcpChannel(channel)),
-                () => OnDisconnected.Invoke(),
-                (error, msg) => OnError.Invoke(KcpUtil.ToTransportError(error), msg),
+                () => onConnected.Invoke(),
+                (data, channel) => onDataReceived.Invoke(data, KcpUtil.FromKcpChannel(channel)),
+                () => onDisconnected.Invoke(),
+                (error, msg) => onError.Invoke(KcpUtil.ToTransportError(error), msg),
                 config
             );
         }
@@ -30,7 +30,7 @@ namespace Nico
         public override void Send(ArraySegment<byte> segment, int channelId = Channels.Reliable)
         {
             _client.Send(segment, KcpUtil.ToKcpChannel(channelId));
-            OnDataSent?.Invoke(segment, channelId);
+            onDataSent?.Invoke(segment, channelId);
         }
 
         public override void Disconnect() => _client.Disconnect();

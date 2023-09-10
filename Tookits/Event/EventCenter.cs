@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
-
+//TODO 把Unity和C# 分开 这样就可以在非Unity中使用
 namespace Nico
 {
     internal class EventCenter<TEvent> where TEvent : IEvent

@@ -6,6 +6,6 @@ namespace Nico
     /// <typeparam name="T"></typeparam>
     internal static class TypeId<T>
     {
-        public static int id = typeof(T).FullName.GetStableHash();
+        public static readonly int ID = typeof(T).FullName.GetStableHash();
     }
 }

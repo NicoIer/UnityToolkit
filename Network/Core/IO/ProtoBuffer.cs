@@ -85,7 +85,7 @@ namespace Nico
             using (ProtoBuffer body = Get())
             {
                 PacketHeader header = new PacketHeader();
-                header.Id = TypeId<T>.id;
+                header.Id = TypeId<T>.ID;
                 if (type != 0)
                 {
                     header.Type = type;

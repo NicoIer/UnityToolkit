@@ -3,7 +3,7 @@ using Google.Protobuf;
 
 namespace Nico
 {
-    public static class ProtoReader
+    public static class ProtoHandler
     {
         public static class Reader<T>
         {

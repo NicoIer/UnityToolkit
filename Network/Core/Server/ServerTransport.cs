@@ -6,19 +6,19 @@ namespace Nico
     public abstract class ServerTransport : INetTransport
     {
         // 与客户端连接时触发
-        public Action<int> OnConnected;
+        public Action<int> onConnected;
 
         // 接收到客户端消息时触发
-        public Action<int, ArraySegment<byte>, int> OnDataReceived;
+        public Action<int, ArraySegment<byte>, int> onDataReceived;
 
         // 发送消息到客户端时触发
-        public Action<int, ArraySegment<byte>, int> OnDataSent;
+        public Action<int, ArraySegment<byte>, int> onDataSent;
 
         // 发生错误时触发
-        public Action<int, TransportError, string> OnError;
+        public Action<int, TransportError, string> onError;
 
         // 与客户端断开连接时触发
-        public Action<int> OnDisconnected;
+        public Action<int> onDisconnected;
 
         //  是否可用
         public abstract Uri Uri();

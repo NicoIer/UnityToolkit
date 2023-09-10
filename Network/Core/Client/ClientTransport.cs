@@ -5,19 +5,19 @@ namespace Nico
     public abstract class ClientTransport : INetTransport
     {
         // 连接到服务器 时触发
-        public Action OnConnected;
+        public Action onConnected;
 
         // 与服务器断开连接时触发
-        public Action OnDisconnected;
+        public Action onDisconnected;
 
         // 接收到服务器消息时触发
-        public Action<ArraySegment<byte>, int> OnDataReceived;
+        public Action<ArraySegment<byte>, int> onDataReceived;
 
         // 发送消息到服务器时触发
-        public Action<ArraySegment<byte>, int> OnDataSent;
+        public Action<ArraySegment<byte>, int> onDataSent;
 
         // 发生错误时触发
-        public Action<TransportError, string> OnError;
+        public Action<TransportError, string> onError;
 
         public abstract bool connected { get; }
         

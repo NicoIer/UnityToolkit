@@ -97,11 +97,11 @@ namespace Nico
             NetworkLoop.onEarlyUpdate += OnEarlyUpdate;
             NetworkLoop.onLateUpdate += OnLateUpdate;
 
-            transport.OnError += OnError;
-            transport.OnDisconnected += OnDisconnected;
-            transport.OnConnected += OnConnected;
-            transport.OnDataSent += OnDataSent;
-            transport.OnDataReceived += OnDataReceived;
+            transport.onError += OnError;
+            transport.onDisconnected += OnDisconnected;
+            transport.onConnected += OnConnected;
+            transport.onDataSent += OnDataSent;
+            transport.onDataReceived += OnDataReceived;
         }
 
         #region Transport Event

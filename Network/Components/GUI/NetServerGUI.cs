@@ -28,7 +28,7 @@ namespace Nico
         public void SendTest()
         {
             PacketHeader header = new PacketHeader();
-            header.Id = TypeId<StringMessage>.id;
+            header.Id = TypeId<StringMessage>.ID;
             StringMessage stringMessage = new StringMessage();
             stringMessage.Msg = "Hello World";
             header.Body = stringMessage.ToByteString();
