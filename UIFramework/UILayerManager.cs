@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Nico;
-using Nico.Collections;
 using UnityEngine;
 
 namespace Nico

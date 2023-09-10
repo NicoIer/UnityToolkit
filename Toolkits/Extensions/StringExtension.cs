@@ -1,5 +1,3 @@
-// ReSharper disable All
-
 using System;
 
 namespace Nico

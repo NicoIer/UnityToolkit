@@ -1,11 +1,7 @@
 {
-    "name": "Nico.Network",
+    "name": "Nico.Core",
     "rootNamespace": "",
-    "references": [
-        "GUID:6806a62c384838046a3c66c44f06d75f",
-        "GUID:411278be43f6249efa8654bc36bfabec",
-        "GUID:799fd470bfb134089bd4efadd9cab2bc"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
@@ -14,5 +10,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": false
+    "noEngineReferences": true
 }

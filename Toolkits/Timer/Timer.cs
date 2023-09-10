@@ -27,18 +27,19 @@ namespace Nico
         // 返回值代表是否已经结束了 不需要再执行了
         internal bool Tick(float deltaTime)
         {
-            
             //非运行也非暂停状态下 不需要再执行了 通知移除
             if (state != TimerState.Running && state != TimerState.Paused)
             {
                 return true;
             }
+
             // Debug.Log("Timer Tick");
             leftTime -= deltaTime;
             if (leftTime > 0)
             {
                 return false;
             }
+
             switch (type)
             {
                 case TimerType.LoopForever:
@@ -49,14 +50,12 @@ namespace Nico
                     onCompleted?.Invoke();
                     return true;
             }
+
             //未知类型 通知移除
             return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Start()
-        {
-            TimerManager.Start(this);
-        }
+        public void Start() => TimerManager.Start(this);
     }
 }

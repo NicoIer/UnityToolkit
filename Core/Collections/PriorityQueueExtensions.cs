@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nico.Collections
+namespace Nico
 {
     public static class PriorityQueueExtensions
     {

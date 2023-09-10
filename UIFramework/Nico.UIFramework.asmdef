@@ -2,7 +2,8 @@
     "name": "Nico.UIFramework",
     "rootNamespace": "",
     "references": [
-        "GUID:411278be43f6249efa8654bc36bfabec"
+        "GUID:411278be43f6249efa8654bc36bfabec",
+        "GUID:799fd470bfb134089bd4efadd9cab2bc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
