@@ -23,9 +23,9 @@ public static partial class BuildInReflection {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
           "Cg1CdWlsZEluLnByb3RvIhwKDVN0cmluZ01lc3NhZ2USCwoDbXNnGAEgASgJ",
-          "IjUKC1BpbmdNZXNzYWdlEhIKCnNlcnZlclRpbWUYASABKAMSEgoKY2xpZW50",
-          "VGltZRgCIAEoAyI1CgtQb25nTWVzc2FnZRISCgpzZXJ2ZXJUaW1lGAEgASgD",
-          "EhIKCmNsaWVudFRpbWUYAiABKAMiOAoRUnBjUmVxdWVzdE1lc3NhZ2USEgoK",
+          "IjUKC1BpbmdNZXNzYWdlEhIKCnNlcnZlclRpbWUYASABKAESEgoKY2xpZW50",
+          "VGltZRgCIAEoASI1CgtQb25nTWVzc2FnZRISCgpzZXJ2ZXJUaW1lGAEgASgB",
+          "EhIKCmNsaWVudFRpbWUYAiABKAEiOAoRUnBjUmVxdWVzdE1lc3NhZ2USEgoK",
           "bWV0aG9kSGFzaBgBIAEoAxIPCgdwYXlsb2FkGAIgASgMIjkKElJwY1Jlc3Bv",
           "bnNlTWVzc2FnZRISCgptZXRob2RIYXNoGAEgASgDEg8KB3BheWxvYWQYAiAB",
           "KAxiBnByb3RvMw=="));
@@ -256,9 +256,9 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
 
   /// <summary>Field number for the "serverTime" field.</summary>
   public const int ServerTimeFieldNumber = 1;
-  private long serverTime_;
+  private double serverTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public long ServerTime {
+  public double ServerTime {
     get { return serverTime_; }
     set {
       serverTime_ = value;
@@ -267,9 +267,9 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
 
   /// <summary>Field number for the "clientTime" field.</summary>
   public const int ClientTimeFieldNumber = 2;
-  private long clientTime_;
+  private double clientTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public long ClientTime {
+  public double ClientTime {
     get { return clientTime_; }
     set {
       clientTime_ = value;
@@ -289,16 +289,16 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (ServerTime != other.ServerTime) return false;
-    if (ClientTime != other.ClientTime) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ServerTime, other.ServerTime)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ClientTime, other.ClientTime)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override int GetHashCode() {
     int hash = 1;
-    if (ServerTime != 0L) hash ^= ServerTime.GetHashCode();
-    if (ClientTime != 0L) hash ^= ClientTime.GetHashCode();
+    if (ServerTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ServerTime);
+    if (ClientTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ClientTime);
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -315,13 +315,13 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (ServerTime != 0L) {
-      output.WriteRawTag(8);
-      output.WriteInt64(ServerTime);
+    if (ServerTime != 0D) {
+      output.WriteRawTag(9);
+      output.WriteDouble(ServerTime);
     }
-    if (ClientTime != 0L) {
-      output.WriteRawTag(16);
-      output.WriteInt64(ClientTime);
+    if (ClientTime != 0D) {
+      output.WriteRawTag(17);
+      output.WriteDouble(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -332,13 +332,13 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (ServerTime != 0L) {
-      output.WriteRawTag(8);
-      output.WriteInt64(ServerTime);
+    if (ServerTime != 0D) {
+      output.WriteRawTag(9);
+      output.WriteDouble(ServerTime);
     }
-    if (ClientTime != 0L) {
-      output.WriteRawTag(16);
-      output.WriteInt64(ClientTime);
+    if (ClientTime != 0D) {
+      output.WriteRawTag(17);
+      output.WriteDouble(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -349,11 +349,11 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public int CalculateSize() {
     int size = 0;
-    if (ServerTime != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ServerTime);
+    if (ServerTime != 0D) {
+      size += 1 + 8;
     }
-    if (ClientTime != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ClientTime);
+    if (ClientTime != 0D) {
+      size += 1 + 8;
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -366,10 +366,10 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
     if (other == null) {
       return;
     }
-    if (other.ServerTime != 0L) {
+    if (other.ServerTime != 0D) {
       ServerTime = other.ServerTime;
     }
-    if (other.ClientTime != 0L) {
+    if (other.ClientTime != 0D) {
       ClientTime = other.ClientTime;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -386,12 +386,12 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 8: {
-          ServerTime = input.ReadInt64();
+        case 9: {
+          ServerTime = input.ReadDouble();
           break;
         }
-        case 16: {
-          ClientTime = input.ReadInt64();
+        case 17: {
+          ClientTime = input.ReadDouble();
           break;
         }
       }
@@ -408,12 +408,12 @@ public sealed partial class PingMessage : pb::IMessage<PingMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 8: {
-          ServerTime = input.ReadInt64();
+        case 9: {
+          ServerTime = input.ReadDouble();
           break;
         }
-        case 16: {
-          ClientTime = input.ReadInt64();
+        case 17: {
+          ClientTime = input.ReadDouble();
           break;
         }
       }
@@ -464,9 +464,9 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
   /// <summary>Field number for the "serverTime" field.</summary>
   public const int ServerTimeFieldNumber = 1;
-  private long serverTime_;
+  private double serverTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public long ServerTime {
+  public double ServerTime {
     get { return serverTime_; }
     set {
       serverTime_ = value;
@@ -475,9 +475,9 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
   /// <summary>Field number for the "clientTime" field.</summary>
   public const int ClientTimeFieldNumber = 2;
-  private long clientTime_;
+  private double clientTime_;
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public long ClientTime {
+  public double ClientTime {
     get { return clientTime_; }
     set {
       clientTime_ = value;
@@ -497,16 +497,16 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
     if (ReferenceEquals(other, this)) {
       return true;
     }
-    if (ServerTime != other.ServerTime) return false;
-    if (ClientTime != other.ClientTime) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ServerTime, other.ServerTime)) return false;
+    if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(ClientTime, other.ClientTime)) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override int GetHashCode() {
     int hash = 1;
-    if (ServerTime != 0L) hash ^= ServerTime.GetHashCode();
-    if (ClientTime != 0L) hash ^= ClientTime.GetHashCode();
+    if (ServerTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ServerTime);
+    if (ClientTime != 0D) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(ClientTime);
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -523,13 +523,13 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     output.WriteRawMessage(this);
   #else
-    if (ServerTime != 0L) {
-      output.WriteRawTag(8);
-      output.WriteInt64(ServerTime);
+    if (ServerTime != 0D) {
+      output.WriteRawTag(9);
+      output.WriteDouble(ServerTime);
     }
-    if (ClientTime != 0L) {
-      output.WriteRawTag(16);
-      output.WriteInt64(ClientTime);
+    if (ClientTime != 0D) {
+      output.WriteRawTag(17);
+      output.WriteDouble(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
@@ -540,13 +540,13 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-    if (ServerTime != 0L) {
-      output.WriteRawTag(8);
-      output.WriteInt64(ServerTime);
+    if (ServerTime != 0D) {
+      output.WriteRawTag(9);
+      output.WriteDouble(ServerTime);
     }
-    if (ClientTime != 0L) {
-      output.WriteRawTag(16);
-      output.WriteInt64(ClientTime);
+    if (ClientTime != 0D) {
+      output.WriteRawTag(17);
+      output.WriteDouble(ClientTime);
     }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
@@ -557,11 +557,11 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public int CalculateSize() {
     int size = 0;
-    if (ServerTime != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ServerTime);
+    if (ServerTime != 0D) {
+      size += 1 + 8;
     }
-    if (ClientTime != 0L) {
-      size += 1 + pb::CodedOutputStream.ComputeInt64Size(ClientTime);
+    if (ClientTime != 0D) {
+      size += 1 + 8;
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -574,10 +574,10 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
     if (other == null) {
       return;
     }
-    if (other.ServerTime != 0L) {
+    if (other.ServerTime != 0D) {
       ServerTime = other.ServerTime;
     }
-    if (other.ClientTime != 0L) {
+    if (other.ClientTime != 0D) {
       ClientTime = other.ClientTime;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -594,12 +594,12 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
           break;
-        case 8: {
-          ServerTime = input.ReadInt64();
+        case 9: {
+          ServerTime = input.ReadDouble();
           break;
         }
-        case 16: {
-          ClientTime = input.ReadInt64();
+        case 17: {
+          ClientTime = input.ReadDouble();
           break;
         }
       }
@@ -616,12 +616,12 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
         default:
           _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
           break;
-        case 8: {
-          ServerTime = input.ReadInt64();
+        case 9: {
+          ServerTime = input.ReadDouble();
           break;
         }
-        case 16: {
-          ClientTime = input.ReadInt64();
+        case 17: {
+          ClientTime = input.ReadDouble();
           break;
         }
       }

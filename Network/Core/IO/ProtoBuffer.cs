@@ -12,7 +12,7 @@ namespace Nico
         public const int DefaultCapacity = 1500; //MTU~=1500
         public const int GrowScale = 2;
 
-        internal byte[] buffer = new byte[DefaultCapacity];
+        internal byte[] buffer = new byte[DefaultCapacity];//1000*1500 byte ~= 1.5M
         public int Position { get; private set; }
         public int Capacity => buffer.Length;
 
@@ -60,17 +60,40 @@ namespace Nico
             int size = proto.CalculateSize();
             EnsureCapacity(Position + size);
             //使用数组段避免拷贝 进而避免GC
+            //把消息写到缓冲区
             proto.WriteTo(new ArraySegment<byte>(buffer, Position, size));
             Position += size;
         }
 
+        public ByteString ToByteString()
+        {
+            return ByteString.CopyFrom(new ArraySegment<byte>(buffer, 0, Position));
+        }
+        
         public override string ToString() =>
             $"[{ToArraySegment().ToHexString()} @ {Position}/{Capacity}]";
 
+        // 禁止外部实例化
         private ProtoBuffer()
         {
         }
 
         public void Dispose() => Pool.Return(this);
+
+        public void Pack<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>
+        {
+            using (ProtoBuffer body = Get())
+            {
+                PacketHeader header = new PacketHeader();
+                header.Id = TypeId<T>.id;
+                if (type != 0)
+                {
+                    header.Type = type;
+                }
+                body.WriteProto(msg); //写入body
+                header.Body = body.ToByteString();
+                WriteProto(header); //写入头
+            }
+        }
     }
 }

@@ -173,20 +173,21 @@ namespace Nico
 
         #region Function
 
-        public void Send<T>(int connectId, T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
+        public void Send<T>(int connectId, T msg, uint type = 0, int channelId = Channels.Reliable)
+            where T : IMessage<T>, new()
         {
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.WriteProto(msg);
+                buffer.Pack(msg, type, channelId);
                 transport.Send(connectId, buffer.ToArraySegment(), channelId);
             }
         }
 
-        public void SendToAll<T>(T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
+        public void SendToAll<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>, new()
         {
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.WriteProto(msg);
+                buffer.Pack(msg, type, channelId);
                 transport.SendToAll(buffer.ToArraySegment(), channelId);
             }
         }

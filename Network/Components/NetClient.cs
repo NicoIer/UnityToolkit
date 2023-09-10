@@ -176,12 +176,13 @@ namespace Nico
 
         #region Function
 
-        public void Send<T>(T msg, int channelId = Channels.Reliable) where T : IMessage<T>, new()
+        public void Send<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>
         {
+            // 拿两个buffer 一个用来写头 一个用来写body
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.WriteProto(msg);
-                transport.Send(buffer, channelId);
+                buffer.Pack(msg, type, channelId);
+                transport.Send(buffer.ToArraySegment(), channelId);
             }
         }
 

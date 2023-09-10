@@ -49,12 +49,9 @@ namespace Nico
                 pingTime = 0f;
                 PingMessage ping = new PingMessage
                 {
-                    ClientTime = Time.frameCount
+                    ClientTime = Time.unscaledTimeAsDouble
                 };
-                PacketHeader header = new PacketHeader();
-                header.Id = TypeId<PingMessage>.id;
-                header.Body = ping.ToByteString();
-                NetClient.singleton.Send(header);
+                NetClient.singleton.Send(ping);
             }
         }
     }
