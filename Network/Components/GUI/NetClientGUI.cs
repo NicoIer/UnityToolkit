@@ -12,12 +12,12 @@ namespace Nico
             GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, 200));
             if (GUILayout.Button("Start"))
             {
-                NetClient.singleton.NetStart();
+                ClientManager.singleton.NetStart();
             }
 
             if (GUILayout.Button("Stop"))
             {
-                NetClient.singleton.NetStop();
+                ClientManager.singleton.NetStop();
             }
 
             GUILayout.EndArea();
@@ -28,21 +28,15 @@ namespace Nico
 
         private void Start()
         {
-            NetClient.singleton.onDisconnected += () =>
-            {
-                Debug.Log("onDisconnected");
-            };
-            
-            NetClient.singleton.onConnected += () =>
-            {
-                Debug.Log("onConnected");
-            };
+            ClientManager.singleton.client.OnDisconnected += () => { Debug.Log("onDisconnected"); };
+
+            ClientManager.singleton.client.OnConnected += () => { Debug.Log("onConnected"); };
             kcp2k.Log.Info = Debug.Log;
         }
 
         private void Update()
         {
-            if (!NetClient.singleton.connected) return;
+            if (!ClientManager.singleton.connected) return;
             pingTime += Time.deltaTime;
             if (pingTime >= pingInterval)
             {
@@ -51,7 +45,7 @@ namespace Nico
                 {
                     ClientTime = DateTime.Now.ToUniversalTime().Ticks
                 };
-                NetClient.singleton.Send(ping);
+                ClientManager.singleton.Send(ping);
             }
         }
     }

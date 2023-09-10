@@ -13,12 +13,12 @@ namespace Nico
             GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, 200));
             if (GUILayout.Button("Start"))
             {
-                NetServer.singleton.NetStart();
+                ServerManager.singleton.NetStart();
             }
 
             if (GUILayout.Button("Stop"))
             {
-                NetServer.singleton.NetStop();
+                ServerManager.singleton.NetStop();
             }
 
             GUILayout.EndArea();
@@ -32,7 +32,7 @@ namespace Nico
             StringMessage stringMessage = new StringMessage();
             stringMessage.Msg = "Hello World";
             header.Body = stringMessage.ToByteString();
-            NetServer.singleton.SendToAll(header);
+            ServerManager.singleton.SendToAll(header);
         }
     }
 }
