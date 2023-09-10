@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace Nico
 {
-    public class KcpComponent : MonoBehaviour
+    public class KcpGetter : MonoBehaviour, IServerTransportGetter, IClientTransportGetter
     {
         public KcpConfig config = KcpUtil.defaultConfig;
         public ushort port = 24419;
 
-        public KcpClientTransport GetClient()
+        public ClientTransport GetClient()
         {
             return new KcpClientTransport(config, port);
         }
 
-        public KcpServerTransport GetServer()
+        public ServerTransport GetServer()
         {
             return new KcpServerTransport(config, port);
         }

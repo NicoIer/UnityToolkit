@@ -1,6 +1,7 @@
 using System;
 using Google.Protobuf;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Nico
 {
@@ -15,31 +16,31 @@ namespace Nico
 
         private bool _init_singleton()
         {
-            if (singleton != null && singleton == this)
+            if (!Application.isPlaying)
+            {
+                throw new Exception("ClientManager must be initialized in play mode");
+            }
+
+            if (singleton == this)
             {
                 return true;
             }
 
+            if (singleton != null)
+            {
+                Destroy(gameObject);
+                return false;
+            }
+
             if (dontDestroyOnLoad)
             {
-                if (singleton != null)
-                {
-                    Destroy(gameObject);
-                    return false;
-                }
-
-                singleton = this;
-                if (Application.isPlaying)
-                {
-                    transform.SetParent(null);
-                    DontDestroyOnLoad(gameObject);
-                }
-            }
-            else
-            {
-                singleton = this;
+                transform.SetParent(null);
+                DontDestroyOnLoad(gameObject);
             }
 
+            singleton = this;
+
+            ProtoHandler.InitBuildInReader();
             return true;
         }
 
@@ -59,9 +60,9 @@ namespace Nico
 
         #endregion
 
-        [SerializeField] KcpComponent _kcpComponent;
+        IClientTransportGetter  _getter;
 
-        public NetClient client;
+        public NetClient client { get; private set; }
         public bool connected => client.connected;
         public string address = "localhost";
 
@@ -70,8 +71,8 @@ namespace Nico
         {
             if (!_init_singleton()) return;
             if (singleton != this) return;
-            _kcpComponent = GetComponent<KcpComponent>();
-            ClientTransport transport = _kcpComponent.GetClient();
+            _getter = GetComponent<IClientTransportGetter>();
+            ClientTransport transport = _getter.GetClient();
             client = new NetClient(transport, address);
             NetworkLoop.onEarlyUpdate += client.OnEarlyUpdate;
             NetworkLoop.onLateUpdate += client.OnLateUpdate;
@@ -95,7 +96,7 @@ namespace Nico
             NetStop();
             _reset_statics();
         }
-        
+
 
         public void NetStart()
         {

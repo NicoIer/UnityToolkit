@@ -1,9 +1,11 @@
 using System;
 using Google.Protobuf;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Nico
 {
+    
     [DisallowMultipleComponent]
     public class ServerManager : MonoBehaviour
     {
@@ -15,31 +17,31 @@ namespace Nico
 
         private bool _init_singleton()
         {
-            if (singleton != null && singleton == this)
+            if (!Application.isPlaying)
+            {
+                throw new Exception("ClientManager must be initialized in play mode");
+            }
+
+            if (singleton == this)
             {
                 return true;
             }
 
+            if (singleton != null)
+            {
+                Destroy(gameObject);
+                return false;
+            }
+
             if (dontDestroyOnLoad)
             {
-                if (singleton != null)
-                {
-                    Destroy(gameObject);
-                    return false;
-                }
-
-                singleton = this;
-                if (Application.isPlaying)
-                {
-                    transform.SetParent(null);
-                    DontDestroyOnLoad(gameObject);
-                }
-            }
-            else
-            {
-                singleton = this;
+                transform.SetParent(null);
+                DontDestroyOnLoad(gameObject);
             }
 
+            singleton = this;
+
+            ProtoHandler.InitBuildInReader();
             return true;
         }
 
@@ -59,7 +61,7 @@ namespace Nico
 
         #endregion
 
-        [SerializeField] KcpComponent _kcpComponent;
+         IServerTransportGetter _getter;
         public NetServer server { get; private set; }
         public bool isRunning => server.isRunning;
 
@@ -67,8 +69,8 @@ namespace Nico
         {
             if (!_init_singleton()) return;
             if (singleton != this) return;
-            _kcpComponent = GetComponent<KcpComponent>();
-            ServerTransport transport = _kcpComponent.GetServer();
+            _getter = GetComponent<IServerTransportGetter>();
+            ServerTransport transport = _getter.GetServer();
             server = new NetServer(transport);
             NetworkLoop.onEarlyUpdate += server.OnEarlyUpdate;
             NetworkLoop.onLateUpdate += server.OnLateUpdate;
