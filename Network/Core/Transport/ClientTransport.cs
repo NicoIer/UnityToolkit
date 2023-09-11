@@ -20,7 +20,7 @@ namespace Nico
         public Action<TransportError, string> onError;
 
         public abstract bool connected { get; }
-        
+
         // 连接到服务器
         public abstract void Connect(string address);
 
@@ -34,9 +34,9 @@ namespace Nico
         public abstract int GetMaxPacketSize(int channelId = Channels.Reliable);
 
         public abstract void Shutdown();
-        
+
         public abstract void TickOutgoing();
-        
+
         public abstract void TickIncoming();
     }
 }

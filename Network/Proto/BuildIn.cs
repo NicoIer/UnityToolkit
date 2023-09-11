@@ -29,9 +29,10 @@ public static partial class BuildInReflection {
           "CnNlcnZlclRpbWUYASABKAMSEgoKY2xpZW50VGltZRgCIAEoAyI1CgtQb25n",
           "TWVzc2FnZRISCgpzZXJ2ZXJUaW1lGAEgASgDEhIKCmNsaWVudFRpbWUYAiAB",
           "KAMiOAoRUnBjUmVxdWVzdE1lc3NhZ2USEgoKbWV0aG9kSGFzaBgBIAEoAxIP",
-          "CgdwYXlsb2FkGAIgASgMIjkKElJwY1Jlc3BvbnNlTWVzc2FnZRISCgptZXRo",
-          "b2RIYXNoGAEgASgDEg8KB3BheWxvYWQYAiABKAwqKAoOUHJvdG9FcnJvckNv",
-          "ZGUSCwoHU1VDQ0VTUxAAEgkKBUVSUk9SEAFiBnByb3RvMw=="));
+          "CgdwYXlsb2FkGAIgASgMIl0KElJwY1Jlc3BvbnNlTWVzc2FnZRISCgptZXRo",
+          "b2RIYXNoGAEgASgDEg8KB3BheWxvYWQYAiABKAwSIgoJZXJyb3JDb2RlGAMg",
+          "ASgOMg8uUHJvdG9FcnJvckNvZGUqKAoOUHJvdG9FcnJvckNvZGUSCwoHU1VD",
+          "Q0VTUxAAEgkKBUVSUk9SEAFiBnByb3RvMw=="));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(new[] {typeof(global::ProtoErrorCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -41,7 +42,7 @@ public static partial class BuildInReflection {
           new pbr::GeneratedClrTypeInfo(typeof(global::PingMessage), global::PingMessage.Parser, new[]{ "ServerTime", "ClientTime" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::PongMessage), global::PongMessage.Parser, new[]{ "ServerTime", "ClientTime" }, null, null, null, null),
           new pbr::GeneratedClrTypeInfo(typeof(global::RpcRequestMessage), global::RpcRequestMessage.Parser, new[]{ "MethodHash", "Payload" }, null, null, null, null),
-          new pbr::GeneratedClrTypeInfo(typeof(global::RpcResponseMessage), global::RpcResponseMessage.Parser, new[]{ "MethodHash", "Payload" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::RpcResponseMessage), global::RpcResponseMessage.Parser, new[]{ "MethodHash", "Payload", "ErrorCode" }, null, null, null, null)
         }));
   }
   #endregion
@@ -60,7 +61,7 @@ public enum ProtoErrorCode {
 
 #region Messages
 /// <summary>
-/// 消息头 
+/// 消息头 用于包装所有消息
 /// </summary>
 public sealed partial class PacketHeader : pb::IMessage<PacketHeader>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
@@ -1114,6 +1115,9 @@ public sealed partial class PongMessage : pb::IMessage<PongMessage>
 
 }
 
+/// <summary>
+///Rpc请求消息
+/// </summary>
 public sealed partial class RpcRequestMessage : pb::IMessage<RpcRequestMessage>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1322,6 +1326,9 @@ public sealed partial class RpcRequestMessage : pb::IMessage<RpcRequestMessage>
 
 }
 
+/// <summary>
+///Rpc响应消息
+/// </summary>
 public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage>
 #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     , pb::IBufferMessage
@@ -1353,6 +1360,7 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
   public RpcResponseMessage(RpcResponseMessage other) : this() {
     methodHash_ = other.methodHash_;
     payload_ = other.payload_;
+    errorCode_ = other.errorCode_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -1383,6 +1391,17 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
     }
   }
 
+  /// <summary>Field number for the "errorCode" field.</summary>
+  public const int ErrorCodeFieldNumber = 3;
+  private global::ProtoErrorCode errorCode_ = global::ProtoErrorCode.Success;
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  public global::ProtoErrorCode ErrorCode {
+    get { return errorCode_; }
+    set {
+      errorCode_ = value;
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   public override bool Equals(object other) {
     return Equals(other as RpcResponseMessage);
@@ -1398,6 +1417,7 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
     }
     if (MethodHash != other.MethodHash) return false;
     if (Payload != other.Payload) return false;
+    if (ErrorCode != other.ErrorCode) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -1406,6 +1426,7 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
     int hash = 1;
     if (MethodHash != 0L) hash ^= MethodHash.GetHashCode();
     if (Payload.Length != 0) hash ^= Payload.GetHashCode();
+    if (ErrorCode != global::ProtoErrorCode.Success) hash ^= ErrorCode.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -1430,6 +1451,10 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
       output.WriteRawTag(18);
       output.WriteBytes(Payload);
     }
+    if (ErrorCode != global::ProtoErrorCode.Success) {
+      output.WriteRawTag(24);
+      output.WriteEnum((int) ErrorCode);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -1447,6 +1472,10 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
       output.WriteRawTag(18);
       output.WriteBytes(Payload);
     }
+    if (ErrorCode != global::ProtoErrorCode.Success) {
+      output.WriteRawTag(24);
+      output.WriteEnum((int) ErrorCode);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -1461,6 +1490,9 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
     }
     if (Payload.Length != 0) {
       size += 1 + pb::CodedOutputStream.ComputeBytesSize(Payload);
+    }
+    if (ErrorCode != global::ProtoErrorCode.Success) {
+      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ErrorCode);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -1478,6 +1510,9 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
     }
     if (other.Payload.Length != 0) {
       Payload = other.Payload;
+    }
+    if (other.ErrorCode != global::ProtoErrorCode.Success) {
+      ErrorCode = other.ErrorCode;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -1501,6 +1536,10 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
           Payload = input.ReadBytes();
           break;
         }
+        case 24: {
+          ErrorCode = (global::ProtoErrorCode) input.ReadEnum();
+          break;
+        }
       }
     }
   #endif
@@ -1521,6 +1560,10 @@ public sealed partial class RpcResponseMessage : pb::IMessage<RpcResponseMessage
         }
         case 18: {
           Payload = input.ReadBytes();
+          break;
+        }
+        case 24: {
+          ErrorCode = (global::ProtoErrorCode) input.ReadEnum();
           break;
         }
       }

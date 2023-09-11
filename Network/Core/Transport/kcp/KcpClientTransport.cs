@@ -45,6 +45,7 @@ namespace Nico
                     return KcpPeer.ReliableMaxMessageSize(_config.Mtu, _config.ReceiveWindowSize);
             }
         }
+        
 
         public override void TickOutgoing()
         {

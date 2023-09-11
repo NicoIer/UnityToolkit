@@ -13,8 +13,8 @@ namespace Nico
         public event Action<int, TransportError, string> onError;
         public event Action<int> onDisconnected;
         public event Action<int> onConnected;
-        public Action<int, ArraySegment<byte>, int> onDataReceived;
-        public Action<int, ArraySegment<byte>, int> onDataSent;
+        public event Action<int, ArraySegment<byte>, int> onDataReceived;
+        public event Action<int, ArraySegment<byte>, int> onDataSent;
         private readonly Dictionary<int, Action<int, ByteString, int>> _handlers;
 
         public NetServer(ServerTransport transport)
