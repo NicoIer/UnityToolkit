@@ -26,7 +26,7 @@ namespace Nico
             transport.onError += _OnError;
             transport.onDataReceived += _OnDataReceived;
             transport.onDataSent += _OnDataSent;
-            
+
             _handlers = new Dictionary<int, Action<int, ByteString, int>>();
         }
 
@@ -64,7 +64,7 @@ namespace Nico
         {
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.Pack(msg, type, channelId);
+                ProtoHandler.Pack(buffer, msg, type);
                 _transport.Send(connectId, buffer.ToArraySegment(), channelId);
             }
         }
@@ -73,7 +73,7 @@ namespace Nico
         {
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.Pack(msg, type, channelId);
+                ProtoHandler.Pack(buffer, msg, type);
                 _transport.SendToAll(buffer.ToArraySegment(), channelId);
             }
         }
@@ -108,7 +108,7 @@ namespace Nico
 
         #region Handler
 
-        public void Register<T>(Action<int, T, int> handler, bool replace = false) where T : IMessage<T>
+        public void Register<T>(Action<int, T, int> handler, bool replace = false) where T : IMessage<T>, new()
         {
             int id = TypeId<T>.ID;
             if (_handlers.ContainsKey(id) && !replace)
@@ -118,8 +118,10 @@ namespace Nico
 
             _handlers[id] = (connectId, data, channel) =>
             {
-                T msg = ProtoHandler.Reader<T>.reader(data);
+                T msg = ProtoHandler.Get<T>();
+                ProtoHandler.UnPack(ref msg, data);
                 handler(connectId, msg, channel);
+                msg.Return();
             };
         }
 

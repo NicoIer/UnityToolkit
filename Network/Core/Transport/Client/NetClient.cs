@@ -36,7 +36,6 @@ namespace Nico
         }
 
 
-
         #region Transport Event
 
         private void _OnDataSent(ArraySegment<byte> data, int channelId)
@@ -96,7 +95,7 @@ namespace Nico
             // 拿两个buffer 一个用来写头 一个用来写body
             using (ProtoBuffer buffer = ProtoBuffer.Get())
             {
-                buffer.Pack(msg, type, channelId);
+                ProtoHandler.Pack(buffer, msg, type);
                 _transport.Send(buffer.ToArraySegment(), channelId);
             }
         }
@@ -113,7 +112,7 @@ namespace Nico
         /// <param name="handler"></param>
         /// <param name="replace"></param>
         /// <typeparam name="T"></typeparam>
-        public void Register<T>(Action<T, int> handler, bool replace = false) where T : IMessage<T>
+        public void Register<T>(Action<T, int> handler, bool replace = false) where T : IMessage<T>, new()
         {
             int id = TypeId<T>.ID;
 
@@ -124,11 +123,12 @@ namespace Nico
 
             _handlers[id] = (data, channel) =>
             {
-                T msg = ProtoHandler.Reader<T>.reader(data);
+                T msg = ProtoHandler.Get<T>();
+                ProtoHandler.UnPack(ref msg,data);
                 handler(msg, channel);
+                msg.Return();
             };
         }
-
 
         #endregion
     }

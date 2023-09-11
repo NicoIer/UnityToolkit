@@ -79,21 +79,5 @@ namespace Nico
         }
 
         public void Dispose() => Pool.Return(this);
-
-        public void Pack<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>
-        {
-            using (ProtoBuffer body = Get())
-            {
-                PacketHeader header = new PacketHeader();
-                header.Id = TypeId<T>.ID;
-                if (type != 0)
-                {
-                    header.Type = type;
-                }
-                body.WriteProto(msg); //写入body
-                header.Body = body.ToByteString();
-                WriteProto(header); //写入头
-            }
-        }
     }
 }

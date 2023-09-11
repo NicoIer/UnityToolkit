@@ -5,13 +5,12 @@ using UnityEngine.Serialization;
 
 namespace Nico
 {
-    
     [DisallowMultipleComponent]
-    public class ServerManager : MonoBehaviour
+    public class ClientManager : MonoBehaviour
     {
         #region Singleton
 
-        public static ServerManager singleton { get; private set; }
+        public static ClientManager singleton { get; private set; }
         public bool dontDestroyOnLoad = true;
         public bool runInBackground = true;
 
@@ -40,8 +39,7 @@ namespace Nico
             }
 
             singleton = this;
-
-            ProtoHandler.InitBuildInReader();
+            
             return true;
         }
 
@@ -53,7 +51,7 @@ namespace Nico
         {
             if (singleton != null)
             {
-                singleton.server.Stop();
+                singleton.NetStop();
             }
 
             singleton = null;
@@ -61,28 +59,31 @@ namespace Nico
 
         #endregion
 
-         IServerTransportGetter _getter;
-        public NetServer server { get; private set; }
-        public bool isRunning => server.isRunning;
+        IClientTransportGetter  _getter;
+
+        public NetClient client { get; private set; }
+        public bool connected => client.connected;
+        public string address = "localhost";
+
 
         protected void Awake()
         {
             if (!_init_singleton()) return;
             if (singleton != this) return;
-            _getter = GetComponent<IServerTransportGetter>();
-            ServerTransport transport = _getter.GetServer();
-            server = new NetServer(transport);
-            NetworkLoop.onEarlyUpdate += server.OnEarlyUpdate;
-            NetworkLoop.onLateUpdate += server.OnLateUpdate;
+            _getter = GetComponent<IClientTransportGetter>();
+            ClientTransport transport = _getter.GetClient();
+            client = new NetClient(transport, address);
+            NetworkLoop.onEarlyUpdate += client.OnEarlyUpdate;
+            NetworkLoop.onLateUpdate += client.OnLateUpdate;
         }
+
 
         private void OnDestroy()
         {
             if (singleton != this) return;
-            NetworkLoop.onEarlyUpdate -= server.OnEarlyUpdate;
-            NetworkLoop.onLateUpdate -= server.OnLateUpdate;
-            server.Stop();
-
+            NetworkLoop.onEarlyUpdate -= client.OnEarlyUpdate;
+            NetworkLoop.onLateUpdate -= client.OnLateUpdate;
+            client.Stop();
             singleton = null;
         }
 
@@ -91,23 +92,22 @@ namespace Nico
         /// </summary>
         public void OnApplicationQuit()
         {
-            if (singleton != this) return;
             NetStop();
             _reset_statics();
         }
 
+
         public void NetStart()
         {
-            server.Start();
+            client.Start();
             Application.runInBackground = runInBackground;
         }
 
-        public void NetStop() => server.Stop();
 
-        public void Send<T>(int connectId, T msg, uint type = 0, int channelId = Channels.Reliable)
-            where T : IMessage<T>, new() => server.Send(connectId, msg, type, channelId);
+        public void NetStop() => client.Stop();
 
-        public void SendToAll<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>, new()
-            => server.SendToAll(msg, type, channelId);
+
+        public void Send<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>
+            => client.Send(msg, type, channelId);
     }
 }
