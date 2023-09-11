@@ -96,12 +96,12 @@ namespace Nico
 
         public void OnEarlyUpdate()
         {
-            _transport?.TickIncoming();
+            _transport.TickIncoming();
         }
 
         public void OnLateUpdate()
         {
-            _transport?.TickOutgoing();
+            _transport.TickOutgoing();
         }
 
         #endregion

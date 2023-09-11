@@ -71,18 +71,28 @@ namespace Nico
             _getter = GetComponent<IServerTransportGetter>();
             ServerTransport transport = _getter.GetServer();
             server = new NetServer(transport);
-            NetworkLoop.onEarlyUpdate += server.OnEarlyUpdate;
-            NetworkLoop.onLateUpdate += server.OnLateUpdate;
+            NetworkLoop.onEarlyUpdate += OnEralyUpdate;
+            NetworkLoop.onLateUpdate += OnLateUpdate;
         }
 
         private void OnDestroy()
         {
             if (singleton != this) return;
-            NetworkLoop.onEarlyUpdate -= server.OnEarlyUpdate;
-            NetworkLoop.onLateUpdate -= server.OnLateUpdate;
+            NetworkLoop.onEarlyUpdate -= OnEralyUpdate;
+            NetworkLoop.onLateUpdate -= OnLateUpdate;
             server.Stop();
 
             singleton = null;
+        }
+        
+        public void OnEralyUpdate()
+        {
+            server.OnEarlyUpdate();
+        }
+        
+        public void OnLateUpdate()
+        {
+            server.OnLateUpdate();
         }
 
         /// <summary>

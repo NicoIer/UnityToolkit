@@ -82,12 +82,12 @@ namespace Nico
 
         public void OnEarlyUpdate()
         {
-            _transport?.TickIncoming();
+            _transport.TickIncoming();
         }
 
         public void OnLateUpdate()
         {
-            _transport?.TickOutgoing();
+            _transport.TickOutgoing();
         }
 
         public void Send<T>(T msg, uint type = 0, int channelId = Channels.Reliable) where T : IMessage<T>
