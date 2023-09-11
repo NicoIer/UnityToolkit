@@ -5,29 +5,30 @@ namespace Nico
 {
     public class ConcurrentPool<T>
     {
-        readonly ConcurrentStack<T> objects = new ConcurrentStack<T>();
-        readonly System.Func<T> objectGenerator;
+        private readonly ConcurrentStack<T> _objects;
+        private readonly System.Func<T> _objectGenerator;
 
         public ConcurrentPool(System.Func<T> objectGenerator, int initialCapacity)
         {
-            this.objectGenerator = objectGenerator;
+            _objects = new ConcurrentStack<T>();
+            _objectGenerator = objectGenerator;
             for (int i = 0; i < initialCapacity; ++i)
-                objects.Push(objectGenerator());
+                _objects.Push(objectGenerator());
         }
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Get()
         {
-            return objects.TryPop(out var item) ? item : objectGenerator();
+            return _objects.TryPop(out var item) ? item : _objectGenerator();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Return(T item)
         {
-            objects.Push(item);
+            _objects.Push(item);
         }
 
-        public int Count => objects.Count;
+        public int Count => _objects.Count;
     }
 }

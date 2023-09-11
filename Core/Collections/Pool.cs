@@ -6,7 +6,7 @@ namespace Nico
 {
     public class Pool<T>
     {
-        readonly Stack<T> _objects = new Stack<T>();
+        private readonly Stack<T> _objects;
 
         // some types might need additional parameters in their constructor, so
         // we use a Func<T> generator
@@ -15,7 +15,7 @@ namespace Nico
         public Pool(Func<T> objectGenerator, int initialCapacity)
         {
             this._objectGenerator = objectGenerator;
-
+            _objects = new Stack<T>(initialCapacity);
             // allocate an initial pool so we have fewer (if any)
             // allocations in the first few frames (or seconds).
             for (int i = 0; i < initialCapacity; ++i)

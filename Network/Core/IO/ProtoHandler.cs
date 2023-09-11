@@ -56,7 +56,7 @@ namespace Nico
 
         private static class ProtoPool<T> where T : IMessage<T>, new()
         {
-            public static Pool<T> Pool = new Pool<T>(() => new T(), 10);
+            public static ConcurrentPool<T> Pool = new ConcurrentPool<T>(() => new T(), 10);
         }
     }
 }
