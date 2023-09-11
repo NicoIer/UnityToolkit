@@ -17,6 +17,11 @@ namespace Nico
             msg.MergeFrom(data);
         }
 
+        public static void UnPack<T>(ref T msg, ArraySegment<byte> data) where T : IMessage<T>, new()
+        {
+            msg.MergeFrom(data);
+        }
+
         /// <summary>
         /// 把消息打包到缓冲区
         /// </summary>

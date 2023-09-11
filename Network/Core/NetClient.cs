@@ -45,9 +45,11 @@ namespace Nico
 
         private void _OnDataReceived(ArraySegment<byte> data, int channelId)
         {
-            PacketHeader header = PacketHeader.Parser.ParseFrom(data);
+            PacketHeader header = ProtoHandler.Get<PacketHeader>();
+            ProtoHandler.UnPack(ref header,data);
             _handlers[header.Id](header.Body, channelId);
             OnDataReceived?.Invoke(data, channelId);
+            header.Return();
         }
 
         private void _OnConnected()

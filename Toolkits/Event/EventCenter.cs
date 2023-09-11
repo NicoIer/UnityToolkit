@@ -8,16 +8,17 @@ namespace Nico
     internal class EventCenter<TEvent> where TEvent : IEvent
     {
         private readonly HashSet<IEventListener<TEvent>> _listeners;
-        private readonly List<IEventListener<TEvent>> _removeList = new List<IEventListener<TEvent>>();
+        private readonly List<IEventListener<TEvent>> _removeList;
 
-        private readonly List<IEventListener<TEvent>> _addList = new List<IEventListener<TEvent>>();
-
-        // 之所以这里加锁 是因为 EventCenter 不一定只在主线程访问 它是 MonoBehavior无关的
+        private readonly List<IEventListener<TEvent>> _addList;
+        
         private bool _triggering;
 
         public EventCenter()
         {
             _listeners = new HashSet<IEventListener<TEvent>>();
+            _removeList = new List<IEventListener<TEvent>>();
+            _addList = new List<IEventListener<TEvent>>();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
