@@ -5,6 +5,13 @@ using Google.Protobuf;
 
 namespace Nico
 {
+    public struct ServerMsg<T>
+    {
+        public T msg;
+        public int channelId;
+    }
+
+
     [Serializable]
     public class NetClient
     {
@@ -19,8 +26,14 @@ namespace Nico
 
         public event Action<ArraySegment<byte>, int> OnDataReceived;
 
+        // public delegate void Handler(IMessage msg, int channel);
+
+        // delegate void Reader(ByteString data, int channel);
+
         public event Action<ArraySegment<byte>, int> OnDataSent;
         private readonly Dictionary<int, Action<ByteString, int>> _handlers;
+
+        private EventCenter _eventCenter;
 
         public NetClient(ClientTransport transport, string address)
         {
@@ -33,6 +46,8 @@ namespace Nico
             transport.onDataSent += _OnDataSent;
 
             _handlers = new Dictionary<int, Action<ByteString, int>>();
+
+            _eventCenter = new EventCenter();
         }
 
 
@@ -46,7 +61,12 @@ namespace Nico
         private void _OnDataReceived(ArraySegment<byte> data, int channelId)
         {
             PacketHeader header = ProtoHandler.Get<PacketHeader>();
-            ProtoHandler.UnPack(ref header,data);
+            ProtoHandler.UnPack(ref header, data);
+            if (!_handlers.ContainsKey(header.Id))
+            {
+                throw new InvalidDataException($"unregistered message id:{header.Id}");
+            }
+
             _handlers[header.Id](header.Body, channelId);
             OnDataReceived?.Invoke(data, channelId);
             header.Return();
@@ -107,29 +127,36 @@ namespace Nico
 
         #region Handler
 
-        /// <summary>
-        /// 注册对指定消息的处理函数
-        /// 这里只能注册一次，重复注册会覆盖
-        /// </summary>
-        /// <param name="handler"></param>
-        /// <param name="replace"></param>
-        /// <typeparam name="T"></typeparam>
-        public void Register<T>(Action<T, int> handler, bool replace = false) where T : IMessage<T>, new()
+        public void Listen<T>(Action<ServerMsg<T>> handler) where T : IMessage<T>, new()
         {
             int id = TypeId<T>.ID;
 
-            if (_handlers.ContainsKey(id) && !replace)
+            if (!_handlers.ContainsKey(id))
             {
-                throw new InvalidDataException($"handler for {typeof(T).Name} already exists");
+                _handlers[id] = (data, channel) =>
+                {
+                    T msg = ProtoHandler.Get<T>();
+                    ProtoHandler.UnPack(ref msg, data);
+                    _eventCenter.Fire(new ServerMsg<T>
+                    {
+                        msg = msg,
+                        channelId = channel
+                    });
+                    msg.Return();
+                };
+            }
+            _eventCenter.Listen(handler);
+        }
+
+        public void UnListen<T>(Action<ServerMsg<T>> handler) where T : IMessage<T>, new()
+        {
+            int id = TypeId<T>.ID;
+            if (!_handlers.ContainsKey(id))
+            {
+                return;
             }
 
-            _handlers[id] = (data, channel) =>
-            {
-                T msg = ProtoHandler.Get<T>();
-                ProtoHandler.UnPack(ref msg,data);
-                handler(msg, channel);
-                msg.Return();
-            };
+            _eventCenter.UnListen(handler);
         }
 
         #endregion
