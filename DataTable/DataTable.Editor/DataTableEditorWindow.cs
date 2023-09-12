@@ -15,13 +15,12 @@ namespace Nico.Editor
         private Button _importDataTableButton;
         private Button _codeGenButton;
         private ObjectField _configObjectField;
-        private TextField codeGenPathTextField;
-        private TextField assetGenPathTextField;
+        private TextField _codeGenPathTextField;
+        private TextField _assetGenPathTextField;
 
         [MenuItem("Tools/Nico/DataTable")]
         public static void ShowExample()
         {
-            
             DataTableEditorWindow wnd = GetWindow<DataTableEditorWindow>();
             wnd.titleContent = new GUIContent("DataTableEditorWindow");
         }
@@ -31,35 +30,45 @@ namespace Nico.Editor
             VisualElement root = rootVisualElement;
             if (uxml == null)
             {
-                uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Plugins/Nico/DataTable/DataTable.Edtor/DataTableEditorWindow.uxml");
+                uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+                    $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTableEditorWindow.uxml");
             }
+
+            if (uss == null)
+            {
+                uss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
+                    $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTableEditorWindow.uss");
+            }
+
             VisualElement labelFromUxml = uxml.Instantiate();
             labelFromUxml.styleSheets.Add(uss);
             root.Add(labelFromUxml);
-            
-            
+
+            if (config == null)
+            {
+                string path = $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/TableDataConfig.asset";
+                config = AssetDatabase.LoadAssetAtPath<TableDataConfig>(path);
+                if (config == null)
+                {
+                    config = ScriptableObject.CreateInstance<TableDataConfig>();
+                    AssetDatabase.CreateAsset(config, path);
+                }
+            }
+
+
             _configObjectField = rootVisualElement.Q<ObjectField>("config");
             _configObjectField.objectType = typeof(TableDataConfig);
             _configObjectField.value = config;
-            _configObjectField.RegisterValueChangedCallback(evt =>
-            {
-                config = evt.newValue as TableDataConfig;
-            });
-            
-            codeGenPathTextField = rootVisualElement.Q<TextField>("code_gen_path");
-            codeGenPathTextField.value = config.codeSavePath;
-            codeGenPathTextField.RegisterValueChangedCallback(evt =>
-            {
-                config.codeSavePath = evt.newValue;
-            });
-            
-            assetGenPathTextField = rootVisualElement.Q<TextField>("asset_gen_path");
-            assetGenPathTextField.value = config.assetSavePath;
-            assetGenPathTextField.RegisterValueChangedCallback(evt =>
-            {
-                config.assetSavePath = evt.newValue;
-            });
-            
+            _configObjectField.RegisterValueChangedCallback(evt => { config = evt.newValue as TableDataConfig; });
+
+            _codeGenPathTextField = rootVisualElement.Q<TextField>("code_gen_path");
+            _codeGenPathTextField.value = config.codeSavePath;
+            _codeGenPathTextField.RegisterValueChangedCallback(evt => { config.codeSavePath = evt.newValue; });
+
+            _assetGenPathTextField = rootVisualElement.Q<TextField>("asset_gen_path");
+            _assetGenPathTextField.value = config.assetSavePath;
+            _assetGenPathTextField.RegisterValueChangedCallback(evt => { config.assetSavePath = evt.newValue; });
+
             QueryImportDataTable();
             QueryCodeGenerate();
         }
@@ -91,7 +100,7 @@ namespace Nico.Editor
                 return;
             }
 
-            TableImporter.ImportExcel(excelPath, config,codeGenPathTextField.value);
+            TableImporter.ImportExcel(excelPath, config, _codeGenPathTextField.value);
             _codeGenButton.SetEnabled(true);
             AssetDatabase.Refresh();
         }
@@ -111,7 +120,7 @@ namespace Nico.Editor
 
             try
             {
-                TableImporter.ImportData(excelPath,assetGenPathTextField.value);
+                TableImporter.ImportData(excelPath, _assetGenPathTextField.value);
             }
             catch (FileNotFoundException e)
             {
