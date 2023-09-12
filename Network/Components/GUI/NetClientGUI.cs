@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Google.Protobuf;
 using UnityEngine;
 
@@ -28,10 +29,20 @@ namespace Nico
 
         private void Start()
         {
+            // kcp2k.Log.Info = Debug.Log;
+
             ClientManager.singleton.client.OnDisconnected += () => { Debug.Log("onDisconnected"); };
 
             ClientManager.singleton.client.OnConnected += () => { Debug.Log("onConnected"); };
-            kcp2k.Log.Info = Debug.Log;
+
+            ClientManager.singleton.client.Register<PongMessage>(OnPong);
+        }
+
+        public void OnPong(PongMessage pongMessage, int channelId)
+        {
+            long delta = DateTime.Now.ToUniversalTime().Ticks - pongMessage.ServerTime;
+            double ms = delta / 10000f;
+            Debug.Log($"pong message from {channelId} delta:{delta} = {ms:0000} ms");
         }
 
         private void Update()
@@ -41,11 +52,10 @@ namespace Nico
             if (pingTime >= pingInterval)
             {
                 pingTime = 0f;
-                PingMessage ping = new PingMessage
-                {
-                    ClientTime = DateTime.Now.ToUniversalTime().Ticks
-                };
+                PingMessage ping = ProtoHandler.Get<PingMessage>();
+                ping.ClientTime = DateTime.Now.ToUniversalTime().Ticks;
                 ClientManager.singleton.Send(ping);
+                ping.Return();
             }
         }
     }

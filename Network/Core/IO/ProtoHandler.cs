@@ -41,11 +41,11 @@ namespace Nico
                     header.Type = type;
                 }
 
-                body.WriteProto(msg); //写入body
+                body.Pack(msg); //写入body
                 header.Body = body.ToByteString();
-                buffer.WriteProto(header); //写入头
+                buffer.Pack(header); //写入头
 
-                Return(header);
+                header.Return();
             }
         }
 
