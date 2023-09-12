@@ -246,7 +246,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4334155901044114147}
-  - component: {fileID: 4334155901044114146}
   m_Layer: 5
   m_Name: UIManager
   m_TagString: Untagged
@@ -272,25 +271,6 @@ Transform:
   - {fileID: 4334155901395028305}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4334155901044114146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4334155901044114156}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70c778671a3e41e4ba5984c08a78ecdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiCamera: {fileID: 4334155901680178726}
-  bottomLayer: {fileID: 4334155900758949597}
-  middleLayer: {fileID: 4334155900820806412}
-  topLayer: {fileID: 4334155901254705995}
-  uiLayerMask:
-    serializedVersion: 2
-    m_Bits: 32
 --- !u!1 &4334155901254706004
 GameObject:
   m_ObjectHideFlags: 0
