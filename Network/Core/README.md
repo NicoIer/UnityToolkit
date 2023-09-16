@@ -1,3 +1,0 @@
-# Core部分
-
-为了能够同时在Unity和.Net控制台程序中使用而做出的取舍，Core文件夹下的代码不允许使用UnityAPI
