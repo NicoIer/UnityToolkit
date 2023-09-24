@@ -1,0 +1,4 @@
+{
+	"name": "UIFramework.Tests",
+	"references":[ "GUID:0aaec3ade56794e58b3bc4efffa6a60c", "GUID:36906cb969c60484fa48f1758b063231" ]
+}

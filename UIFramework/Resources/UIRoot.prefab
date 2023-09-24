@@ -134,7 +134,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -323,4 +323,4 @@ MonoBehaviour:
   <rootCanvas>k__BackingField: {fileID: 8268054131978024907}
   <rootCanvasScaler>k__BackingField: {fileID: 8635259615518811014}
   <rootGraphicRaycaster>k__BackingField: {fileID: 3252259805407743258}
-  <panelDatabase>k__BackingField: {fileID: 11400000, guid: 93fa55c50cf0c49089aa361f324f3f6e, type: 2}
+  <panelDatabase>k__BackingField: {fileID: 0}

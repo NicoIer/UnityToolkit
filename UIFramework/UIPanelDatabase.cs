@@ -12,8 +12,10 @@ namespace UnityToolkit
     [CreateAssetMenu(fileName = "UIPanelDatabase", menuName = "Toolkit/UIPanelDatabase", order = 0)]
     public class UIPanelDatabase : ScriptableObject
     {
+        public List<GameObject> panelList = new List<GameObject>();
+
         [HideInInspector, SerializeField]
-        private SerializableDictionary<int, GameObject> _uiPrefabs = new SerializableDictionary<int, GameObject>();
+        private SerializableDictionary<int, GameObject> _panelDict = new SerializableDictionary<int, GameObject>();
 
         /// <summary>
         /// 创建UI面板
@@ -24,7 +26,7 @@ namespace UnityToolkit
         public T CreatePanel<T>() where T : class, IUIPanel
         {
             int id = TypeId<T>.HashId;
-            if (_uiPrefabs.TryGetValue(id, out GameObject value))
+            if (_panelDict.TryGetValue(id, out GameObject value))
             {
                 GameObject panel = Instantiate(value);
                 if (panel.TryGetComponent(out T component))
@@ -36,14 +38,21 @@ namespace UnityToolkit
             throw new KeyNotFoundException($"{typeof(T)} has't been register in ui database");
         }
 
-#if UNITY_EDITOR
-        [SerializeField] private List<GameObject> _panelPrefabs = new List<GameObject>();
+        //运行时动态添加
+        public void Add(GameObject gameObject)
+        {
+            if (!gameObject.TryGetComponent(out IUIPanel panel)) return;
+            int id = panel.GetType().FullName.GetHashCode();
+            _panelDict.Add(id, gameObject);
+        }
 
+
+#if UNITY_EDITOR
         private void OnValidate()
         {
-            _uiPrefabs.Clear();
-            List<GameObject> validPrefabs = new List<GameObject>(_panelPrefabs.Count);
-            foreach (GameObject uiPrefab in _panelPrefabs)
+            _panelDict.Clear();
+            List<GameObject> validPrefabs = new List<GameObject>(panelList.Count);
+            foreach (GameObject uiPrefab in panelList)
             {
                 if (!uiPrefab.IsPrefab())
                 {
@@ -53,11 +62,11 @@ namespace UnityToolkit
 
                 if (!uiPrefab.TryGetComponent(out IUIPanel panel)) continue;
                 int id = panel.GetType().FullName.GetHashCode();
-                _uiPrefabs.Add(id, uiPrefab);
+                _panelDict.Add(id, uiPrefab);
                 validPrefabs.Add(uiPrefab);
             }
 
-            _panelPrefabs = validPrefabs;
+            panelList = validPrefabs;
         }
 #endif
     }
