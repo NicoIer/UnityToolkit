@@ -1,10 +1,9 @@
 {
-    "name": "Nico.HotUpdateEditor",
-    "rootNamespace": "Nico.HotUpdateEditor",
+    "name": "Nico.DataTable.Editor",
+    "rootNamespace": "Nico",
     "references": [
-        "Unity.Addressables",
-        "Unity.Addressables.Editor",
-        "HybridCLR.Editor",
+        "Nico.DataTable",
+        "Nico.Editor",
         "UnityToolkit.Engine"
     ],
     "includePlatforms": [

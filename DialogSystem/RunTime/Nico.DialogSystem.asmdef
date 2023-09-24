@@ -2,7 +2,7 @@
     "name": "Nico.DialogSystem",
     "rootNamespace": "Nico.DialogSystem",
     "references": [
-        "Nico.Toolkits"
+        "UnityToolkit.Engine"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

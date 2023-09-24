@@ -2,9 +2,8 @@
     "name": "Nico.DialogSystem.Editor",
     "rootNamespace": "Nico.DialogSystem.Editor",
     "references": [
-        "Nico.Toolkits",
         "Nico.DialogSystem",
-        "Nico.Editor"
+        "UnityToolkit.Engine"
     ],
     "includePlatforms": [
         "Editor"
