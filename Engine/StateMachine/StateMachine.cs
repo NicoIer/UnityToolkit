@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Nico
+namespace UnityToolkit
 {
     [Serializable]
     public class StateMachine<TOwner> // where TOwner : MonoBehaviour

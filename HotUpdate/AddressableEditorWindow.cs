@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using HybridCLR.Editor.Commands;
-using Nico.Editor;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
@@ -10,9 +9,10 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
+using UnityToolkit.Editor;
 
 
-namespace Nico.Edotor
+namespace UnityToolkit.Edotor
 {
     public  class AddressableEditorWindow : EditorWindow
     {

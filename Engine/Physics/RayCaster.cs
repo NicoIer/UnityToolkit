@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Nico
+namespace UnityToolkit
 {
     /// <summary>
     /// 游戏中的射线检测管理器

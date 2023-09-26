@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     /// <summary>
     /// 仅在编辑器下使用的工具类

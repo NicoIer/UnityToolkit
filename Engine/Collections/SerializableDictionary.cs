@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Nico
+namespace UnityToolkit
 {
     [Serializable]
     public class SerializableDictionary<TKey, TValue> : IDictionary<TKey, TValue>,

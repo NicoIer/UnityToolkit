@@ -16,8 +16,7 @@ namespace UnityToolkit
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
-        
-
+        public override bool dontDestroyOnLoad => true;
         /// <summary>
         /// 将面板推入栈顶
         /// </summary>
@@ -208,5 +207,20 @@ namespace UnityToolkit
 
             _openedPanelStack.Clear();
         }
+        
+        
+        #if UNITY_EDITOR
+        //在Hierarchy面板中可以快速创建一个UIRoot
+        [UnityEditor.MenuItem("GameObject/UI/UIRoot", false, 0)]
+        public static void CreateUIRoot()
+        {
+            
+            GameObject prefab = Resources.Load<GameObject>("UIRoot");
+            GameObject uiRoot = GameObject.Instantiate(prefab, null);
+            uiRoot.name = "UIRoot";
+            UnityEditor.Selection.activeGameObject = uiRoot;
+
+        }
+        #endif
     }
 }

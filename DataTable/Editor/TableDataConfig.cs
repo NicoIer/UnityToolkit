@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     [CreateAssetMenu(fileName = "TableDataConfig", menuName = "Config/TableDataConfig", order = 0)]
     public class TableDataConfig : ScriptableObject

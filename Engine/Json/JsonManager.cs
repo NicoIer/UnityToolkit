@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class JsonManager
     {

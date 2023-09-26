@@ -7,7 +7,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public static class TableImporter
     {
@@ -35,7 +35,7 @@ namespace Nico.Editor
                 //保存资源
                 if (!File.Exists(savePath))
                 {
-                    Nico.FileUtil.Create(savePath);
+                    FileUtil.Create(savePath);
                 }
 
                 AssetDatabase.CreateAsset(scriptableObject, savePath);
@@ -173,18 +173,18 @@ namespace Nico.Editor
             {
                 string defineName = kvp.Key;
                 string defineCode = kvp.Value;
-                Nico.FileUtil.Write($"{codeSavePath}/{defineName}.cs", defineCode);
+                FileUtil.Write($"{codeSavePath}/{defineName}.cs", defineCode);
             }
 
             foreach (var kvp in tableCodeDict)
             {
                 string tableName = kvp.Key;
                 string tableCode = kvp.Value;
-                Nico.FileUtil.Write($"{codeSavePath}/{tableName}DataTable.cs", tableCode);
+                FileUtil.Write($"{codeSavePath}/{tableName}DataTable.cs", tableCode);
             }
 
             //生成程序集定义
-            Nico.FileUtil.Write($"{codeSavePath}/DataTable.asmdef",
+            FileUtil.Write($"{codeSavePath}/DataTable.asmdef",
                 _config.TDataTableAssemblyDefineTemplate);
         }
 

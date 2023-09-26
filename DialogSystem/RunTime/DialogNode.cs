@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nico.DialogSystem
+namespace UnityToolkit.DialogSystem
 {
     [Serializable]
     public class DialogNode

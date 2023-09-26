@@ -1,11 +1,11 @@
-using Nico.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityToolkit.Editor;
 using Path = System.IO.Path;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class DialogGraphWindow : EditorWindow
     {

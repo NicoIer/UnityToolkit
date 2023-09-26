@@ -8,7 +8,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     internal class HierarchyEditor
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Nico.DialogSystem;
+using UnityToolkit.DialogSystem;
 using UnityEngine;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public partial class DialogGraphEditorData
     {

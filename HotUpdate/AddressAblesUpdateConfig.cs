@@ -5,7 +5,7 @@ using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     [CreateAssetMenu(fileName = "AddressAblesUpdateConfig", menuName = "Config/AddressAblesUpdateConfig", order = 0)]
     public class AddressAblesUpdateConfig : ScriptableObject

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class FileUtil
     {

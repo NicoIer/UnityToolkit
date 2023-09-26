@@ -2,7 +2,7 @@
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public static class DialogGraphAssetHandler
     {

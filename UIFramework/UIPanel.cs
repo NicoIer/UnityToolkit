@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace UnityToolkit
 {
-    public interface IUIComponent
-    {
-    }
-
-    public interface IUIPanel : IUIComponent
+    public interface IUIPanel
     {
         internal GameObject GetGameObject();
         internal RectTransform GetRectTransform();
@@ -19,7 +12,6 @@ namespace UnityToolkit
         public void OnOpened(); //打开面板时调用
         public void OnClosed(); //关闭面板时调用
         public void OnDispose(); //销毁面板时调用
-        
     }
 
     /// <summary>
@@ -42,6 +34,7 @@ namespace UnityToolkit
     /// Panel是唯一的
     /// </summary>
     [RequireComponent(typeof(Canvas))]
+    [DisallowMultipleComponent]
     public abstract class UIPanel : MonoBehaviour, IUIPanel
     {
         public Canvas canvas
@@ -100,7 +93,6 @@ namespace UnityToolkit
         {
             Destroy(gameObject);
         }
-        
 
 
 #if UNITY_EDITOR
@@ -108,10 +100,12 @@ namespace UnityToolkit
         private void Reset()
         {
             sortingOrder = canvas.sortingOrder;
+            canvas.overrideSorting = true;
         }
 
         private void OnValidate()
         {
+            canvas.overrideSorting = true;
             canvas.sortingOrder = sortingOrder;
         }
 #endif

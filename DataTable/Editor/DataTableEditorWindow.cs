@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public class DataTableEditorWindow : EditorWindow
     {

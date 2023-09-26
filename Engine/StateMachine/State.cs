@@ -1,4 +1,4 @@
-﻿namespace Nico
+﻿namespace UnityToolkit
 {
     public abstract class State<T>
     {

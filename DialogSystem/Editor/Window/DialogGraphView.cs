@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nico.DialogSystem;
+using UnityToolkit.DialogSystem;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class DialogGraphView : GraphView
     {

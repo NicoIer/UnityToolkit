@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor.Callbacks;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public static class ParserManager
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class DialogErrorData
     {

@@ -1,4 +1,4 @@
-namespace Nico
+namespace UnityToolkit
 {
     /// <summary>
     /// 比dict更快

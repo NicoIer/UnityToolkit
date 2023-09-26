@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class Extensions
     {

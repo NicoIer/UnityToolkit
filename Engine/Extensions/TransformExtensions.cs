@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class TransformExtensions
     {

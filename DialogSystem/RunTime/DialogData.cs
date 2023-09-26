@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Nico.DialogSystem
+namespace UnityToolkit.DialogSystem
 {
     public class DialogData : ScriptableObject
     {

@@ -12,9 +12,21 @@ namespace UnityToolkit
     {
         private readonly Dictionary<Type, IModel> _models = new Dictionary<Type, IModel>();
 
+        public void Register<T>() where T : IModel, new()
+        {
+            T model = new T();
+            Register(model);
+        }
+
         public void Register<T>(T model) where T : IModel
         {
             var type = typeof(T);
+            if (_models.ContainsKey(type))
+            {
+                throw new ArgumentException($"ModelCenter.Register<{type}>() failed, model already registered");
+                return;
+            }
+
             _models[type] = model;
             model.Init();
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class DialogGroupErrorData
     {

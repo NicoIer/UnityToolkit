@@ -1,7 +1,7 @@
-﻿using Nico.Editor;
+﻿using UnityToolkit.Editor;
 using UnityEditor.Experimental.GraphView;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class SingleDialogNode : BaseDialogNode
     {

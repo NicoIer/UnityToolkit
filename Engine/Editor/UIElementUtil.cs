@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public static class UIElementUtil
     {

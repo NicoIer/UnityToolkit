@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     internal static class Reflection
     {

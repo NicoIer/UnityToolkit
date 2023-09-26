@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public delegate bool ParseDelegate<in TData, TResult>(TData value, out TResult result);
 

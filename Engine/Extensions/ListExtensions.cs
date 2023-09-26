@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class ListExtensions
     {

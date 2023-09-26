@@ -1,10 +1,10 @@
-﻿using Nico.Editor;
-using UnityEditor.Experimental.GraphView;
+﻿using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityToolkit.Editor;
 
 #if UNITY_EDITOR
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public abstract class BaseDialogNode : Node
     {

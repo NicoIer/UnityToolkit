@@ -1,11 +1,11 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
-using Nico.DialogSystem;
-using Nico.Editor;
+using UnityToolkit.DialogSystem;
 using UnityEditor;
 using UnityEngine;
+using UnityToolkit.Editor;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     //Editor中的保存数据
     public partial class DialogGraphEditorData : ScriptableObject

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nico.DialogSystem
+namespace UnityToolkit.DialogSystem
 {
     [Serializable]
     public class ConnectInfo

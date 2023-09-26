@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Nico
+namespace UnityToolkit
 {
     public static class CommonUtils
     {

@@ -6,7 +6,7 @@ using System.IO;
 using OfficeOpenXml;
 using UnityEngine;
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public static class ExcelParser
     {

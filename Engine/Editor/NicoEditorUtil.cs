@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 
 
-namespace Nico.Editor
+namespace UnityToolkit.Editor
 {
     public static class NicoEditorUtil
     {

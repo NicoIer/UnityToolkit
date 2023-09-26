@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Nico;
-using Nico.Editor;
+using UnityToolkit;
+using UnityToolkit.Editor;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -12,8 +12,6 @@ namespace UnityToolkit
     [CreateAssetMenu(fileName = "UIPanelDatabase", menuName = "Toolkit/UIPanelDatabase", order = 0)]
     public class UIPanelDatabase : ScriptableObject
     {
-        public List<GameObject> panelList = new List<GameObject>();
-
         [HideInInspector, SerializeField]
         private SerializableDictionary<int, GameObject> _panelDict = new SerializableDictionary<int, GameObject>();
 
@@ -48,10 +46,11 @@ namespace UnityToolkit
 
 
 #if UNITY_EDITOR
+        public List<GameObject> panelList = new List<GameObject>();
+
         private void OnValidate()
         {
             _panelDict.Clear();
-            List<GameObject> validPrefabs = new List<GameObject>(panelList.Count);
             foreach (GameObject uiPrefab in panelList)
             {
                 if (!uiPrefab.IsPrefab())
@@ -62,11 +61,25 @@ namespace UnityToolkit
 
                 if (!uiPrefab.TryGetComponent(out IUIPanel panel)) continue;
                 int id = panel.GetType().FullName.GetHashCode();
+                if (_panelDict.ContainsKey(id))
+                {
+                    Debug.LogWarning($"{panel.GetType()} has been register in ui database now it will be override");
+                    _panelDict[id] = uiPrefab;
+                    continue;
+                }
+
                 _panelDict.Add(id, uiPrefab);
-                validPrefabs.Add(uiPrefab);
             }
 
-            panelList = validPrefabs;
+            panelList.Clear();
+
+            foreach (var kvp in _panelDict)
+            {
+                if (kvp.Value.TryGetComponent(out IUIPanel panel))
+                {
+                    panelList.Add(kvp.Value);
+                }
+            }
         }
 #endif
     }

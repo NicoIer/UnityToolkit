@@ -1,7 +1,7 @@
-﻿using Nico.DialogSystem;
+﻿using UnityToolkit.DialogSystem;
 using UnityEngine;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     internal static class DialogDataExtension
     {

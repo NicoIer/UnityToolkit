@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Nico.Editor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityToolkit.Editor;
 
-namespace Nico.DialogSystem.Editor
+namespace UnityToolkit.DialogSystem.Editor
 {
     public class MulDialogNode : BaseDialogNode
     {
