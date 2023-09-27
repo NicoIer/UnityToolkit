@@ -28,6 +28,9 @@ namespace UnityToolkit
                 return _singleton;
             }
         }
+        /// <summary>
+        /// 单例提供的
+        /// </summary>
         protected virtual void OnInit()
         {
             // Debug.LogError($"{typeof(T)} OnInit");
