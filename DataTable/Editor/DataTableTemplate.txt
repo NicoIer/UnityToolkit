@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityToolkit;
 
 namespace Nico
 {
@@ -42,7 +43,7 @@ namespace Nico
     }
 
     [Serializable]
-    public struct TableDataNameTemplate : ITableData
+    public class TableDataNameTemplate : ITableData
     {
 
 //fieldsTemplate

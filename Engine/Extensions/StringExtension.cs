@@ -1,5 +1,3 @@
-using System;
-
 namespace UnityToolkit
 {
     public static class StringExtension

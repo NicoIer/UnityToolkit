@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,14 +8,31 @@ namespace UnityToolkit.Editor
     [CreateAssetMenu(fileName = "TableDataConfig", menuName = "Config/TableDataConfig", order = 0)]
     public class TableDataConfig : ScriptableObject
     {
-        [SerializeField] private TextAsset tDataTableTemplate;
-        [SerializeField] private TextAsset tEnumTemplate;
-        [SerializeField] private TextAsset tClassTemplate;
-        [SerializeField] private TextAsset tStructTemplate;
-        [SerializeField] private TextAsset tDataTableAssemblyDefineTemplate;
-        [SerializeField] public string assetSavePath = "Assets/DataTable/";
-        [SerializeField] public string codeSavePath = "Assets/DataTable/";
-        
+        private TextAsset tDataTableTemplate;
+        private TextAsset tEnumTemplate;
+        private TextAsset tClassTemplate;
+        private TextAsset tStructTemplate;
+        [Multiline]
+        public string assetSavePath = "Assets/DataTable/";
+        [Multiline]
+        public string codeSavePath = "Assets/DataTable/";
+        private string _selfPath = "";
+
+        private string selfPath
+        {
+            get
+            {
+                if (_selfPath == "")
+                {
+                    _selfPath = Path.GetDirectoryName(
+                        AssetDatabase.GetAssetPath(
+                            MonoScript.FromScriptableObject(this)));
+                }
+
+                return _selfPath;
+            }
+        }
+
         public string DataTableTemplate
         {
             get
@@ -22,8 +40,9 @@ namespace UnityToolkit.Editor
                 if (tDataTableTemplate == null)
                 {
                     tDataTableTemplate = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTableTemplate.txt");
+                        $"{selfPath}/DataTableTemplate.txt");
                 }
+
                 return tDataTableTemplate.text;
             }
         }
@@ -35,8 +54,9 @@ namespace UnityToolkit.Editor
                 if (tEnumTemplate == null)
                 {
                     tEnumTemplate = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/EnumTemplate.txt");
+                        $"{selfPath}/EnumTemplate.txt");
                 }
+
                 return tEnumTemplate.text;
             }
         }
@@ -48,8 +68,9 @@ namespace UnityToolkit.Editor
                 if (tClassTemplate == null)
                 {
                     tClassTemplate = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/ClassTemplate.txt");
+                        $"{selfPath}/ClassTemplate.txt");
                 }
+
                 return tClassTemplate.text;
             }
         }
@@ -61,22 +82,10 @@ namespace UnityToolkit.Editor
                 if (tStructTemplate == null)
                 {
                     tStructTemplate = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/StructTemplate.txt");
+                        $"{selfPath}/StructTemplate.txt");
                 }
-                return tStructTemplate.text;
-            }
-        }
 
-        public string TDataTableAssemblyDefineTemplate
-        {
-            get
-            {
-                if (tDataTableAssemblyDefineTemplate == null)
-                {
-                    tDataTableAssemblyDefineTemplate = AssetDatabase.LoadAssetAtPath<TextAsset>(
-                        $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTable.asmdef.txt");
-                }
-                return tDataTableAssemblyDefineTemplate.text;
+                return tStructTemplate.text;
             }
         }
     }

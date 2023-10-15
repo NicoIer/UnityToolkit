@@ -176,7 +176,7 @@ namespace UnityToolkit.Editor
             // }
 
             return
-                $"\t\t\tif(!Nico.Editor.ParserManager.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
+                $"\t\t\tif(!{typeof(UnityToolkit.Editor.ParserManager).FullName}.Parse<string,{fieldType}>(values[{idx}], out {fieldName})) return false;";
         }
 
         internal static string CreateField(string fieldName, string fieldType)

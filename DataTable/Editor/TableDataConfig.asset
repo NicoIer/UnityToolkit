@@ -9,13 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71cd429ae8dea4232a4e885db5e53f3e, type: 3}
+  m_Script: {fileID: 11500000, guid: 7fbb8503c8c742d43a9f1e256fb85613, type: 3}
   m_Name: TableDataConfig
   m_EditorClassIdentifier: 
-  tDataTableTemplate: {fileID: 4900000, guid: db1a341fa261b4b40bf8f6cf9e680b96, type: 3}
-  tEnumTemplate: {fileID: 4900000, guid: a1aed018ee2d24192b8beace97208aa9, type: 3}
-  tClassTemplate: {fileID: 4900000, guid: a1bfa574808204d3a94cb51d33f28738, type: 3}
-  tStructTemplate: {fileID: 4900000, guid: bd0e905f660c04bda8c3fb37626ccac6, type: 3}
-  tDataTableAssemblyDefineTemplate: {fileID: 4900000, guid: d7fe55abb806b4ec4ab0e56ace6a4f84, type: 3}
-  assetSavePath: Assets/DataTable/
-  codeSavePath: Assets/DataTable/
+  assetSavePath: Assets/AddressablesResources/DataTable/
+  codeSavePath: Assets/Assemblies/DataTable/

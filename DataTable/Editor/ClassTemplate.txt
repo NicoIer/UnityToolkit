@@ -2,7 +2,7 @@ using UnityEngine;
 namespace Nico
 {
 #if UNITY_EDITOR
-using Nico.Editor;
+using UnityToolkit.Editor;
     [Parse]
 #endif
     [System.Serializable]

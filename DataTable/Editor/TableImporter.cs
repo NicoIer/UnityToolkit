@@ -100,11 +100,43 @@ namespace UnityToolkit.Editor
         private static List<IDataTable> GetTables(List<string> tableNames, List<string[][]> tableValues)
         {
             var tables = new List<IDataTable>();
-            Assembly assembly = Assembly.Load("DataTable");
+
+            //找到当前所有的DataTable的实现类
+
+            AppDomain appDomain = AppDomain.CurrentDomain;
+            Assembly[] assemblies = appDomain.GetAssemblies();
+            Dictionary<string, Type> name2DataTableType = new Dictionary<string, Type>();
+            Dictionary<string, Type> name2TableDataType = new Dictionary<string, Type>();
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsAbstract || type.IsInterface)
+                    {
+                        continue;
+                    }
+
+                    if (type.GetInterface(nameof(IDataTable)) != null)
+                    {
+                        name2DataTableType.Add(type.Name, type);
+                    }
+
+                    if (type.GetInterface(nameof(ITableData)) != null)
+                    {
+                        name2TableDataType.Add(type.Name, type);
+                    }
+                }
+            }
 
             for (int i = 0; i < tableNames.Count; i++)
             {
-                if (!CreateTable(out IDataTable table, tableNames[i], tableValues[i], assembly))
+                string tableName = tableNames[i];
+                string[][] values = tableValues[i];
+
+                Type tableType = name2DataTableType[tableName + "DataTable"];
+                Type dataType = name2TableDataType[tableName + "Data"];
+
+                if (!CreateTable(out IDataTable table, values, tableType, dataType))
                 {
                     continue;
                 }
@@ -117,11 +149,8 @@ namespace UnityToolkit.Editor
             return tables;
         }
 
-        public static bool CreateTable(out IDataTable table, string tableName, string[][] dataValues, Assembly assembly)
+        public static bool CreateTable(out IDataTable table, string[][] dataValues, Type tableType, Type dataType)
         {
-            Type tableType = assembly.GetType($"Nico.{tableName}DataTable");
-            Type dataType = assembly.GetType($"Nico.{tableName}Data");
-
             if (!TableDataCreator.CreateTable(out table, tableType))
             {
                 // Debug.LogError($"create table error:{tableName}");
@@ -182,10 +211,6 @@ namespace UnityToolkit.Editor
                 string tableCode = kvp.Value;
                 FileUtil.Write($"{codeSavePath}/{tableName}DataTable.cs", tableCode);
             }
-
-            //生成程序集定义
-            FileUtil.Write($"{codeSavePath}/DataTable.asmdef",
-                _config.TDataTableAssemblyDefineTemplate);
         }
 
         private static void GenerateCode(TableDataConfig _config, string tableName, string[][] values)
@@ -287,38 +312,55 @@ namespace UnityToolkit.Editor
         }
 
         private static string GenerateTableCode(TableDataConfig _config, string tableName, string[] values,
-            Dictionary<string, int> fieldDict)
+            List<Tuple<string, int>> fieldDict)
         {
             var fieldNames = ReadFieldNames(values, fieldDict);
-            var fieldTypes = fieldDict.Keys.ToArray();
+            string[] fieldTypes = new string[fieldDict.Count];
+            for (int i = 0; i < fieldDict.Count; i++)
+            {
+                fieldTypes[i] = fieldDict[i].Item1;
+            }
+
             return DefineCreator.CreateDataTable(_config, tableName, fieldNames, fieldTypes);
         }
 
 
-        private static string[] ReadFieldNames(string[] values, Dictionary<string, int> fieldDictionary)
+        /// <summary>
+        /// 获取成员变量名
+        /// </summary>
+        /// <param name="values"></param>
+        /// <param name="fieldDictionary"></param>
+        /// <returns></returns>
+        private static string[] ReadFieldNames(string[] values, List<Tuple<string, int>> fieldDictionary)
         {
             string[] fieldNames = new string[fieldDictionary.Count];
             int count = 0;
             foreach (var kvp in fieldDictionary)
             {
-                fieldNames[count] = values[kvp.Value];
+                fieldNames[count] = values[kvp.Item2];
                 ++count;
             }
 
             return fieldNames;
         }
 
-        private static void FindFieldTypeAndDefines(string[] values, out Dictionary<string, int> fieldDict,
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="values">Excel表的第二行</param>
+        /// <param name="fieldDict">成员变量类型-所在列号</param>
+        /// <param name="defineDict"></param>
+        private static void FindFieldTypeAndDefines(string[] values, out List<Tuple<string, int>> fieldDict,
             out Dictionary<string, int> defineDict)
         {
-            fieldDict = new Dictionary<string, int>();
+            fieldDict = new List<Tuple<string, int>>();
             defineDict = new Dictionary<string, int>();
             for (int i = 0; i < values.Length; i++)
             {
                 var value = values[i];
                 if (!value.Contains(":"))
                 {
-                    fieldDict.Add(value, i);
+                    fieldDict.Add(new Tuple<string, int>(value, i));
                 }
                 else
                 {

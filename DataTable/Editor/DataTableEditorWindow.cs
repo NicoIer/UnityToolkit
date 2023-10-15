@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -27,17 +28,22 @@ namespace UnityToolkit.Editor
 
         public void CreateGUI()
         {
+            //加载自己当前所在的路径 
+            string selfPath = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(this));
+            //去除文件名
+            selfPath = Path.GetDirectoryName(selfPath);
+            //  读取自己的 uxml 和 uss 文件
             VisualElement root = rootVisualElement;
             if (uxml == null)
             {
-                uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                    $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTableEditorWindow.uxml");
+                string path = Path.Combine(selfPath, "DataTableEditorWindow.uxml");
+                uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
             }
 
             if (uss == null)
             {
-                uss = AssetDatabase.LoadAssetAtPath<StyleSheet>(
-                    $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/DataTableEditorWindow.uss");
+                string path = Path.Combine(selfPath, "DataTableEditorWindow.uss");
+                uss = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
             }
 
             VisualElement labelFromUxml = uxml.Instantiate();
@@ -46,7 +52,7 @@ namespace UnityToolkit.Editor
 
             if (config == null)
             {
-                string path = $"{NicoEditorUtil.pluginPath}/DataTable/DataTable.Editor/TableDataConfig.asset";
+                string path = $"{selfPath}/TableDataConfig.asset";
                 config = AssetDatabase.LoadAssetAtPath<TableDataConfig>(path);
                 if (config == null)
                 {
@@ -121,14 +127,10 @@ namespace UnityToolkit.Editor
             try
             {
                 TableImporter.ImportData(excelPath, _assetGenPathTextField.value);
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.LogError("找不到文件:" + e.FileName);
+                AssetDatabase.Refresh();
             }
             finally
             {
-                AssetDatabase.Refresh();
                 _importDataTableButton.SetEnabled(true);
             }
         }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace UnityToolkit
 {
@@ -9,7 +8,10 @@ namespace UnityToolkit
     public class StateMachine<TOwner> // where TOwner : MonoBehaviour
     {
         public TOwner Owner { get; private set; }
-        [field: SerializeReference] public State<TOwner> currentState { get; protected set; }
+#if UNITY_EDITOR
+        [field: UnityEngine.SerializeReference]
+#endif
+        public State<TOwner> currentState { get; protected set; }
         protected Dictionary<Type, State<TOwner>> stateDic = new Dictionary<Type, State<TOwner>>();
         
         public StateMachine(TOwner owner)
@@ -48,12 +50,6 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add<T>(T state) where T : State<TOwner>
         {
-            if (stateDic.ContainsKey(typeof(T)))
-            {
-                Debug.LogWarning($"state:{typeof(T)} is already in state machine");
-                return;
-            }
-
             stateDic.Add(typeof(T), state);
         }
 

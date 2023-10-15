@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -6,38 +7,59 @@ namespace UnityToolkit
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
         private static T _singleton;
-        private static bool _isQuitting = false; //这里的静态变量不会被子类共享
-        public virtual bool dontDestroyOnLoad => false;
-        
+
+        protected virtual bool dontDestroyOnLoad()
+        {
+            return false;
+        }
+
+        public static T SingletonNullable => _singleton;
+
         public static T Singleton
         {
             get
             {
-                if (_singleton == null && !_isQuitting) //第一次访问 且 不是在退出时访问
+                
+                if(Application.isPlaying == false)
+                {
+                    return null;
+                }
+             
+                if (_singleton == null) //第一次访问
                 {
                     _singleton = FindObjectOfType<T>(); // 从场景中查找
-                    if (_singleton == null) //找不到则new一个
-                    {
-                        _singleton = new GameObject($"[{typeof(T).Name}]").AddComponent<T>();
-                    }
-
-                    // Debug.LogError($"init:{typeof(T)}");
                     _singleton.OnInit(); //手动初始化
                 }
 
                 return _singleton;
             }
         }
-        /// <summary>
-        /// 单例提供的
-        /// </summary>
+
         protected virtual void OnInit()
         {
-            // Debug.LogError($"{typeof(T)} OnInit");
+            // Debug.Log($"Singleton<{typeof(T).Name}>.OnInit() -> {gameObject.name}");
             transform.SetParent(null);
-            if (dontDestroyOnLoad)
+            if (dontDestroyOnLoad())
             {
                 DontDestroyOnLoad(gameObject);
+            }
+        }
+
+        protected virtual void Awake()
+        {
+            //Awake时如果还没有被访问 则将自己赋值给_singleton
+            if (_singleton == null)
+            {
+                _singleton = this as T;
+                // Debug.Log($"Singleton<{typeof(T).Name}>.Awake() -> {gameObject.name}");
+                _singleton.OnInit();
+                return;
+            }
+
+            //如果已经被访问过 则销毁自己
+            if (_singleton != this)
+            {
+                DestroyImmediate(gameObject);
             }
         }
 
@@ -45,40 +67,33 @@ namespace UnityToolkit
         {
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void ResetStatics()
-        {
-            _isQuitting = false;
-            _singleton = null;
-        }
-        private void Awake()
-        {
-            _isQuitting = false;
-            if (_singleton == null)
-            {
-                _singleton = GetComponent<T>();
-                _singleton.OnInit();
-            }
-            else if (_singleton != this)
-            {
-                Destroy(gameObject);
-            }
-        }
-
-        private void OnApplicationQuit()
-        {
-            _isQuitting = true;
-            if (_singleton == null) return;
-            Destroy(_singleton.gameObject);
-            _singleton = null;
-        }
-
-
         private void OnDestroy()
         {
-            if (_singleton != this) return;
-            _singleton = null;
-            OnDispose();
+            if (_singleton == this)
+            {
+                _singleton.OnDispose();
+                _singleton = null;
+            }
         }
+
+
+        // Unity 2022 后 生命周期变更 OnApplicationQuit -> OnDisable -> OnDestroy
+        private void OnApplicationQuit()
+        {
+            if (_singleton == this)
+            {
+                _singleton.OnDispose();
+                _singleton = null;
+            }
+        }
+
+        #if UNITY_EDITOR
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        private static void ResetStatic()
+        {
+            _singleton = null;
+        }
+        #endif
     }
 }
