@@ -47,7 +47,7 @@ namespace UnityToolkit
             return _repository.GetOrAdd<BuildInEvent<T>>().Regiser(onEvent);
         }
 
-        public void Unregister<T>(Action<T> onEvent)
+        public void UnRegister<T>(Action<T> onEvent)
         {
             _repository.Get<BuildInEvent<T>>()?.UnRegister(onEvent);
         }
@@ -99,23 +99,6 @@ namespace UnityToolkit
     public interface IOnEvent<in TType>
     {
         void OnEvent(TType args);
-
-        /// <summary>
-        /// 提供一个全局的事件注册方法
-        /// </summary>
-        /// <returns></returns>
-        public ICommand RegisterGlobal()
-        {
-            return TypeEventSystem.Global.Register<TType>(OnEvent);
-        }
-
-        /// <summary>
-        /// 提供一个全局的事件取消注册方法
-        /// </summary>
-        public void UnregisterGlobal()
-        {
-            TypeEventSystem.Global.Unregister<TType>(OnEvent);
-        }
     }
 
     /// <summary>

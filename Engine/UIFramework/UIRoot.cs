@@ -111,9 +111,14 @@ namespace UnityToolkit
         public T OpenPanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
+            return OpenPanel(type) as T;
+        }
+
+        public IUIPanel OpenPanel(Type type)
+        {
             if (_openedPanelDict.TryGetValue(type, out IUIPanel panel))
             {
-                return (T)panel;
+                return panel;
             }
 
             if (_closedPanelDict.TryGetValue(type, out panel))
@@ -121,10 +126,10 @@ namespace UnityToolkit
                 _closedPanelDict.Remove(type);
                 Push(panel);
                 _openedPanelDict.Add(type, panel);
-                return (T)panel;
+                return panel;
             }
 
-            panel = UIDatabase.CreatePanel<T>();
+            panel = UIDatabase.CreatePanel(type);
             RectTransform rectTransform = panel.GetRectTransform();
             rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
 
@@ -132,12 +137,17 @@ namespace UnityToolkit
             panel.OnLoaded();
             Push(panel);
             _openedPanelDict.Add(type, panel);
-            return (T)panel;
+            return panel;
         }
 
         public void ClosePanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
+            ClosePanel(type);
+        }
+
+        public void ClosePanel(Type type)
+        {
             if (_openedPanelDict.TryGetValue(type, out IUIPanel panel))
             {
                 Pop(panel);
@@ -169,6 +179,8 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _openedPanelDict.Remove(type);
+                // Debug.Log("Destroy " + value.GetGameObject().name);
+                Destroy(value.GetGameObject());
                 return;
             }
 
@@ -177,6 +189,7 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _closedPanelDict.Remove(type);
+                Destroy(value.GetGameObject());
             }
         }
 
@@ -189,6 +202,7 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Closed);
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
+                Destroy(kvp.Value.GetGameObject());
             }
 
             _openedPanelDict.Clear();
@@ -198,11 +212,59 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
                 kvp.Value.SetState(UIPanelState.Closed);
+                Destroy(kvp.Value.GetGameObject());
             }
 
             _closedPanelDict.Clear();
 
             _openedPanelStack.Clear();
+        }
+
+
+        public bool GetOpenedPanel<T>(out T panel) where T : class, IUIPanel
+        {
+            Type type = typeof(T);
+            if (_openedPanelDict.TryGetValue(type, out IUIPanel value))
+            {
+                panel = (T)value;
+                return true;
+            }
+
+            panel = null;
+            return false;
+        }
+
+
+        public bool IsOpen<T>() where T : class, IUIPanel
+        {
+            Type type = typeof(T);
+            return _openedPanelDict.ContainsKey(type);
+        }
+
+        public bool IsOpen(Type type)
+        {
+            return _openedPanelDict.ContainsKey(type);
+        }
+
+        public bool IsClosed<T>() where T : class, IUIPanel
+        {
+            Type type = typeof(T);
+            return _closedPanelDict.ContainsKey(type);
+        }
+
+        public bool IsClosed(Type type)
+        {
+            return _closedPanelDict.ContainsKey(type);
+        }
+
+        public bool IsDisposed<T>() where T : class, IUIPanel
+        {
+            return !IsClosed<T>() && !IsOpen<T>(); //既不在打开列表也不在关闭列表
+        }
+
+        public bool IsDisposed(Type type)
+        {
+            return !IsClosed(type) && !IsOpen(type); //既不在打开列表也不在关闭列表
         }
 
 
@@ -212,9 +274,23 @@ namespace UnityToolkit
         public static void CreateUIRoot()
         {
             GameObject prefab = Resources.Load<GameObject>("UIRoot");
-            GameObject uiRoot = GameObject.Instantiate(prefab, null);
+            GameObject uiRoot = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             uiRoot.name = "UIRoot";
+            uiRoot.transform.SetParent(null);
+            uiRoot.transform.localPosition = Vector3.zero;
+            uiRoot.transform.localRotation = Quaternion.identity;
+            uiRoot.transform.localScale = Vector3.one;
             UnityEditor.Selection.activeGameObject = uiRoot;
+
+            UIRoot root = uiRoot.GetComponent<UIRoot>();
+            if (root.UIDatabase == null)
+            {
+                root.UIDatabase = root.CreateDatabase();
+                if (root.UIDatabase == null)
+                {
+                    Destroy(uiRoot);
+                }
+            }
         }
 #endif
 
@@ -225,6 +301,10 @@ namespace UnityToolkit
             if (UIDatabase == null)
             {
                 UIDatabase = CreateDatabase();
+                if (UIDatabase == null)
+                {
+                    return;
+                }
             }
 
             UIDatabase.Refresh();

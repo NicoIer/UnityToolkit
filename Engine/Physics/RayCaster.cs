@@ -10,9 +10,9 @@ namespace UnityToolkit
     /// </summary>
     public static class RayCaster
     {
-        const int MAX_COUNT = 25;
-        private static readonly Collider[] _colliders = new Collider[MAX_COUNT];
-        private static readonly RaycastHit[] _raycastHit = new RaycastHit[MAX_COUNT];
+        const int MaxCount = 100;
+        private static readonly Collider[] _colliders = new Collider[MaxCount];
+        private static readonly RaycastHit[] _raycastHit = new RaycastHit[MaxCount];
         private static Camera _mainCamera;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

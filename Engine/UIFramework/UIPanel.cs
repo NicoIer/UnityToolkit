@@ -13,7 +13,7 @@ namespace UnityToolkit
         public void OnClosed(); //关闭面板时调用
         public void OnDispose(); //销毁面板时调用
     }
-    
+
     /// <summary>
     /// UIBind 使用这个特性标记的字段在编辑器模式下,点击AutoBind按钮会自动绑定到对应的子物体
     /// </summary>
@@ -108,6 +108,11 @@ namespace UnityToolkit
             Destroy(gameObject);
         }
 
+        protected void CloseSelf()
+        {
+            UIRoot.Singleton.ClosePanel(GetType());
+        }
+
 
 #if UNITY_EDITOR
 
@@ -123,35 +128,6 @@ namespace UnityToolkit
             canvas.sortingOrder = sortingOrder;
         }
         
-//         //在Hierarchy面板中可以快速创建一个UIPanel
-//         [UnityEditor.MenuItem("GameObject/UI/UIPanel", false, 0)]
-//         public static void CreateUIPanel()
-//         {
-//             //搜索场景中的UIRoot
-//             UIRoot root = FindObjectOfType<UIRoot>();
-//
-//             if (root == null)
-//             {
-//                 UIRoot.CreateUIRoot();
-//                 root = FindObjectOfType<UIRoot>();
-//             }
-//             //拿到root的uiDatabase
-//             UIDatabase database = root.UIDatabase;
-//             //没有则创建一个
-//             if (database == null)
-//             {
-//                 database = root.CreateDatabase();
-//             }
-//             //拿到database所在目录
-//             string databasePath = UnityEditor.AssetDatabase.GetAssetPath(database);
-//             //创建uiPanel的预制体变体
-//             GameObject uiPanelBase = Resources.Load<GameObject>("UIPanel");
-//             //创建uiPanel的预制体
-//             GameObject uiPanelPrefab = UnityEditor.PrefabUtility.InstantiatePrefab(uiPanelBase) as GameObject;
-//             //创建uiPanel的实例
-//             GameObject uiPanel = GameObject.Instantiate(uiPanelPrefab, root.transform);
-//             
-//         }
 #endif
 
 #if UNITY_EDITOR && ODIN_INSPECTOR
@@ -165,8 +141,6 @@ namespace UnityToolkit
 
             //找到预制体的位置
             string prefabPath = UnityEditor.AssetDatabase.GetAssetPath(gameObject);
-            //找到预制体
-            GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             //修改预制体的名字为类名
             gameObject.name = GetType().Name;
             UnityEditor.AssetDatabase.RenameAsset(prefabPath, GetType().Name);

@@ -1,10 +1,17 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace UnityToolkit
 {
-    public abstract class ModelEvent<T> where T : ModelEvent<T>, IModel
+    
+    public interface IModel
+    {
+    }
+    /// <summary>
+    /// 含有事件监听的数据层
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class Model<T> where T : Model<T>
     {
         private event Action<T> OnEvent = _ => { };
 
@@ -25,19 +32,10 @@ namespace UnityToolkit
         }
     }
 
-    public interface IModel
-    {
-        // void Init();
-        // void Save();
-    }
-
     public class ModelCenter
     {
         private readonly Dictionary<Type, IModel> _models = new Dictionary<Type, IModel>();
-
-        // private readonly Dictionary<Type, BindableProperty<IModel>> _bindable =
-        //     new Dictionary<Type, BindableProperty<IModel>>();
-
+        
         public T Register<T>() where T : IModel, new()
         {
             T model = new T();
@@ -53,7 +51,6 @@ namespace UnityToolkit
             }
 
             _models[type] = model;
-            // model.Init();
             return Get<T>();
         }
 
@@ -67,33 +64,5 @@ namespace UnityToolkit
 
             throw new KeyNotFoundException($"please register model<{nameof(TModel)}> first");
         }
-
-        // public BindableProperty<TModel> GetBind<TModel>() where TModel : IModel
-        // {
-        //     var type = typeof(TModel);
-        //     if (_bindable.TryGetValue(type, out BindableProperty<IModel> bind))
-        //     {
-        //         return bind as BindableProperty<TModel>;
-        //     }
-        //     
-        //     TModel model = Get<TModel>();
-        //     BindableProperty<TModel> bindableProperty = new BindableProperty<TModel>(model);
-        //     _bindable.Add(type, bindableProperty as BindableProperty<IModel>);
-        //     return bindableProperty;
-        // }
-
-        // public void Save<TModel>() where TModel : IModel
-        // {
-        //     TModel model = Get<TModel>();
-        //     // model.Save();
-        // }
-        //
-        // public void SaveAll()
-        // {
-        //     foreach (var model in _models.Values)
-        //     {
-        //         model.Save();
-        //     }
-        // }
     }
 }

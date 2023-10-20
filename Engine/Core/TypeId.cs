@@ -1,3 +1,5 @@
+using System;
+
 namespace UnityToolkit
 {
     /// <summary>
@@ -7,6 +9,5 @@ namespace UnityToolkit
     public static class TypeId<T>
     {
         public static readonly int StableId = typeof(T).FullName.GetStableHash();
-        public static readonly int HashId = typeof(T).FullName.GetHashCode();
     }
 }

@@ -22,7 +22,7 @@ namespace UnityToolkit
         /// <exception cref="KeyNotFoundException"></exception>
         public T CreatePanel<T>() where T : class, IUIPanel
         {
-            int id = TypeId<T>.HashId;
+            int id = typeof(T).GetHashCode();
             if (_panelDict.TryGetValue(id, out GameObject value))
             {
                 if (value.GetComponent<T>() == null)
@@ -44,12 +44,36 @@ namespace UnityToolkit
             throw new KeyNotFoundException($"{typeof(T)} hasn't been register in ui database");
         }
 
+        public IUIPanel CreatePanel(Type type)
+        {
+            int id = type.GetHashCode();
+            if (_panelDict.TryGetValue(id, out GameObject value))
+            {
+                if (value.GetComponent(type) == null)
+                {
+                    throw new ArgumentException(
+                        $"UIPanel prefab:{value} doesn't contain UIPanel {type} component");
+                }
+
+                GameObject panel = Instantiate(value);
+                //修改RectTransform为填满的模式
+                RectTransform rectTransform = panel.GetComponent<RectTransform>();
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                return (IUIPanel)panel.GetComponent(type);
+            }
+
+            throw new KeyNotFoundException($"{type} hasn't been register in ui database");
+        }
+
 
         //运行时动态添加
         public void Add(GameObject gameObject)
         {
             if (!gameObject.TryGetComponent(out IUIPanel panel)) return;
-            int id = panel.GetType().FullName.GetHashCode();
+            int id = panel.GetType().GetHashCode();
 
             _panelDict[id] = gameObject;
         }
@@ -74,7 +98,7 @@ namespace UnityToolkit
 
                 if (uiPrefab.TryGetComponent(out IUIPanel panel))
                 {
-                    int id = panel.GetType().FullName.GetHashCode();
+                    int id = panel.GetType().GetHashCode();
                     if (id != key)
                     {
                         _removeIds.Add(key);
@@ -108,10 +132,26 @@ namespace UnityToolkit
             {
                 string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                 GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                if (prefab == null) continue;
                 if (prefab.TryGetComponent(out IUIPanel panel))
                 {
-                    _panelDict[panel.GetType().FullName.GetHashCode()] = prefab;
+                    _panelDict[panel.GetType().GetHashCode()] = prefab;
                 }
+            }
+
+            //删除prefab==null的
+            List<int> removeIds = new List<int>();
+            foreach (var (key, uiPrefab) in _panelDict)
+            {
+                if (uiPrefab == null)
+                {
+                    removeIds.Add(key);
+                }
+            }
+
+            foreach (var removeId in removeIds)
+            {
+                _panelDict.Remove(removeId);
             }
         }
 #endif

@@ -1,5 +1,3 @@
-using System;
-using UnityEditor;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -19,23 +17,22 @@ namespace UnityToolkit
         {
             get
             {
-                
-                if(Application.isPlaying == false)
+                if (Application.isPlaying == false)
                 {
                     return null;
                 }
-             
+
                 if (_singleton == null) //第一次访问
                 {
                     _singleton = FindObjectOfType<T>(); // 从场景中查找
-                    _singleton.OnInit(); //手动初始化
+                    _singleton.OnSingletonInit(); //手动初始化
                 }
 
                 return _singleton;
             }
         }
 
-        protected virtual void OnInit()
+        private void OnSingletonInit()
         {
             // Debug.Log($"Singleton<{typeof(T).Name}>.OnInit() -> {gameObject.name}");
             transform.SetParent(null);
@@ -43,7 +40,9 @@ namespace UnityToolkit
             {
                 DontDestroyOnLoad(gameObject);
             }
+            OnInit();
         }
+
 
         protected virtual void Awake()
         {
@@ -52,15 +51,19 @@ namespace UnityToolkit
             {
                 _singleton = this as T;
                 // Debug.Log($"Singleton<{typeof(T).Name}>.Awake() -> {gameObject.name}");
-                _singleton.OnInit();
+                _singleton.OnSingletonInit();
                 return;
             }
 
             //如果已经被访问过 则销毁自己
             if (_singleton != this)
             {
-                DestroyImmediate(gameObject);
+                Destroy(gameObject);
             }
+        }
+
+        protected virtual void OnInit()
+        {
         }
 
         protected virtual void OnDispose()
@@ -87,13 +90,13 @@ namespace UnityToolkit
             }
         }
 
-        #if UNITY_EDITOR
-        
+#if UNITY_EDITOR
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         private static void ResetStatic()
         {
             _singleton = null;
         }
-        #endif
+#endif
     }
 }

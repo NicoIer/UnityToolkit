@@ -3,7 +3,6 @@
     "rootNamespace": "Nico",
     "references": [
         "Nico.DataTable",
-        "Nico.Editor",
         "UnityToolkit.Engine"
     ],
     "includePlatforms": [
