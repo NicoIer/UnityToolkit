@@ -292,6 +292,18 @@ namespace UnityToolkit
                 }
             }
         }
+
+        public UIDatabase CreateDatabase()
+        {
+            //如果没有找到UIPanelDatabase，就创建一个
+            UIDatabase = ScriptableObject.CreateInstance<UIDatabase>();
+            //打开创建文件的窗口
+            string path = UnityEditor.EditorUtility.SaveFilePanelInProject("Create UIPanelDatabase", "UIPanelDatabase",
+                "asset", "Create UIPanelDatabase");
+            UnityEditor.AssetDatabase.CreateAsset(UIDatabase, path);
+            UnityEditor.AssetDatabase.SaveAssets();
+            return UIDatabase;
+        }
 #endif
 
 #if ODIN_INSPECTOR && UNITY_EDITOR
@@ -314,18 +326,6 @@ namespace UnityToolkit
         public void OpenDatabase()
         {
             throw new NotImplementedException();
-        }
-
-        public UIDatabase CreateDatabase()
-        {
-            //如果没有找到UIPanelDatabase，就创建一个
-            UIDatabase = ScriptableObject.CreateInstance<UIDatabase>();
-            //打开创建文件的窗口
-            string path = UnityEditor.EditorUtility.SaveFilePanelInProject("Create UIPanelDatabase", "UIPanelDatabase",
-                "asset", "Create UIPanelDatabase");
-            UnityEditor.AssetDatabase.CreateAsset(UIDatabase, path);
-            UnityEditor.AssetDatabase.SaveAssets();
-            return UIDatabase;
         }
 #endif
     }
