@@ -11,8 +11,19 @@ namespace UnityToolkit
     [CreateAssetMenu(fileName = "UIDatabase", menuName = "Toolkit/UIDatabase", order = 0)]
     public class UIDatabase : ScriptableObject
     {
-        [SerializeField]
-        private SerializableDictionary<int, GameObject> _panelDict = new SerializableDictionary<int, GameObject>();
+        private Dictionary<int, GameObject> _panelDict;
+        [SerializeField] private List<GameObject> _panels = new List<GameObject>();
+
+        private void InitPanelDict()
+        {
+            _panelDict = new Dictionary<int, GameObject>();
+
+            foreach (var panel in _panels)
+            {
+                int id = panel.GetComponent<IUIPanel>().GetType().GetHashCode();
+                _panelDict.Add(id, panel);
+            }
+        }
 
         /// <summary>
         /// 创建UI面板
@@ -22,6 +33,11 @@ namespace UnityToolkit
         /// <exception cref="KeyNotFoundException"></exception>
         public T CreatePanel<T>() where T : class, IUIPanel
         {
+            if (_panelDict == null)
+            {
+                InitPanelDict();
+            }
+
             int id = typeof(T).GetHashCode();
             if (_panelDict.TryGetValue(id, out GameObject value))
             {
@@ -46,6 +62,7 @@ namespace UnityToolkit
 
         public IUIPanel CreatePanel(Type type)
         {
+            if (_panelDict == null) InitPanelDict();
             int id = type.GetHashCode();
             if (_panelDict.TryGetValue(id, out GameObject value))
             {
@@ -72,6 +89,7 @@ namespace UnityToolkit
         //运行时动态添加
         public void Add(GameObject gameObject)
         {
+            if (_panelDict == null) InitPanelDict();
             if (!gameObject.TryGetComponent(out IUIPanel panel)) return;
             int id = panel.GetType().GetHashCode();
 
@@ -79,42 +97,33 @@ namespace UnityToolkit
         }
 
 #if UNITY_EDITOR
-        private readonly List<int> _removeIds = new List<int>();
-
-        private readonly List<GameObject> _addGameObjects = new List<GameObject>();
-
         // 编辑器下动态添加 校验使用
         private void OnValidate()
         {
-            _removeIds.Clear();
-            _addGameObjects.Clear();
-            foreach (var (key, uiPrefab) in _panelDict)
+            // 移除空的
+            HashSet<int> ids = new HashSet<int>();
+            for (int i = _panels.Count - 1; i > 0; i--)
             {
-                if (uiPrefab == null)
+                var panelPrefab = _panels[i];
+                if (panelPrefab == null)
                 {
-                    _removeIds.Add(key);
+                    Debug.LogError($"UIDatabase中存在空的panel prefab");
+                    _panels.RemoveAt(i);
                     continue;
                 }
 
-                if (uiPrefab.TryGetComponent(out IUIPanel panel))
+                if (!panelPrefab.TryGetComponent(out IUIPanel uiPanel))
                 {
-                    int id = panel.GetType().GetHashCode();
-                    if (id != key)
-                    {
-                        _removeIds.Add(key);
-                        _addGameObjects.Add(uiPrefab);
-                    }
+                    Debug.LogError($"UIDatabase中存在不包含IUIPanel的panel prefab:{panelPrefab}");
+                    _panels.RemoveAt(i);
+                    continue;
                 }
-            }
 
-            foreach (var removeId in _removeIds)
-            {
-                _panelDict.Remove(removeId);
-            }
-
-            foreach (var gameObject in _addGameObjects)
-            {
-                Add(gameObject);
+                int id = uiPanel.GetType().GetHashCode();
+                if (!ids.Contains(id)) continue;
+                Debug.LogError($"UIDatabase中存在重复的panel id:{id}");
+                _panels.RemoveAt(i);
+                continue;
             }
         }
 #endif
@@ -128,30 +137,21 @@ namespace UnityToolkit
             string path = UnityEditor.AssetDatabase.GetAssetPath(this);
             string dir = System.IO.Path.GetDirectoryName(path);
             string[] guids = UnityEditor.AssetDatabase.FindAssets("t:Prefab", new[] { dir });
+            HashSet<int> ids = new HashSet<int>();
+            foreach (var panel in _panels)
+            {
+                ids.Add(panel.GetComponent<IUIPanel>().GetType().GetHashCode());
+            }
+
             foreach (string guid in guids)
             {
                 string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                 GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-                if (prefab == null) continue;
-                if (prefab.TryGetComponent(out IUIPanel panel))
-                {
-                    _panelDict[panel.GetType().GetHashCode()] = prefab;
-                }
-            }
-
-            //删除prefab==null的
-            List<int> removeIds = new List<int>();
-            foreach (var (key, uiPrefab) in _panelDict)
-            {
-                if (uiPrefab == null)
-                {
-                    removeIds.Add(key);
-                }
-            }
-
-            foreach (var removeId in removeIds)
-            {
-                _panelDict.Remove(removeId);
+                if (prefab == null) continue; //不是prefab
+                if (!prefab.TryGetComponent(out IUIPanel panel)) continue; //不包含IUIPanel
+                if (_panels.Contains(prefab)) continue; //已经存在
+                if (ids.Contains(panel.GetType().GetHashCode())) continue; //已经存在
+                _panels.Add(prefab);
             }
         }
 #endif
