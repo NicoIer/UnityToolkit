@@ -19,10 +19,11 @@ namespace UnityToolkit
             _unRegister = null;
         }
     }
-    
+
+    [Serializable]
     public sealed class BindableProperty<T>
     {
-        private T _value;
+        [SerializeField] private T _value;
         private Action<T> _onValueChanged = (_) => { };
 
         public T Value

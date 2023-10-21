@@ -5,6 +5,18 @@ using UnityEngine;
 
 namespace UnityToolkit
 {
+    public static class RayCaster2D
+    {
+        public const int MaxCount = 100;
+        private static Collider2D[] collider2Ds = new Collider2D[MaxCount];
+        
+        public static int OverlapCircleNonAlloc(Vector2 position, float radius,out Collider2D[] cols,LayerMask layerMask)
+        {
+            int count = Physics2D.OverlapCircleNonAlloc(position, radius, collider2Ds, layerMask);
+            cols = collider2Ds;
+            return count;
+        }
+    }
     /// <summary>
     /// 游戏中的射线检测管理器
     /// </summary>

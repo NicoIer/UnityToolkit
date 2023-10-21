@@ -62,9 +62,12 @@ namespace UnityToolkit
 
         private Canvas _panelCanvas; //用于显示面板的Canvas
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ReadOnly]
+        [field: SerializeField, Sirenix.OdinInspector.ReadOnly]
+#else
+        [field: SerializeField]
 #endif
-        public UIPanelState state = UIPanelState.None;
+
+        public UIPanelState state { get; internal set; } = UIPanelState.None;
 
         public int sortingOrder;
 
@@ -114,6 +117,17 @@ namespace UnityToolkit
         }
 
 
+        public bool IsOpened()
+        {
+            return state == UIPanelState.Opened;
+        }
+
+        public bool IsClosed()
+        {
+            return state == UIPanelState.Closed;
+        }
+
+
 #if UNITY_EDITOR
 
         private void Reset()
@@ -127,7 +141,7 @@ namespace UnityToolkit
             canvas.overrideSorting = true;
             canvas.sortingOrder = sortingOrder;
         }
-        
+
 #endif
 
 #if UNITY_EDITOR && ODIN_INSPECTOR

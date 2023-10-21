@@ -40,6 +40,7 @@ namespace UnityToolkit
             {
                 DontDestroyOnLoad(gameObject);
             }
+
             OnInit();
         }
 

@@ -2,9 +2,6 @@
     "name": "Nico.DataTable",
     "rootNamespace": "Nico",
     "references": [
-        "Unity.Addressables",
-        "Unity.ResourceManager",
-        "Nico.Editor",
         "UnityToolkit.Engine"
     ],
     "includePlatforms": [],
