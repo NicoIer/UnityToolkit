@@ -25,6 +25,11 @@ namespace UnityToolkit
             }
         }
 
+        private void OnDestroy()
+        {
+            _panelDict = null;
+        }
+
         /// <summary>
         /// 创建UI面板
         /// </summary>
@@ -39,25 +44,23 @@ namespace UnityToolkit
             }
 
             int id = typeof(T).GetHashCode();
-            if (_panelDict.TryGetValue(id, out GameObject value))
+            if (!_panelDict.TryGetValue(id, out GameObject value))
+                throw new KeyNotFoundException($"{typeof(T)} hasn't been register in ui database");
+            if (value.GetComponent<T>() == null)
             {
-                if (value.GetComponent<T>() == null)
-                {
-                    throw new ArgumentException(
-                        $"UIPanel prefab:{value} doesn't contain UIPanel {typeof(T)} component");
-                }
-
-                GameObject panel = Instantiate(value);
-                //修改RectTransform为填满的模式
-                RectTransform rectTransform = panel.GetComponent<RectTransform>();
-                rectTransform.anchorMin = Vector2.zero;
-                rectTransform.anchorMax = Vector2.one;
-                rectTransform.offsetMin = Vector2.zero;
-                rectTransform.offsetMax = Vector2.zero;
-                return panel.GetComponent<T>();
+                throw new ArgumentException(
+                    $"UIPanel prefab:{value} doesn't contain UIPanel {typeof(T)} component");
             }
 
-            throw new KeyNotFoundException($"{typeof(T)} hasn't been register in ui database");
+            GameObject panel = Instantiate(value);
+            //修改RectTransform为填满的模式
+            RectTransform rectTransform = panel.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            return panel.GetComponent<T>();
+
         }
 
         public IUIPanel CreatePanel(Type type)
@@ -85,16 +88,7 @@ namespace UnityToolkit
             throw new KeyNotFoundException($"{type} hasn't been register in ui database");
         }
 
-
-        //运行时动态添加
-        public void Add(GameObject gameObject)
-        {
-            if (_panelDict == null) InitPanelDict();
-            if (!gameObject.TryGetComponent(out IUIPanel panel)) return;
-            int id = panel.GetType().GetHashCode();
-
-            _panelDict[id] = gameObject;
-        }
+        
 
 #if UNITY_EDITOR
         // 编辑器下动态添加 校验使用

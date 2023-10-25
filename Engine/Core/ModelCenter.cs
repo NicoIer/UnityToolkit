@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace UnityToolkit
 {
-    
     public interface IModel
     {
     }
+
     /// <summary>
     /// 含有事件监听的数据层
     /// </summary>
@@ -35,7 +35,7 @@ namespace UnityToolkit
     public class ModelCenter
     {
         private readonly Dictionary<Type, IModel> _models = new Dictionary<Type, IModel>();
-        
+
         public T Register<T>() where T : IModel, new()
         {
             T model = new T();
@@ -63,6 +63,15 @@ namespace UnityToolkit
             }
 
             throw new KeyNotFoundException($"please register model<{nameof(TModel)}> first");
+        }
+
+        public void UnRegister<TModel>() where TModel : IModel
+        {
+            var type = typeof(TModel);
+            if (_models.ContainsKey(type))
+            {
+                _models.Remove(type);
+            }
         }
     }
 }

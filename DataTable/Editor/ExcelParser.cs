@@ -39,16 +39,15 @@ namespace UnityToolkit.Editor
             int colCount = worksheet.Dimension.Columns;
             // Debug.Log($"[{rowCount}][{colCount}]");
             values = new string[rowCount][];
-
+            
             for (int row = 1; row <= rowCount; row++)
             {
-                values[row - 1] = new string[colCount];
+                values[row - 1] = new string[colCount];// 这里有可能是空列
                 for (int col = 1; col <= colCount; col++)
                 {
                     var value = worksheet.Cells[row, col].Value;
                     if (value is null)
                     {
-                        // Debug.LogWarning($"ExcelParser: value is null at worksheet:{worksheet.Name} row:{row} col:{col}");
                         values[row - 1][col - 1] = "";
                         continue;
                     }

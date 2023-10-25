@@ -171,7 +171,13 @@ namespace UnityToolkit
             foreach (var field in fields)
             {
                 var bindAttr = field.GetCustomAttributes(typeof(UIBindAttribute), true);
-                if (bindAttr.Length <= 0) continue;
+                if (bindAttr.Length <= 0)
+                {
+                    //TODO 看不是不UGUI下的UI组件
+                    continue;
+                }
+                
+                
                 var uiBindAttr = bindAttr[0] as UIBindAttribute;
                 if (string.IsNullOrEmpty(uiBindAttr.path)) //没填path 则递归搜第一个同名
                 {

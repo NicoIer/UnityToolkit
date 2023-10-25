@@ -36,8 +36,6 @@ namespace Nico
             {
                 _dataDict.Add(data.id, data);
             }
-
-            Debug.LogWarning($"{tableData.GetType()} can added to {GetType()}");
         }
 #endif
     }

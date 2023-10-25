@@ -179,5 +179,13 @@ namespace UnityToolkit
             ObjectPool<GameObject> pool = prefabDict[id];
             pool.Release(poolObject.gameObject);
         }
+
+        // public void ReleaseAll()
+        // {
+        //     foreach (var pool in prefabDict.Values)
+        //     {
+        //         pool.Clear();
+        //     }
+        // }
     }
 }
