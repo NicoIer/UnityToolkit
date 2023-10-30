@@ -1,11 +1,12 @@
-﻿
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
 
+namespace UnityToolkit.Editor
+{
     public static class UIElementUtil
     {
         public static void AddClasses(this VisualElement element, params string[] classList)
@@ -98,5 +99,5 @@ using UnityEngine.UIElements;
             return textArea;
         }
     }
-
+}
 #endif

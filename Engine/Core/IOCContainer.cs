@@ -17,16 +17,18 @@ namespace UnityToolkit
             _mInstances[key] = instance;
         }
 
-        public T Get<T>()
+        public bool Get<T>(out T t)
         {
             var key = typeof(T);
 
             if (_mInstances.TryGetValue(key, out var retInstance))
             {
-                return (T)retInstance;
+                t = (T)retInstance;
+                return true;
             }
 
-            return default(T);
+            t = default(T);
+            return false;
         }
     }
 }

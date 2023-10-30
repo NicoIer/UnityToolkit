@@ -60,7 +60,6 @@ namespace UnityToolkit
             rectTransform.offsetMin = Vector2.zero;
             rectTransform.offsetMax = Vector2.zero;
             return panel.GetComponent<T>();
-
         }
 
         public IUIPanel CreatePanel(Type type)
@@ -88,7 +87,6 @@ namespace UnityToolkit
             throw new KeyNotFoundException($"{type} hasn't been register in ui database");
         }
 
-        
 
 #if UNITY_EDITOR
         // 编辑器下动态添加 校验使用
@@ -122,9 +120,14 @@ namespace UnityToolkit
         }
 #endif
 
-#if ODIN_INSPECTOR && UNITY_EDITOR
+#if UNITY_EDITOR
         [Tooltip("刷新Database所在文件夹下的所有prefab")]
+#if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("Refresh")]
+#else
+        [UnityEditor.ContextMenu("Refresh")]
+#endif
+
         public void Refresh()
         {
             //搜索自己所在的文件夹下的所有prefab

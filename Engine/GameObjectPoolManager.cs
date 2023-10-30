@@ -17,6 +17,9 @@ namespace UnityToolkit
         internal int maxPoolSize = 100;
     }
 
+    /// <summary>
+    /// 实现了这个接口的MonoBehaviour可以被对象池管理 类似于TagComponent
+    /// </summary>
     public interface IGameObjectPoolObject
     {
         public void OnGet();

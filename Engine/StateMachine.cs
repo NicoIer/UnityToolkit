@@ -4,18 +4,22 @@ using System.Runtime.CompilerServices;
 
 namespace UnityToolkit
 {
+#if UNITY_EDITOR
     [Serializable]
-    public class StateMachine<TOwner> // where TOwner : MonoBehaviour
+#endif
+    public class StateMachine<TOwner>
     {
         public TOwner Owner { get; private set; }
 #if UNITY_EDITOR
         [field: UnityEngine.SerializeReference]
 #endif
-        public State<TOwner> currentState { get; protected set; }
-        protected Dictionary<Type, State<TOwner>> stateDic = new Dictionary<Type, State<TOwner>>();
-        
+        public State<TOwner> CurrentState { get; protected set; }
+
+        protected Dictionary<Type, State<TOwner>> stateDic;
+
         public StateMachine(TOwner owner)
         {
+            stateDic = new Dictionary<Type, State<TOwner>>();
             Owner = owner;
         }
 
@@ -35,16 +39,16 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Start<T>() where T : State<TOwner>
         {
-            currentState = stateDic[typeof(T)];
-            currentState.OnEnter();
+            CurrentState = stateDic[typeof(T)];
+            CurrentState.OnEnter(Owner);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Change<T>() where T : State<TOwner>
         {
-            currentState.OnExit();
-            currentState = stateDic[typeof(T)];
-            currentState.OnEnter();
+            CurrentState.OnExit(Owner);
+            CurrentState = stateDic[typeof(T)];
+            CurrentState.OnEnter(Owner);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -56,7 +60,7 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void OnUpdate()
         {
-            currentState.OnUpdate();
+            CurrentState.OnUpdate(Owner);
         }
     }
 }

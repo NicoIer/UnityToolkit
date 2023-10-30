@@ -7,10 +7,13 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-
+namespace UnityToolkit.Editor
+{
     internal static class Reflection
     {
-        private const BindingFlags Full = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+        private const BindingFlags Full = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
+                                          BindingFlags.Instance;
+
         public const BindingFlags Instance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
         public const BindingFlags Static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
         private static Assembly type;
@@ -35,20 +38,22 @@ using Object = UnityEngine.Object;
             return type.GetMethod(name, bindingFlags, null, types, null);
         }
     }
-    
-    
-    
+
+
     internal static class UtilityRef
     {
         private static Type type => typeof(EditorUtility);
 
         private static MethodInfo displayObjectContextMenuMethod;
-        private static MethodInfo DisplayObjectContextMenuMethod => displayObjectContextMenuMethod ??= Reflection.GetMethod(type, Reflection.Static,"DisplayObjectContextMenu", new[] { typeof(Rect), typeof(Object), typeof(int) });
+
+        private static MethodInfo DisplayObjectContextMenuMethod => displayObjectContextMenuMethod ??=
+            Reflection.GetMethod(type, Reflection.Static, "DisplayObjectContextMenu",
+                new[] { typeof(Rect), typeof(Object), typeof(int) });
 
         public static void DisplayObjectContextMenu(Rect position, Object context, int contextUserData)
         {
             DisplayObjectContextMenuMethod.Invoke(null, new object[] { position, context, contextUserData });
         }
     }
-
+}
 #endif

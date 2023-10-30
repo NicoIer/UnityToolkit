@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UnityToolkit
@@ -13,14 +14,15 @@ namespace UnityToolkit
 
     public class ProgressBar : MonoBehaviour, IUIComponent
     {
-        public TextMeshProUGUI title;
-        public Image bar;
-        [SerializeField] private bool usingTitle = false;
-        [SerializeField] private int max = 10;
-        [SerializeField] private int value = 5;
-        [SerializeField] private int min = 0;
-        public ProgressTitleType titleType = ProgressTitleType.Value;
-        public bool tween = true;
+        [SerializeField] private TextMeshProUGUI title;
+        [SerializeField] private Image bar;
+        [SerializeField] private bool usingTitle;
+        [SerializeField] private int _max = 100;
+        [SerializeField] private int _value = 50;
+        [SerializeField] private int _min = 0;
+        [SerializeField] private ProgressTitleType _titleType = ProgressTitleType.Value;
+        [SerializeField] private Image.FillMethod _fillMethod = Image.FillMethod.Horizontal; //默认水平填充
+        // public bool tween = true;
 
         public bool UsingTitle
         {
@@ -34,27 +36,47 @@ namespace UnityToolkit
 
         public int Value
         {
-            get => value;
+            get => _value;
             set => SetValue(value);
         }
 
         public int Max
         {
-            get => max;
+            get => _max;
             set
             {
-                max = value;
+                _max = value;
                 UpdateVisualDirect();
             }
         }
 
         public int Min
         {
-            get => min;
+            get => _min;
             set
             {
-                min = value;
+                _min = value;
                 UpdateVisualDirect();
+            }
+        }
+
+        public ProgressTitleType TitleType
+        {
+            get => _titleType;
+            set
+            {
+                _titleType = value;
+                UpdateVisualDirect();
+            }
+        }
+
+        public Image.FillMethod FillMethod
+        {
+            get => _fillMethod;
+            set
+            {
+                _fillMethod = value;
+                bar.fillMethod = value;
             }
         }
 
@@ -63,13 +85,14 @@ namespace UnityToolkit
 
         private void UpdateVisualDirect()
         {
+            bar.fillMethod = _fillMethod;
             UpdateTitle();
             UpdateProgress();
         }
 
         private void UpdateProgress()
         {
-            float percent = ((float)value - min) / (max - min);
+            float percent = ((float)_value - _min) / (_max - _min);
             bar.fillAmount = percent;
         }
 
@@ -77,13 +100,13 @@ namespace UnityToolkit
         {
             title.enabled = usingTitle;
             if (!usingTitle) return;
-            switch (titleType)
+            switch (_titleType)
             {
                 case ProgressTitleType.Value:
-                    title.text = $"{value}/{max}";
+                    title.text = $"{_value}/{_max}";
                     break;
                 case ProgressTitleType.Percent:
-                    float percent = ((float)value - min) / (max - min);
+                    float percent = ((float)_value - _min) / (_max - _min);
                     title.text = $"{percent:P}";
                     break;
                 default:
@@ -94,30 +117,29 @@ namespace UnityToolkit
 
         public void SetValue(int value)
         {
-            if (value > max) value = max;
-            if (value < min) value = min;
+            if (value > _max) value = _max;
+            if (value < _min) value = _min;
 
-            if (this.value != value)
-            {
-                this.value = value;
-                UpdateVisualDirect();
-                OnValueChanged?.Invoke(value);
-            }
+            if (this._value == value) return;
+            this._value = value;
+            UpdateVisualDirect();
+            OnValueChanged?.Invoke(value);
         }
+
         public void SetProgress(int value, int maxValue)
         {
-            this.value = value;
-            max = maxValue;
-            UpdateVisualDirect();
+            this._value = value;
+            _max = maxValue;
+            SetValue(value);
         }
-        
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
             bar.type = Image.Type.Filled;
-            if (min > max) min = max;
-            if (value > max) value = max;
-            if (value < min) value = min;
+            if (_min > _max) _min = _max;
+            if (_value > _max) _value = _max;
+            if (_value < _min) _value = _min;
 
             UpdateVisualDirect();
         }
@@ -130,6 +152,5 @@ namespace UnityToolkit
             progressBar.transform.SetParent(UnityEditor.Selection.activeTransform, false);
         }
 #endif
-
     }
 }

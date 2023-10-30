@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace UnityToolkit.UIEditor
+namespace UnityToolkit.Editor
 {
     public static class UIDataBaseAssetHandler
     {
@@ -12,7 +12,7 @@ namespace UnityToolkit.UIEditor
         {
             if (EditorUtility.InstanceIDToObject(instanceId) is UIDatabase asset)
             {
-                Debug.LogWarning("Open UIPanelDatabase");
+                Debug.LogWarning("Open UIPanelDatabase not implemented yet.");
                 // UIDataBaseEditorWindow.ShowWindow(asset);
                 // return true;
             }

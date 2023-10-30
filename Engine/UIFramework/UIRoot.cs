@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UnityToolkit
 {
-    public class UIRoot : MonoSingleton<UIRoot>
+    public partial class UIRoot : MonoSingleton<UIRoot>
     {
         [field: SerializeField] public Camera UICamera { get; private set; } //UI相机
         [field: SerializeField] public Canvas rootCanvas { get; private set; } //UI根画布
@@ -93,20 +94,13 @@ namespace UnityToolkit
             panel.SetState(UIPanelState.Closed);
         }
 
-        private IUIPanel Peek()
-        {
-            return _openedPanelStack.Peek();
-        }
+        private IUIPanel Peek() => _openedPanelStack.Peek();
 
-        public IUIPanel CurTop()
-        {
-            return Peek();
-        }
 
-        public void CloseTop()
-        {
-            Pop();
-        }
+        public IUIPanel CurTop() => Peek();
+
+        public void CloseTop() => Pop();
+
 
         public T OpenPanel<T>() where T : class, IUIPanel
         {
@@ -266,12 +260,14 @@ namespace UnityToolkit
         {
             return !IsClosed(type) && !IsOpen(type); //既不在打开列表也不在关闭列表
         }
-
+    }
 
 #if UNITY_EDITOR
+    public partial class UIRoot
+    {
         //在Hierarchy面板中可以快速创建一个UIRoot
         [UnityEditor.MenuItem("GameObject/UI/UIRoot", false, 0)]
-        public static void CreateUIRoot()
+        private static void CreateUIRoot()
         {
             GameObject prefab = Resources.Load<GameObject>("UIRoot");
             GameObject uiRoot = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
@@ -293,7 +289,7 @@ namespace UnityToolkit
             }
         }
 
-        public UIDatabase CreateDatabase()
+        private UIDatabase CreateDatabase()
         {
             //如果没有找到UIPanelDatabase，就创建一个
             UIDatabase = ScriptableObject.CreateInstance<UIDatabase>();
@@ -304,10 +300,14 @@ namespace UnityToolkit
             UnityEditor.AssetDatabase.SaveAssets();
             return UIDatabase;
         }
+
+
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.Button("RefreshDatabase")]
+#else
+        [UnityEditor.ContextMenu("RefreshDatabase")]
 #endif
 
-#if ODIN_INSPECTOR && UNITY_EDITOR
-        [Sirenix.OdinInspector.Button("RefreshDatabase")]
         public void RefreshDatabase()
         {
             if (UIDatabase == null)
@@ -321,12 +321,15 @@ namespace UnityToolkit
 
             UIDatabase.Refresh();
         }
-
+#if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("OpenDatabase")]
-        public void OpenDatabase()
+#else
+        [UnityEditor.ContextMenu("OpenDatabase")]
+#endif
+        public void OpenDatabase() // TODO 做一个UI数据库的编辑器
         {
             throw new NotImplementedException();
         }
-#endif
     }
+#endif
 }

@@ -142,10 +142,43 @@ namespace UnityToolkit
             canvas.sortingOrder = sortingOrder;
         }
 
-#endif
+// TODO
+        // [UnityEditor.MenuItem("GameObject/UI/UIPanel", false, 0)]
+        // private static void CreateUIPanel()
+        // {
+        //     //从场景中找UIRoot的UIDatabase的路径
+        //     string uiDatabasePath = null;
+        //     var uiRoot = FindObjectOfType<UIRoot>();
+        //     if (uiRoot == null)
+        //     {
+        //         //弹出提示 先创建UIRoot
+        //         UnityEditor.EditorUtility.DisplayDialog("提示", "请先创建UIRoot", "确定");
+        //         return;
+        //     }
+        //
+        //     if (uiRoot.UIDatabase == null)
+        //     {
+        //         //弹出提示 先给UIRoot创建UIDatabase
+        //         UnityEditor.EditorUtility.DisplayDialog("提示", "请先给UIRoot创建UIDatabase", "确定");
+        //         return;
+        //     }
+        //     uiDatabasePath = UnityEditor.AssetDatabase.GetAssetPath(uiRoot.UIDatabase);
+        //     //一个模板C#文件  XXXPanel.cs
+        //     string templateFilePath = UnityEditor.AssetDatabase.GUIDToAssetPath("b0b4b0b0b0b0b0b0b0b0b0b0b0b0b0b");
+        //     //一个模板预制体文件 XXXPanel.prefab
+        //     string templatePrefabPath = UnityEditor.AssetDatabase.GUIDToAssetPath("b0b4b0b0b0b0b0b0b0b0b0b0b0b0b0b");
+        //     
+        //     
+        //
+        // }
+        
+        
 
-#if UNITY_EDITOR && ODIN_INSPECTOR
+#if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button]
+#else
+        [UnityEngine.ContextMenu("ReNamePanel")]
+#endif
         public void ReNamePanel()
         {
             if (Application.isPlaying)
@@ -160,8 +193,11 @@ namespace UnityToolkit
             UnityEditor.AssetDatabase.RenameAsset(prefabPath, GetType().Name);
         }
 
-
+#if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button]
+#else
+        [UnityEngine.ContextMenu("AutoBind")]
+#endif
         public void AutoBind()
         {
             //找自己所有被UIBind特性标记的字段
@@ -176,8 +212,8 @@ namespace UnityToolkit
                     //TODO 看不是不UGUI下的UI组件
                     continue;
                 }
-                
-                
+
+
                 var uiBindAttr = bindAttr[0] as UIBindAttribute;
                 if (string.IsNullOrEmpty(uiBindAttr.path)) //没填path 则递归搜第一个同名
                 {
