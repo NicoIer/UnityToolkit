@@ -132,6 +132,27 @@ namespace UnityToolkit
         }
     }
     
+    public abstract class Event<T> : IEvent
+    {
+        private Action<T> _onEvent = _ => { };
+
+        public ICommand Register(Action<T> onEvent)
+        {
+            this._onEvent += onEvent;
+            return new EventUnRegister(() => { Unregister(onEvent); });
+        }
+
+        public void Unregister(Action<T> onEvent)
+        {
+            this._onEvent -= onEvent;
+        }
+
+        public void Trigger(T args)
+        {
+            _onEvent(args);
+        }
+    }
+    
     public sealed class BuildInEvent<T> : IEvent
     {
         private Action<T> _onEvent = _ => { };

@@ -10,4 +10,12 @@ namespace UnityToolkit
     {
         public static readonly int StableId = typeof(T).FullName.GetStableHash();
     }
+
+    public static class TypeId
+    {
+        public static int StableId(this object obj)
+        {
+            return obj.GetType().FullName.GetStableHash();
+        }
+    }
 }

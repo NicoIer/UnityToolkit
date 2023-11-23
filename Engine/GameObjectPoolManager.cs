@@ -112,7 +112,7 @@ namespace UnityToolkit
         /// <summary>
         /// 注册一个对象池
         /// </summary>
-        private void Register(GameObject prefab, int initialPoolSize = 10, int maxPoolSize = 100,
+        public void Register(GameObject prefab, int initialPoolSize = 10, int maxPoolSize = 100,
             Action<GameObject> onGet = null,
             Action<GameObject> onRecycle = null,
             Action<GameObject> onDestroy = null)

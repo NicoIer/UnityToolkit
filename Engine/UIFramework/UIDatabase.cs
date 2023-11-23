@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace UnityToolkit
 {
@@ -93,8 +94,8 @@ namespace UnityToolkit
         private void OnValidate()
         {
             // 移除空的
-            HashSet<int> ids = new HashSet<int>();
-            for (int i = _panels.Count - 1; i > 0; i--)
+            HashSet<int> idSet = HashSetPool<int>.Get();
+            for (int i = _panels.Count - 1; i >= 0; i--)
             {
                 var panelPrefab = _panels[i];
                 if (panelPrefab == null)
@@ -112,11 +113,12 @@ namespace UnityToolkit
                 }
 
                 int id = uiPanel.GetType().GetHashCode();
-                if (!ids.Contains(id)) continue;
+                if (!idSet.Contains(id)) continue;
                 Debug.LogError($"UIDatabase中存在重复的panel id:{id}");
                 _panels.RemoveAt(i);
                 continue;
             }
+            HashSetPool<int>.Release(idSet);
         }
 #endif
 

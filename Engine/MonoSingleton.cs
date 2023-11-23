@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace UnityToolkit
 {
+    public interface IAutoCreateSingleton
+    {
+    }
+
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
         private static T _singleton;
@@ -22,13 +26,24 @@ namespace UnityToolkit
                     return null;
                 }
 
-                if (_singleton == null) //第一次访问
+                if (_singleton != null) return _singleton; //第一次访问
+                _singleton = FindObjectOfType<T>(); // 从场景中查找
+                if (_singleton != null)
                 {
-                    _singleton = FindObjectOfType<T>(); // 从场景中查找
                     _singleton.OnSingletonInit(); //手动初始化
+                    return _singleton;
                 }
 
-                return _singleton;
+                if (typeof(T).GetInterface(nameof(IAutoCreateSingleton)) != null)
+                {
+                    GameObject go = new GameObject(typeof(T).Name);
+                    _singleton = go.AddComponent<T>();
+                    _singleton.OnSingletonInit();
+                    return _singleton;
+                }
+
+                throw new System.NullReferenceException(
+                    $"Singleton<{typeof(T).Name}>.Singleton -> {typeof(T).Name} is null");
             }
         }
 

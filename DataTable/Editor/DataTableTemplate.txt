@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityToolkit;
 
-namespace Nico
+namespace UnityToolkit
 {
     public class DataTableNameTemplate : ScriptableObject, IDataTable
     {

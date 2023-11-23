@@ -1,4 +1,4 @@
-namespace Nico
+namespace UnityToolkit
 {
 #if UNITY_EDITOR
 using UnityToolkit.Editor;

@@ -11,7 +11,7 @@ namespace UnityToolkit
     /// 含有事件监听的数据层
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class TriggerObj<T> where T : TriggerObj<T>
+    public abstract class Model<T> : IModel where T : Model<T>
     {
         private event Action<T> OnEvent = _ => { };
 
