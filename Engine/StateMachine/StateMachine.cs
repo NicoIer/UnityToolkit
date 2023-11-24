@@ -17,9 +17,12 @@ namespace UnityToolkit
 
         protected Dictionary<Type, State<TOwner>> stateDic;
 
+        private List<ITransition<TOwner>> transitions;
+
         public StateMachine(TOwner owner)
         {
             stateDic = new Dictionary<Type, State<TOwner>>();
+            transitions = new List<ITransition<TOwner>>();
             Owner = owner;
         }
 
@@ -52,15 +55,53 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual void Change(Type type)
+        {
+            CurrentState.OnExit(Owner);
+            CurrentState = stateDic[type];
+            CurrentState.OnEnter(Owner);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add<T>(T state) where T : State<TOwner>
         {
             stateDic.Add(typeof(T), state);
+        }
+
+        public void Add<T>() where T : State<TOwner>, new()
+        {
+            stateDic.Add(typeof(T), new T());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void OnUpdate()
         {
             CurrentState.OnUpdate(Owner);
+        }
+
+        public void AddTransition(ITransition<TOwner> transition)
+        {
+            transitions.Add(transition);
+        }
+
+        public void AddTransition<T>() where T : ITransition<TOwner>, new()
+        {
+            transitions.Add(new T());
+        }
+
+        public void RemoveTransition(ITransition<TOwner> transition)
+        {
+            transitions.Remove(transition);
+        }
+
+        public virtual void OnTransition()
+        {
+            foreach (var transition in transitions)
+            {
+                if (!transition.GetNext(out var nextState, this, Owner)) continue;
+                Change(nextState);
+                break;
+            }
         }
     }
 }

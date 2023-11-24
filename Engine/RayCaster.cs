@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -9,14 +8,25 @@ namespace UnityToolkit
     {
         public const int MaxCount = 100;
         private static Collider2D[] collider2Ds = new Collider2D[MaxCount];
-        
-        public static int OverlapCircleNonAlloc(Vector2 position, float radius,out Collider2D[] cols,LayerMask layerMask)
+        private static RaycastHit2D[] raycastHit2Ds = new RaycastHit2D[MaxCount];
+
+        public static int OverlapCircleNonAlloc(Vector2 position, float radius, out Collider2D[] cols,
+            LayerMask layerMask)
         {
             int count = Physics2D.OverlapCircleNonAlloc(position, radius, collider2Ds, layerMask);
             cols = collider2Ds;
             return count;
         }
+
+        public static int RaycastNonAlloc(Vector2 origin, Vector2 direction, out RaycastHit2D[] results, float distance,
+            LayerMask layerMask)
+        {
+            int count = Physics2D.RaycastNonAlloc(origin, direction, raycastHit2Ds, distance, layerMask);
+            results = raycastHit2Ds;
+            return count;
+        }
     }
+
     /// <summary>
     /// 游戏中的射线检测管理器
     /// </summary>
@@ -73,12 +83,12 @@ namespace UnityToolkit
 
         public static bool OverLabSphereTarget<T>(out List<T> objs, Vector3 origin, float radius, LayerMask layerMask)
         {
-            int count = Physics.OverlapSphereNonAlloc(origin,radius,RayCaster._colliders,layerMask);
+            int count = Physics.OverlapSphereNonAlloc(origin, radius, RayCaster._colliders, layerMask);
             objs = new List<T>();
             for (int i = 0; i < count; i++)
             {
                 var col = _colliders[i];
-                if(col.gameObject.TryGetComponent<T>(out T obj))
+                if (col.gameObject.TryGetComponent<T>(out T obj))
                 {
                     objs.Add(obj);
                 }
