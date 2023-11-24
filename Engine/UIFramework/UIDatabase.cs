@@ -127,7 +127,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("Refresh")]
 #else
-        [UnityEditor.ContextMenu("Refresh")]
+        [ContextMenu("Refresh")]
 #endif
 
         public void Refresh()
