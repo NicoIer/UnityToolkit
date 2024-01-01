@@ -17,9 +17,9 @@ namespace UnityToolkit
         [SerializeField] private TextMeshProUGUI title;
         [SerializeField] private Image bar;
         [SerializeField] private bool usingTitle;
-        [SerializeField] private int _max = 100;
-        [SerializeField] private int _value = 50;
-        [SerializeField] private int _min = 0;
+        [SerializeField] private float _max = 100;
+        [SerializeField] private float _value = 50;
+        [SerializeField] private float _min = 0;
         [SerializeField] private ProgressTitleType _titleType = ProgressTitleType.Value;
         [SerializeField] private Image.FillMethod _fillMethod = Image.FillMethod.Horizontal; //默认水平填充
         // public bool tween = true;
@@ -34,13 +34,13 @@ namespace UnityToolkit
             }
         }
 
-        public int Value
+        public float Value
         {
             get => _value;
             set => SetValue(value);
         }
 
-        public int Max
+        public float Max
         {
             get => _max;
             set
@@ -50,7 +50,7 @@ namespace UnityToolkit
             }
         }
 
-        public int Min
+        public float Min
         {
             get => _min;
             set
@@ -81,7 +81,7 @@ namespace UnityToolkit
         }
 
 
-        public event Action<int> OnValueChanged;
+        public event Action<float> OnValueChanged;
 
         private void UpdateVisualDirect()
         {
@@ -92,7 +92,7 @@ namespace UnityToolkit
 
         private void UpdateProgress()
         {
-            float percent = ((float)_value - _min) / (_max - _min);
+            float percent = (_value - _min) / (_max - _min);
             bar.fillAmount = percent;
         }
 
@@ -106,7 +106,7 @@ namespace UnityToolkit
                     title.text = $"{_value}/{_max}";
                     break;
                 case ProgressTitleType.Percent:
-                    float percent = ((float)_value - _min) / (_max - _min);
+                    float percent = (_value - _min) / (_max - _min);
                     title.text = $"{percent:P}";
                     break;
                 default:
@@ -114,22 +114,24 @@ namespace UnityToolkit
             }
         }
 
+        private const float Tolerance = 0.0001f;
 
-        public void SetValue(int value)
+        public void SetValue(float value)
         {
             if (value > _max) value = _max;
             if (value < _min) value = _min;
 
-            if (this._value == value) return;
+            if (Math.Abs(this._value - value) < Tolerance) return;
             this._value = value;
             UpdateVisualDirect();
             OnValueChanged?.Invoke(value);
         }
 
-        public void SetProgress(int value, int maxValue)
+        public void Init(float value,float minValue, float maxValue)
         {
             this._value = value;
             _max = maxValue;
+            _min = minValue;
             SetValue(value);
         }
 

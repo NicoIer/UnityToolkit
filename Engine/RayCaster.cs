@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace UnityToolkit
 {
@@ -8,21 +9,12 @@ namespace UnityToolkit
     {
         public const int MaxCount = 100;
         private static Collider2D[] collider2Ds = new Collider2D[MaxCount];
-        private static RaycastHit2D[] raycastHit2Ds = new RaycastHit2D[MaxCount];
 
         public static int OverlapCircleNonAlloc(Vector2 position, float radius, out Collider2D[] cols,
             LayerMask layerMask)
         {
             int count = Physics2D.OverlapCircleNonAlloc(position, radius, collider2Ds, layerMask);
             cols = collider2Ds;
-            return count;
-        }
-
-        public static int RaycastNonAlloc(Vector2 origin, Vector2 direction, out RaycastHit2D[] results, float distance,
-            LayerMask layerMask)
-        {
-            int count = Physics2D.RaycastNonAlloc(origin, direction, raycastHit2Ds, distance, layerMask);
-            results = raycastHit2Ds;
             return count;
         }
     }
@@ -222,8 +214,8 @@ namespace UnityToolkit
                 layerMask);
             // Debug.Log("box find count:" + count);
             //从检测到的碰撞体中找到第一个符合条件的碰撞体
-            tar = new List<T>();
-            col = new List<Collider>();
+            tar = ListPool<T>.Get();
+            col = ListPool<Collider>.Get();
             for (int i = 0; i < count; i++)
             {
                 if (!_colliders[i].gameObject.TryGetComponent(out T t)) continue;
@@ -234,5 +226,13 @@ namespace UnityToolkit
             count = tar.Count;
             return count != 0;
         }
+
+        public static int BoxCheck(Vector3 position, Vector3 halfSize, LayerMask layerMask, out Collider[] colliders,Quaternion quaternion)
+        {
+            int count = Physics.OverlapBoxNonAlloc(position, halfSize, _colliders,quaternion, layerMask);
+            colliders = _colliders;
+            return count;
+        }
+        
     }
 }

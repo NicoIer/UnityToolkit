@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
 namespace UnityToolkit
 {
+    public interface IOnlyPlayingModelSingleton
+    {
+    }
+
     public interface IAutoCreateSingleton
     {
     }
@@ -10,7 +15,7 @@ namespace UnityToolkit
     {
         private static T _singleton;
 
-        protected virtual bool dontDestroyOnLoad()
+        protected virtual bool DontDestroyOnLoad()
         {
             return false;
         }
@@ -21,10 +26,15 @@ namespace UnityToolkit
         {
             get
             {
-                if (Application.isPlaying == false)
+                // 如果T是仅在播放模式下的单例
+                if (typeof(IOnlyPlayingModelSingleton).IsAssignableFrom(typeof(T)))
                 {
-                    return null;
+                    if (Application.isPlaying == false)
+                    {
+                        return null;
+                    }
                 }
+
 
                 if (_singleton != null) return _singleton; //第一次访问
                 _singleton = FindObjectOfType<T>(); // 从场景中查找
@@ -34,16 +44,18 @@ namespace UnityToolkit
                     return _singleton;
                 }
 
-                if (typeof(T).GetInterface(nameof(IAutoCreateSingleton)) != null)
+                if (typeof(IAutoCreateSingleton).IsAssignableFrom(typeof(T)))
                 {
-                    GameObject go = new GameObject(typeof(T).Name);
+                    GameObject go = new GameObject($"{nameof(T)}")
+                    {
+                        hideFlags = HideFlags.HideInHierarchy
+                    };
                     _singleton = go.AddComponent<T>();
                     _singleton.OnSingletonInit();
                     return _singleton;
                 }
 
-                throw new System.NullReferenceException(
-                    $"Singleton<{typeof(T).Name}>.Singleton -> {typeof(T).Name} is null");
+                throw new NullReferenceException($"Singleton<{typeof(T).Name}>.Singleton -> {typeof(T).Name} is null");
             }
         }
 
@@ -51,7 +63,7 @@ namespace UnityToolkit
         {
             // Debug.Log($"Singleton<{typeof(T).Name}>.OnInit() -> {gameObject.name}");
             transform.SetParent(null);
-            if (dontDestroyOnLoad())
+            if (DontDestroyOnLoad())
             {
                 DontDestroyOnLoad(gameObject);
             }

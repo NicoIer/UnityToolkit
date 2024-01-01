@@ -119,7 +119,7 @@ namespace UnityToolkit
                 }
                 else
                 {
-                    GameObject managerObject = new GameObject { name = "TimerManager" };
+                    GameObject managerObject = new GameObject { name = "TimerManager" ,hideFlags = HideFlags.HideInHierarchy};
                     Timer._manager = managerObject.AddComponent<TimerManager>();
                 }
             }

@@ -19,10 +19,13 @@ namespace UnityToolkit
 
         private List<ITransition<TOwner>> transitions;
 
+        private Dictionary<int, object> paramDict;
+
         public StateMachine(TOwner owner)
         {
             stateDic = new Dictionary<Type, State<TOwner>>();
             transitions = new List<ITransition<TOwner>>();
+            paramDict = new Dictionary<int, object>();
             Owner = owner;
         }
 
@@ -49,7 +52,7 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Change<T>() where T : State<TOwner>
         {
-            CurrentState.OnExit(Owner);
+            CurrentState?.OnExit(Owner);
             CurrentState = stateDic[typeof(T)];
             CurrentState.OnEnter(Owner);
         }
@@ -57,7 +60,7 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Change(Type type)
         {
-            CurrentState.OnExit(Owner);
+            CurrentState?.OnExit(Owner);
             CurrentState = stateDic[type];
             CurrentState.OnEnter(Owner);
         }
@@ -76,6 +79,7 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void OnUpdate()
         {
+            if(CurrentState == null) return;
             CurrentState.OnUpdate(Owner);
         }
 
@@ -102,6 +106,17 @@ namespace UnityToolkit
                 Change(nextState);
                 break;
             }
+        }
+
+
+        public void SetParam(int paramKey, object value)
+        {
+            paramDict[paramKey] = value;
+        }
+
+        public object GetParam(int paramKey)
+        {
+            return paramDict[paramKey];
         }
     }
 }

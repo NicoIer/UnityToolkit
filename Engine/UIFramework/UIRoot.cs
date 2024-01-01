@@ -17,7 +17,7 @@ namespace UnityToolkit
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
-        protected override bool dontDestroyOnLoad() => true;
+        protected override bool DontDestroyOnLoad() => true;
 
         /// <summary>
         /// 将面板推入栈顶
@@ -305,7 +305,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("RefreshDatabase")]
 #else
-        [ContextMenu("RefreshDatabase")]
+        [UnityEditor.ContextMenu("RefreshDatabase")]
 #endif
 
         public void RefreshDatabase()
@@ -324,7 +324,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("OpenDatabase")]
 #else
-        [ContextMenu("OpenDatabase")]
+        [UnityEditor.ContextMenu("OpenDatabase")]
 #endif
         public void OpenDatabase() // TODO 做一个UI数据库的编辑器
         {
