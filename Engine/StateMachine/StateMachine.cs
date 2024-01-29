@@ -52,9 +52,7 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void Change<T>() where T : State<TOwner>
         {
-            CurrentState?.OnExit(Owner);
-            CurrentState = stateDic[typeof(T)];
-            CurrentState.OnEnter(Owner);
+            Change(typeof(T));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

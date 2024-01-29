@@ -46,10 +46,7 @@ namespace UnityToolkit
 
                 if (typeof(IAutoCreateSingleton).IsAssignableFrom(typeof(T)))
                 {
-                    GameObject go = new GameObject($"{nameof(T)}")
-                    {
-                        hideFlags = HideFlags.HideInHierarchy
-                    };
+                    GameObject go = new GameObject($"{typeof(T).Name}");
                     _singleton = go.AddComponent<T>();
                     _singleton.OnSingletonInit();
                     return _singleton;

@@ -16,6 +16,10 @@ namespace UnityToolkit
             rectTransform = transform as RectTransform;
         }
 
+        /// <summary>
+        /// 当其他UI Drag在此UI上时触发
+        /// </summary>
+        /// <param name="eventData"></param>
         public void OnDrop(PointerEventData eventData)
         {
             if (_dragComponent!=null) return;

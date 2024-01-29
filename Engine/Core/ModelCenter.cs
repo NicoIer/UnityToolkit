@@ -18,10 +18,10 @@ namespace UnityToolkit
         public ICommand Register(Action<T> onEvent)
         {
             this.OnEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { Unregister(onEvent); });
         }
 
-        public void UnRegister(Action<T> onEvent)
+        public void Unregister(Action<T> onEvent)
         {
             OnEvent -= onEvent;
         }

@@ -180,7 +180,7 @@ namespace UnityToolkit.Editor
 
         public static void RegisterParser<TData, TResult>(ParseDelegate<TData, TResult> @delegate)
         {
-            Parser<TData, TResult>.parser = @delegate;  
+            Parser<TData, TResult>.parser = @delegate;
             _cacheDict ??= new Dictionary<Type, HashSet<Type>>();
 
             var dataType = typeof(TData);
@@ -247,12 +247,47 @@ namespace UnityToolkit.Editor
     {
         public static bool IntParse(string value, out int result)
         {
-            return int.TryParse(value, out result);
+            if(int.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
         }
 
+        public static bool UShortParse(string value, out ushort result)
+        {
+            if (ushort.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
+        public static bool ShortParse(string value, out short result)
+        {
+            if (short.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
+        
         public static bool FloatParse(string value, out float result)
         {
-            return float.TryParse(value, out result);
+            if (float.TryParse(value, out result))
+            {
+                return true;
+            }
+            
+            result = default;
+            return true;
         }
 
         public static bool StringParse(string value, out string result)
@@ -263,7 +298,12 @@ namespace UnityToolkit.Editor
 
         public static bool BoolParse(string value, out bool result)
         {
-            return bool.TryParse(value, out result);
+            if(bool.TryParse(value, out result))
+            {
+                return true;
+            }
+            result = default;
+            return true;
         }
 
         public static bool Vector2Parse(string value, out UnityEngine.Vector2 result)
@@ -443,7 +483,7 @@ namespace UnityToolkit.Editor
                 {
                     continue;
                 }
-                
+
                 string[] kv = pairs[i].Split(_fieldKvSeq);
                 if (kv.Length != 2)
                 {
@@ -469,6 +509,7 @@ namespace UnityToolkit.Editor
                 {
                     continue;
                 }
+
                 name2Idx.Add(fieldNames[i], i);
             }
 
@@ -482,7 +523,8 @@ namespace UnityToolkit.Editor
 
                 if (index == -1)
                 {
-                    UnityEngine.Debug.LogWarning($"{structType} parse field {fieldName} failed, not found in string {str}");
+                    UnityEngine.Debug.LogWarning(
+                        $"{structType} parse field {fieldName} failed, not found in string {str}");
                     continue;
                 }
 
@@ -490,7 +532,8 @@ namespace UnityToolkit.Editor
 
                 if (!ParserManager.Parse(typeof(string), dataStr, fieldType, out object value))
                 {
-                    UnityEngine.Debug.LogWarning($"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
+                    UnityEngine.Debug.LogWarning(
+                        $"{structType} Parse failed when parse field {fieldName} strValue:{dataStr}");
                     continue;
                 }
 

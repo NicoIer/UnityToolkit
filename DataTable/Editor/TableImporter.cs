@@ -37,11 +37,10 @@ namespace UnityToolkit.Editor
                 {
                     FileUtil.Create(savePath);
                 }
-
                 AssetDatabase.CreateAsset(scriptableObject, savePath);
             }
 
-            AssetDatabase.Refresh();
+            // AssetDatabase.Refresh();
         }
 
         private static List<string[][]> GetTableValues(Dictionary<string, string[][]> stringsMap)

@@ -12,6 +12,7 @@ namespace UnityToolkit
     [CreateAssetMenu(fileName = "UIDatabase", menuName = "Toolkit/UIDatabase", order = 0)]
     public class UIDatabase : ScriptableObject
     {
+        // [Sirenix.OdinInspector.ShowInInspector]
         private Dictionary<int, GameObject> _panelDict;
         [SerializeField] private List<GameObject> _panels = new List<GameObject>();
 
@@ -127,7 +128,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("Refresh")]
 #else
-        [UnityEditor.ContextMenu("Refresh")]
+        [ContextMenu("Refresh")]
 #endif
 
         public void Refresh()

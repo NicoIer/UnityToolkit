@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -305,7 +304,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("RefreshDatabase")]
 #else
-        [UnityEditor.ContextMenu("RefreshDatabase")]
+        [ContextMenu("RefreshDatabase")]
 #endif
 
         public void RefreshDatabase()
@@ -324,7 +323,7 @@ namespace UnityToolkit
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button("OpenDatabase")]
 #else
-        [UnityEditor.ContextMenu("OpenDatabase")]
+        [ContextMenu("OpenDatabase")]
 #endif
         public void OpenDatabase() // TODO 做一个UI数据库的编辑器
         {

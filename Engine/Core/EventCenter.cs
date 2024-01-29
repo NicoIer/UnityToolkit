@@ -6,11 +6,11 @@ namespace UnityToolkit
     /// <summary>
     /// 用于取消注册事件
     /// </summary>
-    public struct EventUnRegister : ICommand
+    public struct CommonCommand : ICommand
     {
         private Action _unRegister;
 
-        public EventUnRegister(Action unRegister)
+        public CommonCommand(Action unRegister)
         {
             this._unRegister = unRegister;
         }
@@ -118,7 +118,7 @@ namespace UnityToolkit
         public ICommand Register(Action onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { Unregister(onEvent); });
+            return new CommonCommand(() => { Unregister(onEvent); });
         }
 
         public void Unregister(Action onEvent)
@@ -139,7 +139,7 @@ namespace UnityToolkit
         public ICommand Register(Action<T> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { Unregister(onEvent); });
+            return new CommonCommand(() => { Unregister(onEvent); });
         }
 
         public void Unregister(Action<T> onEvent)
@@ -160,7 +160,7 @@ namespace UnityToolkit
         public ICommand Regiser(Action<T> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { UnRegister(onEvent); });
         }
 
         public void UnRegister(Action<T> onEvent)
@@ -181,7 +181,7 @@ namespace UnityToolkit
         public ICommand Register(Action<T1, T2> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { UnRegister(onEvent); });
         }
 
         public void UnRegister(Action<T1, T2> onEvent)
@@ -202,7 +202,7 @@ namespace UnityToolkit
         public ICommand Register(Action<T1, T2, T3> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { UnRegister(onEvent); });
         }
 
         public void UnRegister(Action<T1, T2, T3> onEvent)
@@ -218,7 +218,7 @@ namespace UnityToolkit
         public ICommand Register(Action<T1, T2, T3, T4> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { UnRegister(onEvent); });
         }
 
         public void UnRegister(Action<T1, T2, T3, T4> onEvent)
@@ -234,7 +234,7 @@ namespace UnityToolkit
         public ICommand Register(Action<T1, T2, T3, T4, T5> onEvent)
         {
             this._onEvent += onEvent;
-            return new EventUnRegister(() => { UnRegister(onEvent); });
+            return new CommonCommand(() => { UnRegister(onEvent); });
         }
 
         public void UnRegister(Action<T1, T2, T3, T4, T5> onEvent)

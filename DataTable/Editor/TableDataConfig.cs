@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnityToolkit.Editor
 {
-    [CreateAssetMenu(fileName = "TableDataConfig", menuName = "Config/TableDataConfig", order = 0)]
+    [CreateAssetMenu(fileName = "TableDataConfig", menuName = "Toolkit/TableDataConfig", order = 0)]
     public class TableDataConfig : ScriptableObject
     {
         private TextAsset tDataTableTemplate;

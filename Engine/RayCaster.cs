@@ -10,12 +10,20 @@ namespace UnityToolkit
         public const int MaxCount = 100;
         private static Collider2D[] collider2Ds = new Collider2D[MaxCount];
 
-        public static int OverlapCircleNonAlloc(Vector2 position, float radius, out Collider2D[] cols,
+        public static int OverlapCircle(Vector2 position, float radius, out Collider2D[] cols,
             LayerMask layerMask)
         {
             int count = Physics2D.OverlapCircleNonAlloc(position, radius, collider2Ds, layerMask);
             cols = collider2Ds;
             return count;
+        }
+
+        public static int OverlapBox(out Collider2D[] results, Vector3 point, Vector2 size, float facingAngle,
+            LayerMask layer)
+        {
+            int ans = Physics2D.OverlapBoxNonAlloc(point, size, facingAngle, collider2Ds, layer);
+            results = collider2Ds;
+            return ans;
         }
     }
 
@@ -227,12 +235,19 @@ namespace UnityToolkit
             return count != 0;
         }
 
-        public static int BoxCheck(Vector3 position, Vector3 halfSize, LayerMask layerMask, out Collider[] colliders,Quaternion quaternion)
+        public static int BoxCheck(Vector3 position, Vector3 halfSize, LayerMask layerMask, out Collider[] colliders,
+            Quaternion quaternion)
         {
-            int count = Physics.OverlapBoxNonAlloc(position, halfSize, _colliders,quaternion, layerMask);
+            int count = Physics.OverlapBoxNonAlloc(position, halfSize, _colliders, quaternion, layerMask);
             colliders = _colliders;
             return count;
         }
-        
+
+        public static int OverlapBox(out Collider[] colliders ,Vector3 handPosition, Vector3 halfExtents, Quaternion identity, LayerMask entityLayer)
+        {
+            int count = Physics.OverlapBoxNonAlloc(handPosition, halfExtents, _colliders, identity, entityLayer);
+            colliders = _colliders;
+            return count;
+        }
     }
 }
