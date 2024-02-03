@@ -9,5 +9,6 @@ Unity版本>=2021.3.15
 - LoopList: UGUI下的可复用列表
 - EventSystem: C#事件系统
 - Timer: 定时器
+- GameObjectPoolManager: 游戏物体对象池(Prefab为Key)
 - DataTable: Excel导表&代码生成工具
 - Hierarchy: hierarchy美化工具
