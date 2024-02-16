@@ -12,9 +12,21 @@ namespace UnityToolkit
         [field: SerializeField] public CanvasScaler rootCanvasScaler { get; private set; } //UI根画布缩放器
         [field: SerializeField] public GraphicRaycaster rootGraphicRaycaster { get; private set; } //UI根画布射线检测器
         [field: SerializeField] public UIDatabase UIDatabase { get; private set; } //UI数据库
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowInInspector]
+        private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
+
+        [Sirenix.OdinInspector.ShowInInspector]
+        private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
+
+        [Sirenix.OdinInspector.ShowInInspector]
+        private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
+#else
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
+#endif
+
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
         protected override bool DontDestroyOnLoad() => true;
 
@@ -35,10 +47,13 @@ namespace UnityToolkit
                     top = _openedPanelStack.Pop();
                 }
 
+                panel.GetRectTransform().SetAsLastSibling();
                 _openedPanelStack.Push(panel);
                 while (_helpStack.Count > 0)
                 {
-                    _openedPanelStack.Push(_helpStack.Pop());
+                    IUIPanel origin = _helpStack.Pop();
+                    origin.GetRectTransform().SetAsLastSibling();
+                    _openedPanelStack.Push(origin);
                 }
             }
             else
@@ -62,11 +77,14 @@ namespace UnityToolkit
             }
 
             IUIPanel panel = _openedPanelStack.Pop();
+            // Debug.Log("Pop " + panel.GetType().Name);
             panel.SetState(UIPanelState.Closing);
             _openedPanelDict.Remove(panel.GetType());
             _closedPanelDict.Add(panel.GetType(), panel);
             panel.SetState(UIPanelState.Closed);
             panel.OnClosed();
+            // 放到第一个 最先 保证不会遮挡其他面板
+            panel.GetRectTransform().SetAsFirstSibling();
         }
 
         /// <summary>
@@ -78,19 +96,30 @@ namespace UnityToolkit
             panel.SetState(UIPanelState.Closing);
 
             IUIPanel top = _openedPanelStack.Peek();
-            while (top != panel && _openedPanelStack.Count > 0)
+            if (top != panel)
             {
                 _helpStack.Push(top);
                 top = _openedPanelStack.Pop();
-            }
+                // 找到目标面板
+                while (top != panel && _openedPanelStack.Count > 0)
+                {
+                    _helpStack.Push(top);
+                    top = _openedPanelStack.Pop();
+                }
 
-            while (_helpStack.Count > 0)
+                while (_helpStack.Count > 0)
+                {
+                    _openedPanelStack.Push(_helpStack.Pop());
+                }
+            }
+            else
             {
-                _openedPanelStack.Push(_helpStack.Pop());
+                _openedPanelStack.Pop();
             }
 
             panel.OnClosed();
             panel.SetState(UIPanelState.Closed);
+            panel.GetRectTransform().SetAsFirstSibling();
         }
 
         private IUIPanel Peek() => _openedPanelStack.Peek();
@@ -111,6 +140,7 @@ namespace UnityToolkit
         {
             if (_openedPanelDict.TryGetValue(type, out IUIPanel panel))
             {
+                // Debug.LogWarning("Panel already opened");
                 return panel;
             }
 

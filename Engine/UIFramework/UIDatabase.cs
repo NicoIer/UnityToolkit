@@ -68,25 +68,32 @@ namespace UnityToolkit
         {
             if (_panelDict == null) InitPanelDict();
             int id = type.GetHashCode();
-            if (_panelDict.TryGetValue(id, out GameObject value))
+            if (!_panelDict.TryGetValue(id, out GameObject value))
             {
-                if (value.GetComponent(type) == null)
+#if UNITY_EDITOR
+                Refresh();
+                if (!_panelDict.TryGetValue(id, out value))
                 {
-                    throw new ArgumentException(
-                        $"UIPanel prefab:{value} doesn't contain UIPanel {type} component");
+                    throw new KeyNotFoundException($"{type} hasn't been register in ui database");
                 }
-
-                GameObject panel = Instantiate(value);
-                //修改RectTransform为填满的模式
-                RectTransform rectTransform = panel.GetComponent<RectTransform>();
-                rectTransform.anchorMin = Vector2.zero;
-                rectTransform.anchorMax = Vector2.one;
-                rectTransform.offsetMin = Vector2.zero;
-                rectTransform.offsetMax = Vector2.zero;
-                return (IUIPanel)panel.GetComponent(type);
+#endif
+                throw new KeyNotFoundException($"{type} hasn't been register in ui database");
+            }
+            if (value.GetComponent(type) == null)
+            {
+                throw new ArgumentException(
+                    $"UIPanel prefab:{value} doesn't contain UIPanel {type} component");
             }
 
-            throw new KeyNotFoundException($"{type} hasn't been register in ui database");
+            GameObject panel = Instantiate(value);
+            //修改RectTransform为填满的模式
+            RectTransform rectTransform = panel.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            return (IUIPanel)panel.GetComponent(type);
+
         }
 
 

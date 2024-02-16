@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -7,7 +8,7 @@ namespace UnityToolkit
         internal GameObject GetGameObject();
         internal RectTransform GetRectTransform();
         internal void SetState(UIPanelState state);
-        internal int GetSortingOrder();
+        public int GetSortingOrder();
         public void OnLoaded(); //加载面板时调用
         public void OnOpened(); //打开面板时调用
         public void OnClosed(); //关闭面板时调用
@@ -70,6 +71,8 @@ namespace UnityToolkit
         public UIPanelState state { get; internal set; } = UIPanelState.None;
 
         public int sortingOrder;
+        
+        // protected List<IUISubPanel> _subPanels;
 
         GameObject IUIPanel.GetGameObject()
         {
