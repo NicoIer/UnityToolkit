@@ -36,21 +36,24 @@ namespace UnityToolkit
         /// <summary>
         /// The scroll data source to fill items.
         /// </summary>
-        [NonSerialized] public ItemProviderDelegate itemProvider = null;
+        [NonSerialized] public ItemProviderDelegate ItemProvider = null;
 
-        public ReturnDelegate returnDelegate = null;
+        /// <summary>
+        /// 回收Item
+        /// </summary>
+        [NonSerialized] public ReturnDelegate ItemReturn = null;
+        
+        /// <summary>
+        /// [Optional] Helper for accurate size so we can achieve better scrolling.
+        /// </summary>
+        [NonSerialized] public GetItemSizeDelegate SizeHelper = null;
 
         /// <summary>
         /// The scroll's total count for items with id in [0, totalCount]. Negative value like -1 means infinite items.
         /// </summary>
         [Tooltip("Total count, negative means INFINITE mode")]
         public int totalCount;
-
-        /// <summary>
-        /// [Optional] Helper for accurate size so we can achieve better scrolling.
-        /// </summary>
-        [NonSerialized] public GetItemSizeDelegate sizeDelegateHelper = null;
-
+        
         /// <summary>
         /// When threshold reached, we prepare new items outside view. This will be expanded to at least 1.5 * itemSize.
         /// </summary>
@@ -747,6 +750,11 @@ namespace UnityToolkit
         protected override void Awake()
         {
             base.Awake();
+            
+            if(m_Content ==null){
+                m_Content = transform.Find("Content") as RectTransform;
+            }
+
             if (Application.isPlaying)
             {
                 float value = (reverseDirection ^ (direction == LoopScrollRectDirection.Horizontal)) ? 0 : 1;
@@ -774,7 +782,7 @@ namespace UnityToolkit
                 totalCount = 0;
                 for (int i = m_Content.childCount - 1; i >= 0; i--)
                 {
-                    returnDelegate(m_Content.GetChild(i));
+                    ItemReturn(m_Content.GetChild(i));
                 }
             }
         }
@@ -869,9 +877,9 @@ namespace UnityToolkit
             }
             else
             {
-                if (sizeDelegateHelper != null)
+                if (SizeHelper != null)
                 {
-                    dist = GetDimension(sizeDelegateHelper(currentFirst) - sizeDelegateHelper(index)) +
+                    dist = GetDimension(SizeHelper(currentFirst) - SizeHelper(index)) +
                            contentSpacing * (CurrentLine - TargetLine - 1);
                     dist += offset;
                 }
@@ -992,7 +1000,7 @@ namespace UnityToolkit
                     }
                     else
                     {
-                        returnDelegate(m_Content.GetChild(i));
+                        ItemReturn(m_Content.GetChild(i));
                         i--;
                     }
                 }
@@ -1705,10 +1713,10 @@ namespace UnityToolkit
         //==========LoopScrollRect==========
         private void GetHorizonalOffsetAndSize(out float totalSize, out float offset)
         {
-            if (sizeDelegateHelper != null)
+            if (SizeHelper != null)
             {
-                totalSize = sizeDelegateHelper(TotalLines).x + contentSpacing * (TotalLines - 1);
-                offset = m_ContentBounds.min.x - sizeDelegateHelper(StartLine).x - contentSpacing * StartLine;
+                totalSize = SizeHelper(TotalLines).x + contentSpacing * (TotalLines - 1);
+                offset = m_ContentBounds.min.x - SizeHelper(StartLine).x - contentSpacing * StartLine;
             }
             else
             {
@@ -1720,10 +1728,10 @@ namespace UnityToolkit
 
         private void GetVerticalOffsetAndSize(out float totalSize, out float offset)
         {
-            if (sizeDelegateHelper != null)
+            if (SizeHelper != null)
             {
-                totalSize = sizeDelegateHelper(TotalLines).y + contentSpacing * (TotalLines - 1);
-                offset = m_ContentBounds.max.y + sizeDelegateHelper(StartLine).y + contentSpacing * StartLine;
+                totalSize = SizeHelper(TotalLines).y + contentSpacing * (TotalLines - 1);
+                offset = m_ContentBounds.max.y + SizeHelper(StartLine).y + contentSpacing * StartLine;
             }
             else
             {
