@@ -1,5 +1,3 @@
-using System;
-
 namespace UnityToolkit
 {
     public interface ICommand

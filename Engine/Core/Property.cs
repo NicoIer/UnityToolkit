@@ -1,15 +1,21 @@
 ﻿using System;
-using UnityEngine;
-using UnityToolkit;
 
 namespace UnityToolkit
 {
     [Serializable]
     public class Property<T> where T : IComparable
     {
-        [SerializeField] private T _maxValue;
-        [SerializeField] private T _minValue;
-        [SerializeField] private T _value;
+#if UNITY_EDITOR
+        [UnityEngine.SerializeField] private T _maxValue;
+        [UnityEngine.SerializeField] private T _minValue;
+        [UnityEngine.SerializeField] private T _value;
+#else
+        private T _maxValue;
+        private T _minValue;
+        private T _value;
+#endif
+
+
         private Action<Property<T>> _onValueChanged = _ => { };
 
         public T MaxValue
@@ -102,7 +108,7 @@ namespace UnityToolkit
         {
             _onValueChanged(this);
         }
-        
+
         // 实现隐式类型转换
         public static implicit operator T(Property<T> property)
         {

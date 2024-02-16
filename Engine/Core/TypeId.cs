@@ -13,9 +13,9 @@ namespace UnityToolkit
 
     public static class TypeId
     {
-        public static int StableId(this object obj)
+        public static int StableId(Type type)
         {
-            return obj.GetType().FullName.GetStableHash();
+            return type.FullName.GetStableHash();
         }
     }
 }

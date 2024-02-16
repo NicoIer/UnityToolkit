@@ -13,7 +13,7 @@ namespace UnityToolkit
     /// <typeparam name="T"></typeparam>
     public abstract class Model<T> : IModel where T : Model<T>
     {
-        private event Action<T> OnEvent = _ => { };
+        private event Action<T> OnEvent;
 
         public ICommand Register(Action<T> onEvent)
         {
@@ -28,7 +28,7 @@ namespace UnityToolkit
 
         public void Trigger()
         {
-            OnEvent(this as T);
+            OnEvent?.Invoke(this as T);
         }
     }
 

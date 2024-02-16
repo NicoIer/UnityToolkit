@@ -5,4 +5,10 @@
     {
         
     }
+    
+    public interface IUISubPanel : IUIComponent
+    {
+        void Open();
+        void Close();
+    }
 }
