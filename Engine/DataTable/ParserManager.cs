@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Callbacks;
+using UnityEngine;
 
 namespace UnityToolkit.Editor
 {
@@ -207,6 +208,7 @@ namespace UnityToolkit.Editor
             if (parseDelegate == null)
             {
                 result = null;
+                Debug.LogError($"解析Excel失败,未找到解析器:{dataType} to {resultType}");
                 return false;
             }
 
@@ -225,6 +227,8 @@ namespace UnityToolkit.Editor
             {
                 return parser(data, out result);
             }
+
+            Debug.LogError($"解析Excel失败,未找到解析器:{typeof(TData)} to {typeof(TResult)}");
 
             return false;
         }
@@ -245,9 +249,53 @@ namespace UnityToolkit.Editor
 
     internal static class BuildInStringParser
     {
+        public static bool ByteParse(string value, out byte result)
+        {
+            if(byte.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
         public static bool IntParse(string value, out int result)
         {
             if(int.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
+        public static bool UintParse(string value, out uint result)
+        {
+            if(uint.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
+        public static bool LongParse(string value, out long result)
+        {
+            if(long.TryParse(value, out result))
+            {
+                return true;
+            }
+
+            result = default;
+            return true;
+        }
+        
+        public static bool ULongParse(string value, out ulong result)
+        {
+            if(ulong.TryParse(value, out result))
             {
                 return true;
             }
@@ -278,10 +326,20 @@ namespace UnityToolkit.Editor
             return true;
         }
         
-        
         public static bool FloatParse(string value, out float result)
         {
             if (float.TryParse(value, out result))
+            {
+                return true;
+            }
+            
+            result = default;
+            return true;
+        }
+        
+        public static bool DoubleParse(string value, out double result)
+        {
+            if (double.TryParse(value, out result))
             {
                 return true;
             }

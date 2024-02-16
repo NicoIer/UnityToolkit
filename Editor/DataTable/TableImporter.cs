@@ -70,6 +70,7 @@ namespace UnityToolkit.Editor
 
                 //逐行解析
                 List<List<string>> result = new List<List<string>>();
+                // Debug.Log($"有效行数:{values.Length-3}");
                 for (int row = 3; row < values.Length; row++)
                 {
                     List<string> obj = new List<string>();
@@ -83,7 +84,7 @@ namespace UnityToolkit.Editor
                         }
 
                         var value = values[row][col] ?? "";
-
+                        // Debug.Log($"tableName:[{tableName}]  row:{row} col:{col} value:{value}");
                         obj.Add(value);
                     }
 
@@ -158,20 +159,20 @@ namespace UnityToolkit.Editor
 
             foreach (var dataValue in dataValues)
             {
-                bool isEmpty = false;
-                for (int i = 0; i < dataValue.Length; i++)
-                {
-                    if (string.IsNullOrEmpty(dataValue[i]))
-                    {
-                        isEmpty = true;
-                        break;
-                    }
-                }
-
-                if (isEmpty)
-                {
-                    continue;
-                }
+                // bool isEmpty = false;
+                // for (int i = 0; i < dataValue.Length; i++)
+                // {
+                //     if (string.IsNullOrEmpty(dataValue[i]))
+                //     {
+                //         isEmpty = true;
+                //         break;
+                //     }
+                // }
+                //
+                // if (isEmpty)
+                // {
+                //     continue;
+                // }
 
                 if (!TableDataCreator.CreateData(out ITableData data, dataType, dataValue))
                 {

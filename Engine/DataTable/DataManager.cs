@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -35,6 +36,7 @@ namespace UnityToolkit
         [field: SerializeField] private List<ScriptableObject> _configList;
         private Dictionary<Type, ScriptableObject> _type2Configs;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TData Get<TData>(int id) where TData : ITableData
         {
             IDataTable table = GetTable<TData>();
@@ -47,6 +49,7 @@ namespace UnityToolkit
             return (TData)table.Get(id);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TData Get<TData>(Enum @enum) where TData : ITableData
         {
             int id = Convert.ToInt32(@enum);
@@ -191,17 +194,16 @@ namespace UnityToolkit
         }
 #if UNITY_EDITOR
 
-        [SerializeField]
-        private string datablePath = "Assets/AddressablesResources/DataTable";
+        [SerializeField] private string datablePath = "Assets/AddressablesResources/DataTable";
 
         [SerializeField] private string configPath = "Assets/AddressablesResources/Config";
-        
+
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button]
 #else
         [ContextMenu("LoadAll")]
 #endif
-        
+
         public void LoadAll()
         {
             _dataTables = new List<ScriptableObject>();

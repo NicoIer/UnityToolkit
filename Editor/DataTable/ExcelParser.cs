@@ -31,25 +31,25 @@ namespace UnityToolkit.Editor
             values = null;
             if (worksheet.Dimension is null)
             {
-                Debug.LogWarning($"ExcelParser: worksheet.Dimension is null at worksheet:{worksheet.Name}");
+                Debug.LogWarning($"Excel解析失败: {worksheet.Name} 为空");
                 return false;
             }
 
-            int rowCount = worksheet.Dimension.Rows;
+
+            int rowCount = worksheet.Dimension.Rows + 1;
             int colCount = worksheet.Dimension.Columns;
-            // Debug.Log($"[{rowCount}][{colCount}]");
+            // Debug.Log($"{worksheet.Name} 行数: {rowCount} 列数: {colCount}");
             values = new string[rowCount][];
-            
+
             for (int row = 1; row <= rowCount; row++)
             {
-                values[row - 1] = new string[colCount];// 这里有可能是空列
+                values[row - 1] = new string[colCount]; // 这里有可能是空列
                 for (int col = 1; col <= colCount; col++)
                 {
                     var value = worksheet.Cells[row, col].Value;
                     if (value is null)
                     {
-                        values[row - 1][col - 1] = "";
-                        continue;
+                        value = "";
                     }
 
                     values[row - 1][col - 1] = value.ToString();
