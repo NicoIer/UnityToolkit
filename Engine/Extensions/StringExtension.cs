@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace UnityToolkit
 {
     public static class StringExtension
@@ -12,6 +14,12 @@ namespace UnityToolkit
         public static string Blue(this string s) => s.SetColor(TextColor.Blue);
         public static string Red(this string s) => s.SetColor(TextColor.Red);
         public static string Sky(this string s) => s.SetColor(TextColor.Sky);
+
+        public static string Color(this string s, Color color)
+        {
+            string hex = ColorUtility.ToHtmlStringRGB(color);
+            return $"<color=#{hex}>{s}</color>";
+        }
         public static string SetColor(this string s, TextColor type)
         {
             return type switch
