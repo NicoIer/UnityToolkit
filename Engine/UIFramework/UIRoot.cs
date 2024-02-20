@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,7 +70,7 @@ namespace UnityToolkit
         /// <summary>
         /// 弹出栈顶面板
         /// </summary>
-        private void Pop()
+        public void Pop()
         {
             if (_openedPanelStack.Count == 0)
             {
@@ -121,15 +122,11 @@ namespace UnityToolkit
             panel.SetState(UIPanelState.Closed);
             panel.GetRectTransform().SetAsFirstSibling();
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IUIPanel Peek() => _openedPanelStack.Peek();
+        
 
-        private IUIPanel Peek() => _openedPanelStack.Peek();
-
-
-        public IUIPanel CurTop() => Peek();
-
-        public void CloseTop() => Pop();
-
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T OpenPanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
@@ -162,7 +159,7 @@ namespace UnityToolkit
             _openedPanelDict.Add(type, panel);
             return panel;
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClosePanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
@@ -257,34 +254,36 @@ namespace UnityToolkit
             return false;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsOpen<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _openedPanelDict.ContainsKey(type);
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsOpen(Type type)
         {
             return _openedPanelDict.ContainsKey(type);
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsClosed<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _closedPanelDict.ContainsKey(type);
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsClosed(Type type)
         {
             return _closedPanelDict.ContainsKey(type);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsDisposed<T>() where T : class, IUIPanel
         {
             return !IsClosed<T>() && !IsOpen<T>(); //既不在打开列表也不在关闭列表
         }
-
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsDisposed(Type type)
         {
             return !IsClosed(type) && !IsOpen(type); //既不在打开列表也不在关闭列表
@@ -337,7 +336,7 @@ namespace UnityToolkit
         [ContextMenu("RefreshDatabase")]
 #endif
 
-        public void RefreshDatabase()
+        private void RefreshDatabase()
         {
             if (UIDatabase == null)
             {
@@ -355,7 +354,7 @@ namespace UnityToolkit
 #else
         [ContextMenu("OpenDatabase")]
 #endif
-        public void OpenDatabase() // TODO 做一个UI数据库的编辑器
+        private void OpenDatabase() // TODO 做一个UI数据库的编辑器
         {
             throw new NotImplementedException();
         }
