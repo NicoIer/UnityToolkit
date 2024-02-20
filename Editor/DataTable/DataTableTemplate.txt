@@ -2,13 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using UnityToolkit;
+using System.Collections;
 
 namespace UnityToolkit
 {
-    public class DataTableNameTemplate : ScriptableObject, IDataTable
+    public class DataTableNameTemplate : ScriptableObject, IDataTable, IEnumerable<TableDataNameTemplate>
     {
         [SerializeField]private SerializableDictionary<int, TableDataNameTemplate> _dataDict = new SerializableDictionary<int, TableDataNameTemplate>();
-
+        public int Count=>_dataDict.Count;
+        
         public ITableData Get(int id)
         {
             return _dataDict[id];
@@ -17,6 +19,16 @@ namespace UnityToolkit
         public Type GetDataType()
         {
         	return typeof(TableDataNameTemplate);
+        }
+        
+        public IEnumerator<TableDataNameTemplate> GetEnumerator()
+        {
+            return _dataDict.Values.GetEnumerator();
+        }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
         
 #if UNITY_EDITOR
