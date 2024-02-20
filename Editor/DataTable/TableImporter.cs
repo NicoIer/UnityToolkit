@@ -191,6 +191,9 @@ namespace UnityToolkit.Editor
 
         public static void ImportExcel(string excelPath, TableDataConfig _config, string codeSavePath)
         {
+            defineDict.Clear();
+            tableCodeDict.Clear();
+            
             var stringsMap = ExcelParser.ReadExcel(excelPath);
             foreach (var kvp in stringsMap)
             {
