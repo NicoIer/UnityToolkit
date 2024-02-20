@@ -71,7 +71,7 @@ namespace UnityToolkit
         public UIPanelState state { get; internal set; } = UIPanelState.None;
 
         public int sortingOrder;
-        
+
         // protected List<IUISubPanel> _subPanels;
 
         GameObject IUIPanel.GetGameObject()
@@ -174,8 +174,7 @@ namespace UnityToolkit
         //     
         //
         // }
-        
-        
+
 
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button]
@@ -224,6 +223,30 @@ namespace UnityToolkit
                     string fieldName = field.Name;
                     fieldName = fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
                     var child = transform.Find(fieldName);
+
+                    if (child == null)
+                    {
+                        // 广度优先
+                        Queue<Transform> queue = new Queue<Transform>();
+                        queue.Enqueue(transform);
+                        while (queue.Count > 0)
+                        {
+                            var parent = queue.Dequeue();
+                            for (int i = 0; i < parent.childCount; i++)
+                            {
+                                var c = parent.GetChild(i);
+                                var next = c.Find(fieldName);
+                                if (next != null)
+                                {
+                                    child = next;
+                                    break;
+                                }
+
+                                queue.Enqueue(c);
+                            }
+                        }
+                    }
+
                     if (child != null)
                     {
                         field.SetValue(this, child.GetComponent(field.FieldType));
