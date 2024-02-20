@@ -604,11 +604,13 @@ namespace UnityToolkit.Editor
 
         public static bool EnumParser<T>(string value, out T result)
         {
-            var parseResult = Enum.Parse(typeof(T), value);
-            if (parseResult is T tParseResult)
+            if(Enum.TryParse(typeof(T), value, out object parseResult))
             {
-                result = tParseResult;
-                return true;
+                if (parseResult is T tParseResult)
+                {
+                    result = tParseResult;
+                    return true;
+                }
             }
 
             result = default;
