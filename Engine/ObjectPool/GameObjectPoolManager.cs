@@ -1,29 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Pool;
 
 namespace UnityToolkit
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    [DisallowMultipleComponent]
-    internal class PoolObjConfig : MonoBehaviour
+    public interface IPoolGameObject
     {
-        internal int initialPoolSize = 10;
-        internal int maxPoolSize = 100;
-    }
-
-    /// <summary>
-    /// 实现了这个接口的MonoBehaviour可以被对象池管理 类似于TagComponent
-    /// </summary>
-    public interface IGameObjectPoolObject
-    {
-        public void OnGet();
-        public void OnReturn();
+        void OnGet();
+        void OnRecycle();
     }
 
     [DisallowMultipleComponent]
@@ -32,66 +18,48 @@ namespace UnityToolkit
         #region Default
 
         //默认的回收和获取回调
-        private static readonly Action<GameObject> DefaultOnRecycle = obj =>
+        private static readonly Action<GameObject> _defaultOnRecycle = obj =>
         {
-            if (obj.TryGetComponent(out IGameObjectPoolObject poolObj))
-            {
-                poolObj.OnReturn();
-            }
-            else
-            {
-                obj.SetActive(false);
-            }
+            obj.transform.SetParent(null);
+            obj.SetActive(false);
         };
 
-        private static readonly Action<GameObject> DefaultOnGet = obj =>
-        {
-            if (obj.TryGetComponent(out IGameObjectPoolObject poolObj))
-            {
-                poolObj.OnGet();
-            }
-            else
-            {
-                obj.SetActive(true);
-            }
-        };
+        private static readonly Action<GameObject> _defaultOnGet = obj => { obj.SetActive(true); };
 
-        private static readonly Action<GameObject> DefaultOnDestroy = obj => { GameObject.Destroy(obj); };
+        private static readonly Action<GameObject> _defaultOnDestroy = GameObject.Destroy;
+
+        private static readonly Func<GameObject, GameObject> _defaultCreateFunc = GameObject.Instantiate;
 
         #endregion
 
-        [SerializeField] private List<GameObject> prefabList = new List<GameObject>();
+        public int initialPoolSize = 10;
+        public int maxPoolSize = 100;
+        [SerializeField] private List<GameObject> prefabList = new();
 
-        private Dictionary<int, ObjectPool<GameObject>> prefabDict;
-
-        private Dictionary<Type, int> type2Id;
+        private Dictionary<int, ObjectPool<GameObject>> _prefabDict;
+        private Dictionary<Type, int> _typeDict;
 
         protected override void OnInit()
         {
-            base.OnInit();
-            type2Id = new Dictionary<Type, int>();
-            prefabDict = new Dictionary<int, ObjectPool<GameObject>>();
-
+            _prefabDict = new Dictionary<int, ObjectPool<GameObject>>(prefabList.Count);
+            _typeDict = new Dictionary<Type, int>(prefabList.Count);
 
             foreach (var prefab in prefabList)
             {
-                int id = prefab.GetInstanceID();
-                if (prefab.TryGetComponent(out IGameObjectPoolObject poolObject))
-                {
-                    type2Id[poolObject.GetType()] = id;
-                }
-
-                int initialPoolSize = 10; //默认值
-                int maxPoolSize = 100; //默认值
-                if (prefab.TryGetComponent(out PoolObjConfig poolConfig))
-                {
-                    initialPoolSize = poolConfig.initialPoolSize;
-                    maxPoolSize = poolConfig.maxPoolSize;
-                }
-
                 Register(prefab, initialPoolSize, maxPoolSize);
             }
         }
+
+        protected override void OnDispose()
+        {
+            foreach (var pool in _prefabDict.Values)
+            {
+                pool.Dispose();
+            }
+
+            _prefabDict.Clear();
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
@@ -99,12 +67,30 @@ namespace UnityToolkit
             HashSet<GameObject> set = new HashSet<GameObject>(prefabList);
             prefabList = set.ToList();
             //去空
-            for (int i = prefabList.Count - 1; i >= 0; --i)
+            prefabList.RemoveNull();
+        }
+#endif
+
+#if ODIN_INSPECTOR
+        [SerializeField] internal string path = "Assets/AddressablesResources/Prefabs";
+        [Sirenix.OdinInspector.Button]
+        public void LoadAll()
+        {
+            prefabList = new List<GameObject>();
+            // 列出文件夹下所有文件
+            string[] files = System.IO.Directory.GetFiles(path, "*.asset", System.IO.SearchOption.AllDirectories);
+            for (int i = 0; i < files.Length; i++)
             {
-                if (prefabList[i] == null)
+                string file = files[i];
+                string assetPath = file.Substring(file.IndexOf("Assets", StringComparison.Ordinal));
+                GameObject asset = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+                if (asset == null)
                 {
-                    prefabList.RemoveAt(i);
+                    Debug.LogError($"[DataManager] LoadAll Error: {assetPath} is not exist.");
+                    continue;
                 }
+
+                prefabList.Add(asset);
             }
         }
 #endif
@@ -118,77 +104,71 @@ namespace UnityToolkit
             Action<GameObject> onDestroy = null)
 
         {
-            int id = prefab.GetInstanceID();
-            if (prefabDict.ContainsKey(id))
+            if (prefab == null)
             {
-                throw new Exception($"{prefab.name},instanceId:{id} already exist!");
+                Debug.LogWarning("prefab is null!");
+                return;
+            }
+
+            if (prefab.TryGetComponent(out IPoolGameObject poolGameObject))
+            {
+                _typeDict.Add(poolGameObject.GetType(), prefab.GetInstanceID());
+                onGet = obj => { obj.GetComponent<IPoolGameObject>().OnGet(); };
+                onRecycle = obj => { obj.GetComponent<IPoolGameObject>().OnRecycle(); };
+            }
+
+            int id = prefab.GetInstanceID();
+            if (_prefabDict.ContainsKey(id))
+            {
+                Debug.LogWarning($"{prefab.name},instanceId:{id} already exist!");
+                return;
             }
 
             if (onGet == null)
             {
-                onGet = DefaultOnGet;
+                onGet = _defaultOnGet;
             }
 
             if (onRecycle == null)
             {
-                onRecycle = DefaultOnRecycle;
+                onRecycle = _defaultOnRecycle;
             }
 
             if (onDestroy == null)
             {
-                onDestroy = DefaultOnDestroy;
+                onDestroy = _defaultOnDestroy;
             }
 
-            ObjectPool<GameObject> pool = new ObjectPool<GameObject>(() =>
-            {
-                GameObject go = GameObject.Instantiate(prefab);
-                return go;
-            }, onGet, onRecycle, onDestroy, true, initialPoolSize, maxPoolSize);
 
-            prefabDict.Add(id, pool);
+            ObjectPool<GameObject> pool = new ObjectPool<GameObject>(() => _defaultCreateFunc(prefab), onGet, onRecycle,
+                onDestroy, true,
+                initialPoolSize, maxPoolSize);
+
+            _prefabDict.Add(id, pool);
         }
 
         public GameObject Get(GameObject prefab)
         {
-            ObjectPool<GameObject> pool = prefabDict[prefab.GetInstanceID()];
+            ObjectPool<GameObject> pool = _prefabDict[prefab.GetInstanceID()];
             return pool.Get();
-        }
-
-        public T Get<T>() where T : MonoBehaviour, IGameObjectPoolObject
-        {
-            int id = type2Id[typeof(T)];
-            ObjectPool<GameObject> pool = prefabDict[id];
-            return pool.Get().GetComponent<T>();
-        }
-
-        public T Get<T>(Vector3 position) where T : MonoBehaviour, IGameObjectPoolObject
-        {
-            int id = type2Id[typeof(T)];
-            ObjectPool<GameObject> pool = prefabDict[id];
-            GameObject go = pool.Get();
-            go.transform.position = position;
-            return go.GetComponent<T>();
         }
 
         public void Return(GameObject prefab, GameObject go)
         {
-            ObjectPool<GameObject> pool = prefabDict[prefab.GetInstanceID()];
+            ObjectPool<GameObject> pool = _prefabDict[prefab.GetInstanceID()];
             pool.Release(go);
         }
 
-        public void Return<T>(T poolObject) where T : MonoBehaviour, IGameObjectPoolObject
+        public T Get<T>() where T : MonoBehaviour, IPoolGameObject
         {
-            int id = type2Id[poolObject.GetType()];
-            ObjectPool<GameObject> pool = prefabDict[id];
-            pool.Release(poolObject.gameObject);
+            ObjectPool<GameObject> pool = _prefabDict[_typeDict[typeof(T)]];
+            return pool.Get().GetComponent<T>();
         }
 
-        // public void ReleaseAll()
-        // {
-        //     foreach (var pool in prefabDict.Values)
-        //     {
-        //         pool.Clear();
-        //     }
-        // }
+        public void Return<T>(GameObject go) where T : MonoBehaviour, IPoolGameObject
+        {
+            ObjectPool<GameObject> pool = _prefabDict[_typeDict[typeof(T)]];
+            pool.Release(go);
+        }
     }
 }
