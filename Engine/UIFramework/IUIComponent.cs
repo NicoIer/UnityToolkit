@@ -8,6 +8,7 @@
     
     public interface IUISubPanel : IUIComponent
     {
+        bool IsOpen();
         void Open();
         void Close();
     }

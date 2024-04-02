@@ -5,6 +5,28 @@ using UnityEngine.Pool;
 
 namespace UnityToolkit
 {
+    public static class RayCaster2D
+    {
+        public const int MaxCount = 100;
+        private static Collider2D[] collider2Ds = new Collider2D[MaxCount];
+
+        public static int OverlapCircle(Vector2 position, float radius, out Collider2D[] cols,
+            LayerMask layerMask)
+        {
+            int count = Physics2D.OverlapCircleNonAlloc(position, radius, collider2Ds, layerMask);
+            cols = collider2Ds;
+            return count;
+        }
+
+        public static int OverlapBox(out Collider2D[] results, Vector3 point, Vector2 size, float facingAngle,
+            LayerMask layer)
+        {
+            int ans = Physics2D.OverlapBoxNonAlloc(point, size, facingAngle, collider2Ds, layer);
+            results = collider2Ds;
+            return ans;
+        }
+    }
+
     /// <summary>
     /// 游戏中的射线检测管理器
     /// </summary>
@@ -42,21 +64,12 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool OverLabSphereAll(out Collider[] cols, out int count, Vector3 origin, float radius,
+        public static int OverlapSphereAll(Vector3 origin, float radius,out Collider[] cols,
             LayerMask layerMask)
         {
             //将原来的colliders全部变成null
-            var hitCount = Physics.OverlapSphereNonAlloc(origin, radius, RayCaster._colliders, layerMask);
-            if (hitCount > 0)
-            {
-                cols = RayCaster._colliders;
-                count = hitCount;
-                return true;
-            }
-
-            cols = null;
-            count = 0;
-            return false;
+            cols = RayCaster._colliders;
+            return Physics.OverlapSphereNonAlloc(origin, radius, cols, layerMask);
         }
 
         public static bool OverLabSphereTarget<T>(out List<T> objs, Vector3 origin, float radius, LayerMask layerMask)
@@ -221,9 +234,17 @@ namespace UnityToolkit
             return count;
         }
 
-        public static int OverlapBox(out Collider[] colliders ,Vector3 handPosition, Vector3 halfExtents, Quaternion identity, LayerMask entityLayer)
+        public static int OverlapBox(out Collider[] colliders, Vector3 handPosition, Vector3 halfExtents,
+            Quaternion identity, LayerMask entityLayer)
         {
             int count = Physics.OverlapBoxNonAlloc(handPosition, halfExtents, _colliders, identity, entityLayer);
+            colliders = _colliders;
+            return count;
+        }
+
+        public static int OverlapBoxAll(Vector3 center, Vector3 halfExtents,out Collider[] colliders, LayerMask layer)
+        {
+            int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _colliders, Quaternion.identity, layer);
             colliders = _colliders;
             return count;
         }

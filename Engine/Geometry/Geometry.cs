@@ -6,7 +6,7 @@ namespace UnityToolkit
     /// <summary>
     /// 空间几何计算
     /// </summary>
-    public static class Geometry2D
+    public static class Geometry
     {
         public static bool CircleCollision(Vector2 c1, float r1, Vector2 c2, float r2)
         {

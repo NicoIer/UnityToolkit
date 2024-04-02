@@ -2,7 +2,7 @@
   "name": "UnityToolkit.Editor",
   "rootNamespace": "UnityToolkit.Editor",
   "references": [
-    "UnityToolkit.Engine"
+    "UnityToolkit"
   ],
   "includePlatforms": [
     "Editor"

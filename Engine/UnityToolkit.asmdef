@@ -1,5 +1,5 @@
 {
-    "name": "UnityToolkit.Engine",
+    "name": "UnityToolkit",
     "rootNamespace": "",
     "references": [
         "Unity.TextMeshPro"

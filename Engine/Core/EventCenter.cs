@@ -21,6 +21,17 @@ namespace UnityToolkit
             _unRegister = null;
         }
     }
+    //
+    // public class KeyEventSystem
+    // {
+    //     public void Send(object key, object args)
+    //     {
+    //     }
+    //
+    //     public void Listen(object key, Action<object> onEvent)
+    //     {
+    //     }
+    // }
 
     /// <summary>
     /// 基于类型的事件系统
@@ -30,7 +41,7 @@ namespace UnityToolkit
         // 提供一个全局的事件系统便于使用
         public static readonly TypeEventSystem Global = new TypeEventSystem();
 
-        private EventRepository _repository = new EventRepository();
+        private readonly EventRepository _repository = new EventRepository();
 
         public void Send<T>() where T : new()
         {
@@ -131,7 +142,7 @@ namespace UnityToolkit
             _onEvent();
         }
     }
-    
+
     public abstract class Event<T> : IEvent
     {
         private Action<T> _onEvent = _ => { };
@@ -152,7 +163,7 @@ namespace UnityToolkit
             _onEvent(args);
         }
     }
-    
+
     public sealed class BuildInEvent<T> : IEvent
     {
         private Action<T> _onEvent = _ => { };
@@ -174,7 +185,7 @@ namespace UnityToolkit
         }
     }
 
-    public  sealed class BuildInEvent<T1, T2> : IEvent
+    public sealed class BuildInEvent<T1, T2> : IEvent
     {
         private Action<T1, T2> _onEvent = (_, __) => { };
 

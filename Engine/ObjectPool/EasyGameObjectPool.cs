@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 
 namespace UnityToolkit
 {
     public class EasyGameObjectPool : MonoBehaviour
     {
-        [SerializeField] private GameObject _prefab;
-        [SerializeField] private RectTransform _hidden;
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private Transform hidden;
         [SerializeField] private int initSize = 10;
         [SerializeField] private int maxSize = 100;
 
@@ -15,15 +16,14 @@ namespace UnityToolkit
         private void Awake()
         {
             _pool = new ObjectPool<GameObject>(
-                () => Instantiate(_prefab),
+                () => Instantiate(prefab),
                 (obj) => obj.SetActive(true),
                 (obj) =>
                 {
                     obj.SetActive(false);
-                    obj.transform.SetParent(_hidden);
+                    obj.transform.SetParent(hidden);
                 }, DestroyImmediate, true, initSize, maxSize
             );
-            gameObject.SetActive(false);
         }
 
         public GameObject Get() => _pool.Get();

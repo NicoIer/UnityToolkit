@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 
 namespace UnityToolkit
@@ -70,7 +70,7 @@ namespace UnityToolkit
         /// <summary>
         /// 弹出栈顶面板
         /// </summary>
-        public void Pop()
+        private void Pop()
         {
             if (_openedPanelStack.Count == 0)
             {
@@ -122,11 +122,14 @@ namespace UnityToolkit
             panel.SetState(UIPanelState.Closed);
             panel.GetRectTransform().SetAsFirstSibling();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IUIPanel Peek() => _openedPanelStack.Peek();
-        
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private IUIPanel Peek() => _openedPanelStack.Peek();
+
+
+        public IUIPanel CurTop() => Peek();
+
+        public void CloseTop() => Pop();
+
         public T OpenPanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
@@ -159,11 +162,31 @@ namespace UnityToolkit
             _openedPanelDict.Add(type, panel);
             return panel;
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public void ClosePanel<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             ClosePanel(type);
+        }
+
+        public void CloseAllExcept<T>() where T : UIPanel
+        {
+            Type type = typeof(T);
+            List<Type> targets = ListPool<Type>.Get();
+            foreach (var uiPanel in _openedPanelStack)
+            {
+                if (uiPanel.GetType() != type)
+                {
+                    targets.Add(uiPanel.GetType());
+                }
+            }
+
+            foreach (var target in targets)
+            {
+                ClosePanel(target);
+            }
+
+            ListPool<Type>.Release(targets);
         }
 
         public void ClosePanel(Type type)
@@ -254,36 +277,34 @@ namespace UnityToolkit
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool IsOpen<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _openedPanelDict.ContainsKey(type);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool IsOpen(Type type)
         {
             return _openedPanelDict.ContainsKey(type);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool IsClosed<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _closedPanelDict.ContainsKey(type);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool IsClosed(Type type)
         {
             return _closedPanelDict.ContainsKey(type);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsDisposed<T>() where T : class, IUIPanel
         {
             return !IsClosed<T>() && !IsOpen<T>(); //既不在打开列表也不在关闭列表
         }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
         public bool IsDisposed(Type type)
         {
             return !IsClosed(type) && !IsOpen(type); //既不在打开列表也不在关闭列表
@@ -298,9 +319,9 @@ namespace UnityToolkit
         private static void CreateUIRoot()
         {
             GameObject prefab = Resources.Load<GameObject>("UIRoot");
-            GameObject uiRoot = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            GameObject uiRoot = Instantiate(prefab, null, false);
+            // UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             uiRoot.name = "UIRoot";
-            uiRoot.transform.SetParent(null);
             uiRoot.transform.localPosition = Vector3.zero;
             uiRoot.transform.localRotation = Quaternion.identity;
             uiRoot.transform.localScale = Vector3.one;
@@ -336,7 +357,7 @@ namespace UnityToolkit
         [ContextMenu("RefreshDatabase")]
 #endif
 
-        private void RefreshDatabase()
+        public void RefreshDatabase()
         {
             if (UIDatabase == null)
             {
@@ -354,7 +375,7 @@ namespace UnityToolkit
 #else
         [ContextMenu("OpenDatabase")]
 #endif
-        private void OpenDatabase() // TODO 做一个UI数据库的编辑器
+        public void OpenDatabase() // TODO 做一个UI数据库的编辑器
         {
             throw new NotImplementedException();
         }

@@ -87,11 +87,11 @@ namespace UnityToolkit
 
             GameObject panel = Instantiate(value);
             //修改RectTransform为填满的模式
-            RectTransform rectTransform = panel.GetComponent<RectTransform>();
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
+            // RectTransform rectTransform = panel.GetComponent<RectTransform>();
+            // rectTransform.anchorMin = Vector2.zero;
+            // rectTransform.anchorMax = Vector2.one;
+            // rectTransform.offsetMin = Vector2.zero;
+            // rectTransform.offsetMax = Vector2.zero;
             return (IUIPanel)panel.GetComponent(type);
 
         }

@@ -7,7 +7,7 @@ namespace UnityToolkit
 {
     public static class CommonUtils
     {
-        public static string PrettyBytes(this long bytes)
+        public static string PrettyBytes(long bytes)
         {
             // bytes
             if (bytes < 1024)
@@ -33,7 +33,7 @@ namespace UnityToolkit
 
         // pretty print seconds as hours:minutes:seconds(.milliseconds/100)s.
         // double for long running servers.
-        public static string PrettySeconds(this double seconds)
+        public static string PrettySeconds(double seconds)
         {
             TimeSpan t = TimeSpan.FromSeconds(seconds);
             string res = "";
@@ -48,7 +48,7 @@ namespace UnityToolkit
             return res != "" ? res : "0s";
         }
         
-        public static Rect KeepInScreen(this Rect rect)
+        public static Rect KeepInScreen(Rect rect)
         {
             // ensure min
             rect.x = Math.Max(rect.x, 0);
@@ -61,7 +61,7 @@ namespace UnityToolkit
             return rect;
         }
         
-        public static bool IsSceneActive(this string scene)
+        public static bool IsSceneActive(string scene)
         {
             Scene activeScene = SceneManager.GetActiveScene();
             return activeScene.path == scene ||
@@ -69,7 +69,7 @@ namespace UnityToolkit
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsPointInScreen(this Vector2 point) =>
+        public static bool IsPointInScreen(Vector2 point) =>
             0 <= point.x && point.x < Screen.width &&
             0 <= point.y && point.y < Screen.height;
     }
