@@ -15,13 +15,13 @@ namespace UnityToolkit.Debugger
         /// <summary>
         /// 默认调试器漂浮框大小。
         /// </summary>
-        internal static readonly Rect DefaultIconRect = new Rect(10f, 10f, 60f, 60f);
-
+        internal static readonly Rect DefaultIconRect = new Rect(10f, 500f, 60f, 60f);
+ 
         /// <summary>
         /// 默认调试器窗口大小。
         /// </summary>
-        internal static readonly Rect DefaultWindowRect = new Rect(10f, 0f, 640f, 480f);
-
+        internal static readonly Rect DefaultWindowRect = new Rect(10f, 500f, 640f, 480f);
+        
         /// <summary>
         /// 默认调试器窗口缩放比例。
         /// </summary>

@@ -16,7 +16,7 @@ namespace UnityToolkit
         {
             destination.AddRange(source);
         }
-        
+
         /// <summary>
         /// 这个是消息通信的基础 需要版本不同编程语言 不同平台下 对同一个字符串的hash值都是一样的
         /// </summary>

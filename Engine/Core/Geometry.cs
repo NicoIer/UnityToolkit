@@ -1,12 +1,11 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityToolkit
 {
     /// <summary>
     /// 空间几何计算
     /// </summary>
-    public static class Geometry
+    public static partial class Geometry
     {
         public static bool CircleCollision(Vector2 c1, float r1, Vector2 c2, float r2)
         {
@@ -28,7 +27,7 @@ namespace UnityToolkit
         {
             //angel转换到-180~180
             angel = (angel + 180) % 360 - 180;
-            
+
             float rectAngel = Mathf.Atan2(rect.height, rect.width) * Mathf.Rad2Deg;
 
             if (angel >= -rectAngel && angel <= rectAngel)
@@ -59,5 +58,27 @@ namespace UnityToolkit
                     rect.center.y - rect.height / 2);
             }
         }
+
+        public static bool InTriangle(Vector2 position, Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            float s = p1.y * p3.x - p1.x * p3.y + (p3.y - p1.y) * position.x + (p1.x - p3.x) * position.y;
+            float t = p1.x * p2.y - p1.y * p2.x + (p1.y - p2.y) * position.x + (p2.x - p1.x) * position.y;
+
+            if ((s < 0) != (t < 0))
+            {
+                return false;
+            }
+
+            float A = -p2.y * p3.x + p1.y * (p3.x - p2.x) + p1.x * (p2.y - p3.y) + p2.x * p3.y;
+            if (A < 0.0)
+            {
+                s = -s;
+                t = -t;
+                A = -A;
+            }
+
+            return s > 0 && t > 0 && (s + t) <= A;
+        }
     }
+
 }

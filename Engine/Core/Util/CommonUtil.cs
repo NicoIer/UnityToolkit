@@ -1,11 +1,10 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace UnityToolkit
 {
-    public static class CommonUtils
+    public static class CommonUtil
     {
         public static string PrettyBytes(long bytes)
         {
@@ -47,30 +46,8 @@ namespace UnityToolkit
             // return the seconds instead of returning an empty string
             return res != "" ? res : "0s";
         }
-        
-        public static Rect KeepInScreen(Rect rect)
-        {
-            // ensure min
-            rect.x = Math.Max(rect.x, 0);
-            rect.y = Math.Max(rect.y, 0);
 
-            // ensure max
-            rect.x = Math.Min(rect.x, Screen.width - rect.width);
-            rect.y = Math.Min(rect.y, Screen.width - rect.height);
 
-            return rect;
-        }
-        
-        public static bool IsSceneActive(string scene)
-        {
-            Scene activeScene = SceneManager.GetActiveScene();
-            return activeScene.path == scene ||
-                   activeScene.name == scene;
-        }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsPointInScreen(Vector2 point) =>
-            0 <= point.x && point.x < Screen.width &&
-            0 <= point.y && point.y < Screen.height;
+
     }
 }

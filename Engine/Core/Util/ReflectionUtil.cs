@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace UnityToolkit
 {
-    public static class ReflectionUtils
+    public static class ReflectionUtil
     {
         private static readonly AppDomain _appDomain = AppDomain.CurrentDomain;
         private static readonly Assembly[] _assemblies = _appDomain.GetAssemblies();

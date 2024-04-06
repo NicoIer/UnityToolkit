@@ -45,7 +45,7 @@ namespace UnityToolkit.Editor
             }
 
             //找到所有的ParseAttribute 标注的类型,为他们自动生成解析器
-            foreach (var type in ReflectionUtils.GetTypesWithAttribute<ParseAttribute>())
+            foreach (var type in ReflectionUtil.GetTypesWithAttribute<ParseAttribute>())
             {
                 var methodInfo = __generate_string_parser(type);
                 __register_parser_method(methodInfo);
