@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-
 namespace UnityToolkit
 {
     /// <summary>
