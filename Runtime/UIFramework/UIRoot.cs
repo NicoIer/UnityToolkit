@@ -1,18 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
 
 namespace UnityToolkit
 {
+    /// <summary>
+    /// UIRoot
+    /// Unity Toolkit的UI框架的根节点
+    /// </summary>
     public partial class UIRoot : MonoSingleton<UIRoot>
     {
         [field: SerializeField] public Camera UICamera { get; private set; } //UI相机
         [field: SerializeField] public Canvas rootCanvas { get; private set; } //UI根画布
         [field: SerializeField] public CanvasScaler rootCanvasScaler { get; private set; } //UI根画布缩放器
         [field: SerializeField] public GraphicRaycaster rootGraphicRaycaster { get; private set; } //UI根画布射线检测器
-        [field: SerializeField] public UIDatabase UIDatabase { get; private set; } //UI数据库
+        [field: SerializeField] public UIDatabase UIDatabase { get; private set; } //
+
+
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
@@ -29,6 +36,8 @@ namespace UnityToolkit
 #endif
 
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
+
+
         protected override bool DontDestroyOnLoad() => true;
 
         /// <summary>
@@ -70,7 +79,7 @@ namespace UnityToolkit
         /// <summary>
         /// 弹出栈顶面板
         /// </summary>
-        private void Pop()
+        public void Pop()
         {
             if (_openedPanelStack.Count == 0)
             {
@@ -92,7 +101,7 @@ namespace UnityToolkit
         /// 将面板弹出
         /// </summary>
         /// <param name="panel"></param>
-        private void Pop(IUIPanel panel)
+        public void Pop(IUIPanel panel)
         {
             panel.SetState(UIPanelState.Closing);
 
@@ -123,47 +132,43 @@ namespace UnityToolkit
             panel.GetRectTransform().SetAsFirstSibling();
         }
 
-        private IUIPanel Peek() => _openedPanelStack.Peek();
+        public IUIPanel Peek() => _openedPanelStack.Peek();
 
 
         public IUIPanel CurTop() => Peek();
 
         public void CloseTop() => Pop();
 
-        public T OpenPanel<T>() where T : class, IUIPanel
+        public T OpenPanel<T>() where T : IUIPanel
         {
             Type type = typeof(T);
-            return OpenPanel(type) as T;
-        }
-
-        public IUIPanel OpenPanel(Type type)
-        {
-            if (_openedPanelDict.TryGetValue(type, out IUIPanel panel))
+            if (_openedPanelDict.TryGetValue(type, out IUIPanel panel) && panel is T tPanel)
             {
                 // Debug.LogWarning("Panel already opened");
-                return panel;
+                return tPanel;
             }
 
-            if (_closedPanelDict.TryGetValue(type, out panel))
+            if (_closedPanelDict.Remove(type, out panel) && panel is T tPanel2)
             {
-                _closedPanelDict.Remove(type);
                 Push(panel);
                 _openedPanelDict.Add(type, panel);
-                return panel;
+                return tPanel2;
             }
 
-            panel = UIDatabase.CreatePanel(type);
-            RectTransform rectTransform = panel.GetRectTransform();
+
+            T uiPanel = UIDatabase.CreatePanel<T>();
+            RectTransform rectTransform = uiPanel.GetRectTransform();
             rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
 
-            panel.SetState(UIPanelState.Loaded);
-            panel.OnLoaded();
-            Push(panel);
-            _openedPanelDict.Add(type, panel);
-            return panel;
+            uiPanel.SetState(UIPanelState.Loaded);
+            uiPanel.OnLoaded();
+            Push(uiPanel);
+            _openedPanelDict.Add(type, uiPanel);
+            return uiPanel;
         }
 
-        public void ClosePanel<T>() where T : class, IUIPanel
+
+        public void ClosePanel<T>() where T : IUIPanel
         {
             Type type = typeof(T);
             ClosePanel(type);
@@ -222,8 +227,7 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _openedPanelDict.Remove(type);
-                // Debug.Log("Destroy " + value.GetGameObject().name);
-                Destroy(value.GetGameObject());
+                Dispose(value.GetGameObject());
                 return;
             }
 
@@ -232,7 +236,7 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _closedPanelDict.Remove(type);
-                Destroy(value.GetGameObject());
+                Dispose(value.GetGameObject());
             }
         }
 
@@ -245,7 +249,7 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Closed);
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
-                Destroy(kvp.Value.GetGameObject());
+                Dispose(kvp.Value.GetGameObject());
             }
 
             _openedPanelDict.Clear();
@@ -255,12 +259,18 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
                 kvp.Value.SetState(UIPanelState.Closed);
-                Destroy(kvp.Value.GetGameObject());
+                Dispose(kvp.Value.GetGameObject());
             }
 
             _closedPanelDict.Clear();
 
             _openedPanelStack.Clear();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Dispose(GameObject go)
+        {
+            UIDatabase.DisposePanel(go);
         }
 
 
@@ -330,54 +340,25 @@ namespace UnityToolkit
             UIRoot root = uiRoot.GetComponent<UIRoot>();
             if (root.UIDatabase == null)
             {
-                root.UIDatabase = root.CreateDatabase();
-                if (root.UIDatabase == null)
+                UIDatabase database = UnityEditor.AssetDatabase.LoadAssetAtPath<UIDatabase>("Assets/UIDatabase.asset");
+                if (database == null)
                 {
-                    Destroy(uiRoot);
+                    database = ScriptableObject.CreateInstance<UIDatabase>();
+                    UnityEditor.AssetDatabase.CreateAsset(database, "Assets/UIDatabase.asset");
+                    // 弹出MessageBox提醒用户
+                    UnityEditor.EditorUtility.DisplayDialog("Create UIDatabase",
+                        "Create UIDatabase.asset in Assets folder,You can move it to other folder or modify it in the editor.",
+                        "OK");
+                    // 选中创建的UIDatabase
+                    UnityEditor.Selection.activeObject = database;
+                }
+
+                root.UIDatabase = database;
+                if (UnityEditor.Selection.activeObject != database)
+                {
+                    UnityEditor.Selection.activeObject = root;
                 }
             }
-        }
-
-        private UIDatabase CreateDatabase()
-        {
-            //如果没有找到UIPanelDatabase，就创建一个
-            UIDatabase = ScriptableObject.CreateInstance<UIDatabase>();
-            //打开创建文件的窗口
-            string path = UnityEditor.EditorUtility.SaveFilePanelInProject("Create UIPanelDatabase", "UIPanelDatabase",
-                "asset", "Create UIPanelDatabase");
-            UnityEditor.AssetDatabase.CreateAsset(UIDatabase, path);
-            UnityEditor.AssetDatabase.SaveAssets();
-            return UIDatabase;
-        }
-
-
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.Button("RefreshDatabase")]
-#else
-        [ContextMenu("RefreshDatabase")]
-#endif
-
-        public void RefreshDatabase()
-        {
-            if (UIDatabase == null)
-            {
-                UIDatabase = CreateDatabase();
-                if (UIDatabase == null)
-                {
-                    return;
-                }
-            }
-
-            UIDatabase.Refresh();
-        }
-#if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.Button("OpenDatabase")]
-#else
-        [ContextMenu("OpenDatabase")]
-#endif
-        public void OpenDatabase() // TODO 做一个UI数据库的编辑器
-        {
-            throw new NotImplementedException();
         }
     }
 #endif
