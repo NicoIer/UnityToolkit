@@ -1,20 +1,43 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 
 namespace UnityToolkit
 {
+    public partial interface IUILoader
+    {
+        public GameObject Load<T>() where T : IUIPanel;
+
+        public void LoadAsync<T>(Action<GameObject> callback) where T : IUIPanel;
+    }
+
     // TODO 删除UIDatabase 使用Json配置 路径 然后用自定义加载路径进行加载
     /// <summary>
     /// UI数据库
     /// 用于 存储 & 加载 UI
     /// </summary>
     [CreateAssetMenu(fileName = "UIDatabase", menuName = "Toolkit/UIDatabase", order = 0)]
-    public sealed class UIDatabase : ScriptableObject
+    public partial class UIDatabase : ScriptableObject
     {
-        public Func<Type,GameObject> LoadFunc = (type) => Resources.Load<GameObject>(type.Name);
-        
+        private struct DefaultLoader : IUILoader
+        {
+            public GameObject Load<T>() where T : IUIPanel
+            {
+                return Resources.Load<GameObject>(typeof(T).Name);
+            }
+
+            public void LoadAsync<T>(Action<GameObject> callback) where T : IUIPanel
+            {
+                var handle = Resources.LoadAsync<GameObject>(typeof(T).Name);
+                handle.completed += operation => { callback(handle.asset as GameObject); };
+            }
+        }
+
+        public IUILoader Loader = new DefaultLoader();
+
         public Action<GameObject> DisposeFunc = GameObject.DestroyImmediate;
 
         /// <summary>
@@ -23,17 +46,31 @@ namespace UnityToolkit
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public  T CreatePanel<T>() where T : IUIPanel
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T CreatePanel<T>() where T : IUIPanel
         {
-            GameObject prefab = LoadFunc(typeof(T));
-            // 这里是一个加载方法
-            if (prefab.GetComponent<T>() == null)
+            GameObject prefab = Loader.Load<T>();
+            return Modify<T>(prefab);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CreatePanelAsync<T>(Action<T> callback) where T : IUIPanel
+        {
+            Loader.LoadAsync<T>(prefab =>
+            {
+                callback?.Invoke(Modify<T>(prefab));
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private T Modify<T>(GameObject panel) where T : IUIPanel
+        {
+            if (panel.GetComponent<T>() == null)
             {
                 throw new ArgumentException(
                     $"{nameof(UIDatabase)} doesn't contain {typeof(T)}");
             }
 
-            GameObject panel = Instantiate(prefab);
             //修改RectTransform为填满的模式
             RectTransform rectTransform = panel.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
@@ -43,8 +80,8 @@ namespace UnityToolkit
             return panel.GetComponent<T>();
         }
 
-        public  void DisposePanel(GameObject panel)
-        { 
+        public void DisposePanel(GameObject panel)
+        {
             DisposeFunc(panel);
         }
     }

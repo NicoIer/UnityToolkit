@@ -15,7 +15,9 @@ namespace UnityToolkit
     public partial class UIRoot : MonoSingleton<UIRoot>
     {
         [field: SerializeField] public Camera UICamera { get; private set; } //UI相机
+
         [field: SerializeField] public Canvas rootCanvas { get; private set; } //UI根画布
+
         // [field: SerializeField] public CanvasScaler rootCanvasScaler { get; private set; } //UI根画布缩放器
         // [field: SerializeField] public GraphicRaycaster rootGraphicRaycaster { get; private set; } //UI根画布射线检测器
         [field: SerializeField] public UIDatabase UIDatabase { get; private set; } //
@@ -40,10 +42,11 @@ namespace UnityToolkit
 
 
         protected override bool DontDestroyOnLoad() => true;
+
         protected override void OnInit()
         {
             Camera main = Camera.main;
-            if(main == null)
+            if (main == null)
             {
                 Debug.LogError("Main Camera is null");
                 return;
@@ -54,6 +57,7 @@ namespace UnityToolkit
                 Debug.LogError($"{nameof(UIRoot)}'s {nameof(UICamera)} is null");
                 return;
             }
+
             var cameraData = main.GetUniversalAdditionalCameraData();
             if (!cameraData.cameraStack.Contains(UICamera))
             {
@@ -186,6 +190,36 @@ namespace UnityToolkit
             Push(uiPanel);
             _openedPanelDict.Add(type, uiPanel);
             return uiPanel;
+        }
+
+        public async void OpenPanelAsync<T>(Action<T> callback=null) where T : IUIPanel
+        {
+            Type type = typeof(T);
+            if (_openedPanelDict.TryGetValue(type, out IUIPanel panel) && panel is T tPanel)
+            {
+                // Debug.LogWarning("Panel already opened");
+                callback?.Invoke(tPanel);
+                return;
+            }
+
+            if (_closedPanelDict.Remove(type, out panel) && panel is T tPanel2)
+            {
+                Push(panel);
+                _openedPanelDict.Add(type, panel);
+                callback?.Invoke(tPanel2);
+                return;
+            }
+            // 或许是回调地狱 但是 不能用Task做异步 因为不一定是主线程 会GG
+            UIDatabase.CreatePanelAsync<T>((uiPanel) =>
+            {
+                RectTransform rectTransform = uiPanel.GetRectTransform();
+                rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
+                uiPanel.SetState(UIPanelState.Loaded);
+                uiPanel.OnLoaded();
+                Push(uiPanel);
+                _openedPanelDict.Add(type, uiPanel);
+                callback?.Invoke(uiPanel);
+            });
         }
 
 
@@ -356,6 +390,7 @@ namespace UnityToolkit
                 UnityEditor.EditorUtility.DisplayDialog("Create UIRoot", "UIRoot already exists", "OK");
                 return;
             }
+
             GameObject prefab = Resources.Load<GameObject>("UIRoot");
             GameObject uiRoot = Instantiate(prefab, null, false);
             // UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
