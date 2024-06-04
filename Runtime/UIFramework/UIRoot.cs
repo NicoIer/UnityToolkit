@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace UnityToolkit
@@ -39,6 +40,26 @@ namespace UnityToolkit
 
 
         protected override bool DontDestroyOnLoad() => true;
+        protected override void OnInit()
+        {
+            Camera main = Camera.main;
+            if(main == null)
+            {
+                Debug.LogError("Main Camera is null");
+                return;
+            }
+
+            if (UICamera == null)
+            {
+                Debug.LogError($"{nameof(UIRoot)}'s {nameof(UICamera)} is null");
+                return;
+            }
+            var cameraData = main.GetUniversalAdditionalCameraData();
+            if (!cameraData.cameraStack.Contains(UICamera))
+            {
+                cameraData.cameraStack.Add(UICamera);
+            }
+        }
 
         /// <summary>
         /// 将面板推入栈顶
