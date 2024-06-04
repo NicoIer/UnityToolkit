@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using UnityEngine;
 
 namespace UnityToolkit
@@ -26,6 +27,7 @@ namespace UnityToolkit
         {
             get
             {
+                // 非主线程访问
                 // 如果T是仅在播放模式下的单例
                 if (typeof(IOnlyPlayingModelSingleton).IsAssignableFrom(typeof(T)))
                 {
@@ -74,9 +76,15 @@ namespace UnityToolkit
             //Awake时如果还没有被访问 则将自己赋值给_singleton
             if (_singleton == null)
             {
-                _singleton = this as T;
-                // Debug.Log($"Singleton<{typeof(T).Name}>.Awake() -> {gameObject.name}");
-                _singleton.OnSingletonInit();
+                if (this is T t)
+                {
+                    _singleton = t;
+                    _singleton.OnSingletonInit();
+                    return;
+                }
+                
+                // unknown error
+                Destroy(gameObject);
                 return;
             }
 
