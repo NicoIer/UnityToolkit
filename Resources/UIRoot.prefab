@@ -316,7 +316,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2508011023531552935}
-  - component: {fileID: 2703957819411857033}
+  - component: {fileID: 5851234246293377378}
   m_Layer: 5
   m_Name: UIRoot
   m_TagString: Untagged
@@ -342,7 +342,7 @@ Transform:
   - {fileID: 4370800244026924808}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2703957819411857033
+--- !u!114 &5851234246293377378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -351,11 +351,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8448063690480027880}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48a4e260330d24a7a8d5bbb5701fbf8b, type: 3}
+  m_Script: {fileID: 11500000, guid: a6d38e61bedf9524c86057c6928a1a0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <UICamera>k__BackingField: {fileID: 239112774878818453}
   <rootCanvas>k__BackingField: {fileID: 8268054131978024907}
-  <rootCanvasScaler>k__BackingField: {fileID: 8635259615518811014}
-  <rootGraphicRaycaster>k__BackingField: {fileID: 3252259805407743258}
   <UIDatabase>k__BackingField: {fileID: 0}

@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 8694659288605832217}
   - component: {fileID: 7268380138798720865}
   - component: {fileID: 3137867053441157382}
-  - component: {fileID: 5664743124926890659}
+  - component: {fileID: 2841095518182856279}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5664743124926890659
+--- !u!114 &2841095518182856279
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,17 +252,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4542174788260968814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a8202b791794de2ae3a65b2e8cc6b36, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ff0c6d6c9af8454f92ae3f43d229f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 4804004819856385358}
   bar: {fileID: 1514233175326964903}
   usingTitle: 0
-  max: 10
-  value: 5
+  max: 100
+  value: 50
   min: 0
   titleType: 0
-  tween: 1
+  fillMethod: 0
 --- !u!1 &7232959711361915096
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,8 +330,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 10/12
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 976e14b9130829247b3b0c41f20c26cc, type: 2}
-  m_sharedMaterial: {fileID: 532865983990596019, guid: 976e14b9130829247b3b0c41f20c26cc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

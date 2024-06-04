@@ -15,8 +15,8 @@ namespace UnityToolkit
     {
         [field: SerializeField] public Camera UICamera { get; private set; } //UI相机
         [field: SerializeField] public Canvas rootCanvas { get; private set; } //UI根画布
-        [field: SerializeField] public CanvasScaler rootCanvasScaler { get; private set; } //UI根画布缩放器
-        [field: SerializeField] public GraphicRaycaster rootGraphicRaycaster { get; private set; } //UI根画布射线检测器
+        // [field: SerializeField] public CanvasScaler rootCanvasScaler { get; private set; } //UI根画布缩放器
+        // [field: SerializeField] public GraphicRaycaster rootGraphicRaycaster { get; private set; } //UI根画布射线检测器
         [field: SerializeField] public UIDatabase UIDatabase { get; private set; } //
 
 
@@ -328,6 +328,13 @@ namespace UnityToolkit
         [UnityEditor.MenuItem("GameObject/UI/UIRoot", false, 0)]
         private static void CreateUIRoot()
         {
+            UIRoot root = GameObject.FindFirstObjectByType<UIRoot>();
+            if (root != null)
+            {
+                UnityEditor.Selection.activeGameObject = root.gameObject;
+                UnityEditor.EditorUtility.DisplayDialog("Create UIRoot", "UIRoot already exists", "OK");
+                return;
+            }
             GameObject prefab = Resources.Load<GameObject>("UIRoot");
             GameObject uiRoot = Instantiate(prefab, null, false);
             // UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
@@ -337,7 +344,7 @@ namespace UnityToolkit
             uiRoot.transform.localScale = Vector3.one;
             UnityEditor.Selection.activeGameObject = uiRoot;
 
-            UIRoot root = uiRoot.GetComponent<UIRoot>();
+            root = uiRoot.GetComponent<UIRoot>();
             if (root.UIDatabase == null)
             {
                 UIDatabase database = UnityEditor.AssetDatabase.LoadAssetAtPath<UIDatabase>("Assets/UIDatabase.asset");

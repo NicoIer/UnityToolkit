@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 223751921434906540}
   - component: {fileID: 114408553226943516}
   - component: {fileID: 114901697352296590}
-  - component: {fileID: 114530257322874124}
+  - component: {fileID: 2050200660095364742}
   m_Layer: 5
   m_Name: HealthBarHandDrawn
   m_TagString: Untagged
@@ -388,7 +388,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &114901697352296590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -405,8 +405,8 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 119
---- !u!114 &114530257322874124
+    m_Bits: 55
+--- !u!114 &2050200660095364742
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -415,7 +415,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1838076773556994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ba8dd62eea814efd8625484217f2508, type: 3}
+  m_Script: {fileID: 11500000, guid: 049e5cff4c43124498eaccda569f03b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dropSpeed: 0.5
+  maxHealth: 0
+  currentHealth: 0
