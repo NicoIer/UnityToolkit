@@ -12,19 +12,19 @@ namespace UnityToolkit
 
         private static string LogFilePath => Application.persistentDataPath + "/Log_" + System.DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
 
-        [Conditional("Debugger")]
+        // [Conditional("Debugger")]
         public static void Log(object obj)
         {
             Debug.Log(obj);
         }
 
-        [Conditional("Debugger")]
+        // [Conditional("Debugger")]
         public static void Warning(object obj)
         {
             Debug.LogWarning(obj);
         }
 
-        [Conditional("Debugger")]
+        // [Conditional("Debugger")]
         public static void Error(object obj)
         {
             Debug.LogError(obj);
