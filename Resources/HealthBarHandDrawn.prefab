@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bdc26e678dba44599a25f650de864368, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a0c8627ef6b14a54ab7f7461e7378a67, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 141713463c346414ca3c3479b5632b1b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 46d014b811fb6764894b3d0ee22503ac, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -215,7 +215,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bdc26e678dba44599a25f650de864368, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a0c8627ef6b14a54ab7f7461e7378a67, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -290,7 +290,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bdc26e678dba44599a25f650de864368, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a0c8627ef6b14a54ab7f7461e7378a67, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 223751921434906540}
   - component: {fileID: 114408553226943516}
   - component: {fileID: 114901697352296590}
-  - component: {fileID: 2050200660095364742}
+  - component: {fileID: 1169128695397702535}
   m_Layer: 5
   m_Name: HealthBarHandDrawn
   m_TagString: Untagged
@@ -406,7 +406,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 55
---- !u!114 &2050200660095364742
+--- !u!114 &1169128695397702535
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -415,9 +415,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1838076773556994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 049e5cff4c43124498eaccda569f03b2, type: 3}
+  m_Script: {fileID: 11500000, guid: b4fa53d7ea35e0846ba7693a97f3e58d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dropSpeed: 0.5
-  maxHealth: 0
-  currentHealth: 0
+  maxHealth: 100
+  currentHealth: 50

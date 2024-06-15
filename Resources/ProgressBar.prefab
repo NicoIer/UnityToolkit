@@ -155,7 +155,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7,
+    type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -176,7 +177,7 @@ GameObject:
   - component: {fileID: 8694659288605832217}
   - component: {fileID: 7268380138798720865}
   - component: {fileID: 3137867053441157382}
-  - component: {fileID: 2841095518182856279}
+  - component: {fileID: 4723339571567795636}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -243,7 +244,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2841095518182856279
+--- !u!114 &4723339571567795636
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -252,12 +253,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4542174788260968814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ff0c6d6c9af8454f92ae3f43d229f24, type: 3}
+  m_Script: {fileID: 11500000, guid: 38d66b28b9073614aa099fa344201ea5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   title: {fileID: 4804004819856385358}
   bar: {fileID: 1514233175326964903}
-  usingTitle: 0
+  usingTitle: 1
   max: 100
   value: 50
   min: 0
@@ -315,7 +316,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7232959711361915096}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -328,10 +329,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 10/12
+  m_text: 50/100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 075a644ae3e0d4f4ba8953c38d0f2e92, type: 2}
+  m_sharedMaterial: {fileID: 2608996104116260222, guid: 075a644ae3e0d4f4ba8953c38d0f2e92,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
