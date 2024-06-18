@@ -40,6 +40,10 @@ namespace UnityToolkit
 
         public Action<GameObject> DisposeFunc = GameObject.DestroyImmediate;
 
+        public void ResetLoader()
+        {
+            Loader = new DefaultLoader();
+        }
         /// <summary>
         /// 创建UI面板
         /// </summary>
@@ -63,21 +67,23 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T Modify<T>(GameObject panel) where T : IUIPanel
+        private T Modify<T>(GameObject prefab) where T : IUIPanel
         {
-            if (panel.GetComponent<T>() == null)
+            if (prefab.GetComponent<T>() == null)
             {
                 throw new ArgumentException(
                     $"{nameof(UIDatabase)} doesn't contain {typeof(T)}");
             }
 
+            GameObject go = Instantiate(prefab);
+
             //修改RectTransform为填满的模式
-            RectTransform rectTransform = panel.GetComponent<RectTransform>();
+            RectTransform rectTransform = go.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
             rectTransform.offsetMin = Vector2.zero;
             rectTransform.offsetMax = Vector2.zero;
-            return panel.GetComponent<T>();
+            return go.GetComponent<T>();
         }
 
         public void DisposePanel(GameObject panel)
