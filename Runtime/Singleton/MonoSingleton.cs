@@ -54,7 +54,8 @@ namespace UnityToolkit
                     return _singleton;
                 }
 
-                throw new NullReferenceException($"Singleton<{typeof(T).Name}>.Singleton -> {typeof(T).Name} is null");
+                return null;
+                // throw new NullReferenceException($"Singleton<{typeof(T).Name}>.Singleton -> {typeof(T).Name} is null");
             }
         }
 

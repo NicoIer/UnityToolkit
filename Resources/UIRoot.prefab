@@ -327,7 +327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2508011023531552935}
-  - component: {fileID: 9111083656675789740}
+  - component: {fileID: 460624036940910143}
   m_Layer: 5
   m_Name: UIRoot
   m_TagString: Untagged
@@ -353,7 +353,7 @@ Transform:
   - {fileID: 4370800244026924808}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9111083656675789740
+--- !u!114 &460624036940910143
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
