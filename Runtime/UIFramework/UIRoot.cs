@@ -391,7 +391,7 @@ namespace UnityToolkit
                 return;
             }
 
-            GameObject prefab = Resources.Load<GameObject>("UIRoot");
+            GameObject prefab = Resources.Load<GameObject>("UnityToolkit/UIRoot");
             GameObject uiRoot = Instantiate(prefab, null, false);
             // UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
             uiRoot.name = "UIRoot";

@@ -362,7 +362,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8448063690480027880}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48a4e260330d24a7a8d5bbb5701fbf8b, type: 3}
+  m_Script: {fileID: 11500000, guid: 732d1bca925ff2c43802773d51a8dc1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <UICamera>k__BackingField: {fileID: 239112774878818453}
