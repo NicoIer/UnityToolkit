@@ -314,7 +314,7 @@ GameObject:
   - component: {fileID: 114901697352296590}
   - component: {fileID: 1169128695397702535}
   m_Layer: 5
-  m_Name: HealthBarHandDrawn
+  m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,9 +415,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1838076773556994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4fa53d7ea35e0846ba7693a97f3e58d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3020c8eb3e3cf42fe94a696d1d62fc55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dropSpeed: 0.5
-  maxHealth: 100
-  currentHealth: 50
+  maxHealth: 0
+  currentHealth: 0
