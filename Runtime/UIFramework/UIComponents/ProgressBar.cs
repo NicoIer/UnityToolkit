@@ -147,10 +147,10 @@ namespace UnityToolkit
             UpdateVisualDirect();
         }
 
-        [UnityEditor.MenuItem("GameObject/UI/ProgressBar")]
+        [UnityEditor.MenuItem("GameObject/UI/UnityToolkit/ProgressBar")]
         private static void CreateProgressBar()
         {
-            GameObject progressBarPrefab = Resources.Load<GameObject>("ProgressBar");
+            GameObject progressBarPrefab = Resources.Load<GameObject>("UnityToolkit/ProgressBar");
             // UnityEditor.PrefabUtility.InstantiatePrefab(progressBarPrefab) as GameObject;
             GameObject progressBar = Instantiate(progressBarPrefab, UnityEditor.Selection.activeTransform, false);
             UnityEditor.Selection.activeGameObject = progressBar;
