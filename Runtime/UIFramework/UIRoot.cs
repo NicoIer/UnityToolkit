@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Rendering.Universal;
@@ -157,14 +158,18 @@ namespace UnityToolkit
             panel.GetRectTransform().SetAsFirstSibling();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IUIPanel Peek() => _openedPanelStack.Peek();
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IUIPanel CurTop() => Peek();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CloseTop() => Pop();
 
-        public T OpenPanel<T>() where T : IUIPanel
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private T CheckPanelCache<T>() where T : IUIPanel
         {
             Type type = typeof(T);
             if (_openedPanelDict.TryGetValue(type, out IUIPanel panel) && panel is T tPanel)
@@ -180,46 +185,69 @@ namespace UnityToolkit
                 return tPanel2;
             }
 
+            return default;
+        }
 
-            T uiPanel = UIDatabase.CreatePanel<T>();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void BeforePanelLoaded<T>(T uiPanel) where T : IUIPanel
+        {
             RectTransform rectTransform = uiPanel.GetRectTransform();
             rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
 
             uiPanel.SetState(UIPanelState.Loaded);
             uiPanel.OnLoaded();
             Push(uiPanel);
+        }
+
+        public T OpenPanel<T>() where T : IUIPanel
+        {
+            T cache = CheckPanelCache<T>();
+            if (cache != null)
+            {
+                return cache;
+            }
+
+            Type type = typeof(T);
+
+            T uiPanel = UIDatabase.CreatePanel<T>();
+            BeforePanelLoaded(uiPanel);
             _openedPanelDict.Add(type, uiPanel);
             return uiPanel;
         }
 
-        public async void OpenPanelAsync<T>(Action<T> callback=null) where T : IUIPanel
+        public void OpenPanelAsync<T>(Action<T> callback = null) where T : IUIPanel
         {
             Type type = typeof(T);
-            if (_openedPanelDict.TryGetValue(type, out IUIPanel panel) && panel is T tPanel)
+            T cache = CheckPanelCache<T>();
+            if (cache != null)
             {
-                // Debug.LogWarning("Panel already opened");
-                callback?.Invoke(tPanel);
+                callback?.Invoke(cache);
                 return;
             }
 
-            if (_closedPanelDict.Remove(type, out panel) && panel is T tPanel2)
-            {
-                Push(panel);
-                _openedPanelDict.Add(type, panel);
-                callback?.Invoke(tPanel2);
-                return;
-            }
             // 或许是回调地狱 但是 不能用Task做异步 因为不一定是主线程 会GG
-            UIDatabase.CreatePanelAsync<T>((uiPanel) =>
+            UIDatabase.CreatePanelAsync<T>(uiPanel =>
             {
-                RectTransform rectTransform = uiPanel.GetRectTransform();
-                rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
-                uiPanel.SetState(UIPanelState.Loaded);
-                uiPanel.OnLoaded();
-                Push(uiPanel);
+                BeforePanelLoaded(uiPanel);
                 _openedPanelDict.Add(type, uiPanel);
                 callback?.Invoke(uiPanel);
             });
+        }
+
+        public async Task<T> OpenPanelAsync<T>() where T : IUIPanel
+        {
+            Type type = typeof(T);
+            T cache = CheckPanelCache<T>();
+            if (cache != null)
+            {
+                return cache;
+            }
+
+            // 或许是回调地狱 但是 不能用Task做异步 因为不一定是主线程 会GG
+            T uiPanel = await UIDatabase.CreatePanelAsync<T>();
+            BeforePanelLoaded(uiPanel);
+            _openedPanelDict.Add(type, uiPanel);
+            return uiPanel;
         }
 
 
@@ -229,7 +257,7 @@ namespace UnityToolkit
             ClosePanel(type);
         }
 
-        public void CloseAllExcept<T>() where T : UIPanel
+        public void CloseAllExcept<T>() where T : IUIPanel
         {
             Type type = typeof(T);
             List<Type> targets = ListPool<Type>.Get();
@@ -342,34 +370,39 @@ namespace UnityToolkit
             return false;
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsOpen<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _openedPanelDict.ContainsKey(type);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsOpen(Type type)
         {
             return _openedPanelDict.ContainsKey(type);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsClosed<T>() where T : class, IUIPanel
         {
             Type type = typeof(T);
             return _closedPanelDict.ContainsKey(type);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsClosed(Type type)
         {
             return _closedPanelDict.ContainsKey(type);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsDisposed<T>() where T : class, IUIPanel
         {
             return !IsClosed<T>() && !IsOpen<T>(); //既不在打开列表也不在关闭列表
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsDisposed(Type type)
         {
             return !IsClosed(type) && !IsOpen(type); //既不在打开列表也不在关闭列表
@@ -401,6 +434,11 @@ namespace UnityToolkit
             UnityEditor.Selection.activeGameObject = uiRoot;
 
             root = uiRoot.GetComponent<UIRoot>();
+            if (root == null)
+            {
+                root = uiRoot.AddComponent<UIRoot>();
+            }
+
             if (root.UIDatabase == null)
             {
                 UIDatabase database = UnityEditor.AssetDatabase.LoadAssetAtPath<UIDatabase>("Assets/UIDatabase.asset");

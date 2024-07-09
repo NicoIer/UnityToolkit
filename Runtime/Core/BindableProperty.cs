@@ -19,6 +19,33 @@ namespace UnityToolkit
         }
     }
 
+
+    public class BindData<T>
+    {
+        private event Action<T> Listeners = delegate { };
+        private readonly T _data;
+
+        public BindData(T data)
+        {
+            _data = data;
+        }
+
+        public void Invoke()
+        {
+            Listeners(_data);
+        }
+
+        public void Listen(Action<T> action)
+        {
+            Listeners += action;
+        }
+
+        public void UnListen(Action<T> action)
+        {
+            Listeners -= action;
+        }
+    }
+
     [Serializable]
     public sealed class BindableProperty<T>
     {

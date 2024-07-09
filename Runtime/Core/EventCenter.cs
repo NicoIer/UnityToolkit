@@ -53,12 +53,12 @@ namespace UnityToolkit
             _repository.Get<BuildInEvent<T>>()?.Trigger(args);
         }
 
-        public ICommand Register<T>(Action<T> onEvent)
+        public ICommand Listen<T>(Action<T> onEvent)
         {
             return _repository.GetOrAdd<BuildInEvent<T>>().Regiser(onEvent);
         }
 
-        public void UnRegister<T>(Action<T> onEvent)
+        public void UnListen<T>(Action<T> onEvent)
         {
             _repository.Get<BuildInEvent<T>>()?.UnRegister(onEvent);
         }

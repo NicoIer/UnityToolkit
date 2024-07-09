@@ -14,15 +14,29 @@ namespace UnityToolkit
 
     public class ProgressBar : MonoBehaviour, IUIComponent
     {
-        [SerializeField] private TextMeshProUGUI title;
-        [SerializeField] private Image bar;
+        [field: SerializeField] public TextMeshProUGUI title { get; private set; }
+        [field: SerializeField] public Image bar { get; private set; }
         [SerializeField] private bool usingTitle;
         [SerializeField] private float max = 100;
         [SerializeField] private float value = 50;
         [SerializeField] private float min = 0;
         [SerializeField] private ProgressTitleType titleType = ProgressTitleType.Value;
+
         [SerializeField] private Image.FillMethod fillMethod = Image.FillMethod.Horizontal; //默认水平填充
+
         // public bool tween = true;
+        private void Awake()
+        {
+            if (title == null)
+            {
+                title = transform.Find("Title").GetComponent<TextMeshProUGUI>();
+            }
+
+            if (bar == null)
+            {
+                bar = transform.Find("Mask/Bar").GetComponent<Image>();
+            }
+        }
 
         public bool UsingTitle
         {
@@ -116,6 +130,19 @@ namespace UnityToolkit
 
         private const float Tolerance = 0.0001f;
 
+        public void SetPercent(float percent)
+        {
+            percent = Mathf.Clamp01(percent);
+            SetValue(min + (max - min) * percent);
+        }
+
+        public void SetPercentWithoutNotify(float percent)
+        {
+            percent = Mathf.Clamp01(percent);
+            value = min + (max - min) * percent;
+            UpdateVisualDirect();
+        }
+
         public void SetValue(float value)
         {
             if (value > max) value = max;
@@ -134,11 +161,12 @@ namespace UnityToolkit
             min = minValue;
             UpdateVisualDirect();
         }
-        
+
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
+            if (title == null) Awake();
             bar.type = Image.Type.Filled;
             if (min > max) min = max;
             if (value > max) value = max;

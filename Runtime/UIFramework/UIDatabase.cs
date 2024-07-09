@@ -12,6 +12,10 @@ namespace UnityToolkit
         public GameObject Load<T>() where T : IUIPanel;
 
         public void LoadAsync<T>(Action<GameObject> callback) where T : IUIPanel;
+
+        public Task<GameObject> LoadAsync<T>() where T : IUIPanel;
+
+        public void Dispose(GameObject panel);
     }
 
     // TODO 删除UIDatabase 使用Json配置 路径 然后用自定义加载路径进行加载
@@ -34,16 +38,25 @@ namespace UnityToolkit
                 var handle = Resources.LoadAsync<GameObject>(typeof(T).Name);
                 handle.completed += operation => { callback(handle.asset as GameObject); };
             }
+
+            public async Task<GameObject> LoadAsync<T>() where T : IUIPanel
+            {
+                TaskCompletionSource<GameObject> tcs = new TaskCompletionSource<GameObject>();
+                var handle = Resources.LoadAsync<GameObject>(typeof(T).Name);
+                tcs.SetResult(handle.asset as GameObject);
+                await tcs.Task;
+                return tcs.Task.Result;
+            }
+
+            public void Dispose(GameObject panel)
+            {
+                DestroyImmediate(panel);
+            }
         }
 
         public IUILoader Loader = new DefaultLoader();
+        
 
-        public Action<GameObject> DisposeFunc = GameObject.DestroyImmediate;
-
-        public void ResetLoader()
-        {
-            Loader = new DefaultLoader();
-        }
         /// <summary>
         /// 创建UI面板
         /// </summary>
@@ -60,13 +73,17 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CreatePanelAsync<T>(Action<T> callback) where T : IUIPanel
         {
-            Loader.LoadAsync<T>(prefab =>
-            {
-                callback?.Invoke(Modify<T>(prefab));
-            });
+            Loader.LoadAsync<T>(prefab => { callback?.Invoke(Modify<T>(prefab)); });
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public async Task<T> CreatePanelAsync<T>() where T : IUIPanel
+        {
+            GameObject prefab = await Loader.LoadAsync<T>();
+            return Modify<T>(prefab);
+        }
+
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private T Modify<T>(GameObject prefab) where T : IUIPanel
         {
             if (prefab.GetComponent<T>() == null)
@@ -88,7 +105,7 @@ namespace UnityToolkit
 
         public void DisposePanel(GameObject panel)
         {
-            DisposeFunc(panel);
+            Loader.Dispose(panel);
         }
     }
 }
