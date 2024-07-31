@@ -65,7 +65,10 @@ namespace UnityToolkit
             transform.SetParent(null);
             if (DontDestroyOnLoad())
             {
-                DontDestroyOnLoad(gameObject);
+                if (Application.isPlaying)
+                {
+                    DontDestroyOnLoad(gameObject);
+                }
             }
 
             OnInit();
@@ -126,7 +129,7 @@ namespace UnityToolkit
 
 #if UNITY_EDITOR
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatic()
         {
             _singleton = null;

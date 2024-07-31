@@ -11,15 +11,42 @@ namespace UnityToolkit
         [SerializeField] private int maxSize = 100;
 
         private ObjectPool<GameObject> _pool;
+        private bool _initialized;
 
         private void Awake()
         {
+            Initialize(hidden);
+        }
+
+        public void Initialize(Transform parent = null)
+        {
+            if (parent == null) parent = hidden;
+            if (_initialized) return;
+            _initialized = true;
             _pool = new ObjectPool<GameObject>(
-                () => Instantiate(prefab),
-                (obj) => obj.SetActive(true),
+                () => Instantiate(prefab, parent),
                 (obj) =>
                 {
-                    obj.SetActive(false);
+                    if (obj.TryGetComponent(out IPoolObject poolObject))
+                    {
+                        poolObject.OnGet();
+                    }
+                    else
+                    {
+                        obj.SetActive(true);
+                    }
+                },
+                (obj) =>
+                {
+                    if (obj.TryGetComponent(out IPoolObject poolObject))
+                    {
+                        poolObject.OnRelease();
+                    }
+                    else
+                    {
+                        obj.SetActive(false);
+                    }
+
                     obj.transform.SetParent(hidden);
                 }, DestroyImmediate, true, initSize, maxSize
             );
