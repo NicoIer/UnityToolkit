@@ -46,6 +46,7 @@ namespace UnityToolkit
 
         protected override void OnInit()
         {
+            rootCanvas.transform.localScale = Vector3.one;
             Camera main = Camera.main;
             if (main == null)
             {
@@ -64,6 +65,14 @@ namespace UnityToolkit
             {
                 cameraData.cameraStack.Add(UICamera);
             }
+            
+            // Delete the default canvas child
+            for (int i = 0; i < rootCanvas.transform.childCount; i++)
+            {
+                Destroy(rootCanvas.transform.GetChild(i));
+                Debug.LogWarning("Delete the default canvas child");
+            }
+            
         }
 
         /// <summary>
@@ -412,6 +421,14 @@ namespace UnityToolkit
 #if UNITY_EDITOR
     public partial class UIRoot
     {
+        private void OnValidate()
+        {
+            if (rootCanvas != null)
+            {
+                rootCanvas.transform.localScale = Vector3.one;
+            }
+        }
+
         //在Hierarchy面板中可以快速创建一个UIRoot
         [UnityEditor.MenuItem("GameObject/UI/UIRoot", false, 0)]
         private static void CreateUIRoot()
@@ -459,6 +476,18 @@ namespace UnityToolkit
                 {
                     UnityEditor.Selection.activeObject = root;
                 }
+            }
+
+            if (root.rootCanvas == null)
+            {
+                Canvas canvas = uiRoot.GetComponentInChildren<Canvas>();
+                root.rootCanvas = canvas;
+            }
+
+            if (root.UICamera == null)
+            {
+                Camera camera = uiRoot.GetComponentInChildren<Camera>();
+                root.UICamera = camera;
             }
         }
     }

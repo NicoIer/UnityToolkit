@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UnityToolkit
 {
@@ -155,6 +159,43 @@ namespace UnityToolkit
         {
             v.z = 0;
             return v;
+        }
+
+        public static T RandomTake<T>(this HashSet<T> set)
+        {
+            if (set.Count == 0)
+            {
+                throw new NullReferenceException($"HashSet<{typeof(T)}> is empty");
+            }
+
+            int index = Random.Range(0, set.Count);
+            T t = set.ElementAt(index);
+            set.Remove(t);
+            return t;
+        }
+        
+        public static List<T> Shuffle<T>(this List<T> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                int index = Random.Range(0, list.Count);
+                (list[i], list[index]) = (list[index], list[i]);
+            }
+
+            return list;
+        }
+
+        public static T RandomTake<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+            {
+                throw new NullReferenceException($"List<{typeof(T)}> is empty");
+            }
+
+            int index = Random.Range(0, list.Count);
+            T t = list[index];
+            list.RemoveAt(index);
+            return t;
         }
     }
 }
