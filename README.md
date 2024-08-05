@@ -121,4 +121,4 @@ UIRoot.Singleton.Dispose<TXXXPanel>(); // 销毁一个面板
 
 # Network
 
-提供网络游戏开发工具包
+提供网络游戏开发工具包，依赖于MemoryPack
