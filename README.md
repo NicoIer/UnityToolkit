@@ -6,7 +6,20 @@ briefcase:
 
 Unity版本>=2021.3.15
 
-[//]: # (# 推荐的框架结构)
+# Getting Started
+
+## Install
+
+[//]: # (- 通过Unity Package Manager安装)
+
+- 通过.unitypackage安装，在Releases中下载最新的.unitypackage文件，然后导入到Unity中即可
+  - 当不需要使用网络模块时，直接删除Network目录即可
+  - 使用网络模块需要导入MemoryPack，具体请参考MemoryPack的文档
+
+## 推荐的游戏框架结构
+......
+
+# Toolkit
 
 ## UIFramework
 
@@ -97,19 +110,67 @@ UIRoot.Singleton.Dispose<TXXXPanel>(); // 销毁一个面板
     - 也可以实现IUIPanel接口，实现自己的UIPanel
     - 注意你的prefab路径，需要能够被你的IUILoader加载到
 
+### 无限循环滚动列表
+
+LoopScrollRect: 无限循环滚动列表 ，来自github.com/qiankanglai/LoopScrollRect
+
 ## Debugger
 
 - 拷贝自GameFramework的调试器，在场景中新建一个空物体，挂上DebuggerManager脚本即可
 
-## Other
+## Event System
 
-- TypeEventSystem：事件系统，支持事件的注册和注销，事件的派发，事件的监听，事件的移除
+事件系统，支持事件的注册和注销，事件的派发，事件的监听，事件的移除。
+
+内置实现了一套基于类型的事件系统，如果想实现基于字符串的事件系统，可以参考TypeEventSystem自己实现一套。
+
+在合适的地方初始化事件系统
+
+```csharp
+var eventSystem = new TypeEventSystem();
+```
+
+定义自己的事件
+
+```csharp
+public struct XXXEvent
+{
+    public int a;
+    public string b;
+    public float c;
+    //......
+}
+```
+
+在合适的地方注册事件
+
+```csharp
+void OnXXXEvent(XXXEvent e)
+{
+    //处理事件
+}
+
+// 注册事件
+ICommand unListenCommand = eventSystem.Listen<XXXEvent>(OnXXXEvent);
+
+// 触发事件
+eventSystem.Send<XXXEvent>(new XXXEvent(){
+    a = 1,
+    b = "2",
+    c = 3.0f
+});
+// 注销事件 两种方式
+unListenCommand.Execute();
+eventSystem.Unlisten<XXXEvent>(OnXXXEvent);
+```
+
+## ObjectPool
+
 - EasyGameObjectPool : 简单的对象池仅支持单一GameObject，支持对象的创建，回收，销毁，清空等操作
 - GameObjectPoolManager: 管理多个EasyGameObjectPool，支持对象的创建，回收，销毁，清空等操作
-- PlayerLoopHelper：源自Mirror的PlayerLoopHelper，用于自定义PlayerLoop
-- CharacterController2D：2D角色控制器源自github.com/prime31/CharacterController2D
-- ModelCenter:类似于MVC中的Model层，提供数据访问和数据管理的功能
-- Timer: 计时器
+
+## Singleton
+
 - MonoSingleton
     - 单例模式的基类，继承MonoSingleton\<T>即可实现单例模式
     - 通过MonoSingleton\<T>.Singleton获取单例对象
@@ -117,8 +178,14 @@ UIRoot.Singleton.Dispose<TXXXPanel>(); // 销毁一个面板
     - 重写DontDestroyOnLoad()方法可以实现场景切换不销毁单例对象
     - 实现IAutoCreateSingleton接口可以实现自动创建单例对象
     - 实现IOnlyPlayModeSingleton接口可以实现只在PlayMode下创建单例对象
-- LoopScrollRect: 无限循环滚动列表 github.com/qiankanglai/LoopScrollRect
+
+## Other
+
+- PlayerLoopHelper：源自Mirror的PlayerLoopHelper，用于自定义PlayerLoop
+- CharacterController2D：2D角色控制器源自github.com/prime31/CharacterController2D
+- ModelCenter:类似于MVC中的Model层，提供数据访问和数据管理的功能
+- Timer: 计时器
 
 # Network
 
-提供网络游戏开发工具包
+提供网络游戏开发工具包，依赖于MemoryPack

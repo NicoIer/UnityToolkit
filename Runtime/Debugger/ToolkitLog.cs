@@ -7,7 +7,7 @@ using Debug = UnityEngine.Debug;
 
 namespace UnityToolkit
 {
-    public static class Log
+    public static class ToolkitLog
     {
         public static bool writeLog { get; set; }
 

@@ -47,7 +47,7 @@ namespace UnityToolkit
             var type = typeof(T);
             if (_models.ContainsKey(type))
             {
-                throw new ArgumentException($"ModelCenter.Register<{type}>() failed, model already registered");
+               ToolkitLog.Error($"ModelCenter.Register<{type}>() failed, model already registered");
             }
 
             _models[type] = model;

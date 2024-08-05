@@ -62,6 +62,21 @@ namespace UnityToolkit
         {
             _repository.Get<BuildInEvent<T>>()?.UnRegister(onEvent);
         }
+
+        public ICommand Listen<T, TResult>(Func<T, TResult> onEvent)
+        {
+            return _repository.GetOrAdd<BuildInResultEvent<T, TResult>>().Register(onEvent);
+        }
+
+        public void UnListen<T, TResult>(Func<T, TResult> onEvent)
+        {
+            _repository.Get<BuildInResultEvent<T, TResult>>()?.UnRegister(onEvent);
+        }
+
+        public TResult SendWithResult<T, TResult>(T args)
+        {
+            return _repository.Get<BuildInResultEvent<T, TResult>>().Invoke(args);
+        }
     }
 
     /// <summary>
@@ -117,6 +132,32 @@ namespace UnityToolkit
     /// </summary>
     public interface IEvent
     {
+    }
+
+    /// <summary>
+    /// 提供给需要返回值的事件 通常用于Task等待
+    /// </summary>
+    /// <typeparam name="TParam"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    public sealed class BuildInResultEvent<TParam, TResult> : IEvent
+    {
+        private event Func<TParam, TResult> _onEvent = _ => default;
+
+        public ICommand Register(Func<TParam, TResult> onEvent)
+        {
+            this._onEvent += onEvent;
+            return new CommonCommand(() => { UnRegister(onEvent); });
+        }
+
+        public void UnRegister(Func<TParam, TResult> onEvent)
+        {
+            this._onEvent -= onEvent;
+        }
+
+        public TResult Invoke(TParam args)
+        {
+            return _onEvent(args);
+        }
     }
 
     /// <summary>

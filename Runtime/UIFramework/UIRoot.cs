@@ -33,13 +33,17 @@ namespace UnityToolkit
 
         [Sirenix.OdinInspector.ShowInInspector]
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
+        
+        [Sirenix.OdinInspector.ShowInInspector]
+        private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
 #else
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
+        private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();//辅助栈
 #endif
 
-        private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
+        
 
 
         protected override bool DontDestroyOnLoad() => true;
@@ -178,7 +182,7 @@ namespace UnityToolkit
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private T CheckPanelCache<T>() where T : IUIPanel
+        private T TryGetFromClosed<T>() where T : IUIPanel
         {
             Type type = typeof(T);
             if (_openedPanelDict.TryGetValue(type, out IUIPanel panel) && panel is T tPanel)
@@ -210,7 +214,7 @@ namespace UnityToolkit
 
         public T OpenPanel<T>() where T : IUIPanel
         {
-            T cache = CheckPanelCache<T>();
+            T cache = TryGetFromClosed<T>();
             if (cache != null)
             {
                 return cache;
@@ -224,10 +228,10 @@ namespace UnityToolkit
             return uiPanel;
         }
 
-        public void OpenPanelAsync<T>(Action<T> callback = null) where T : IUIPanel
+        public void OpenPanelAsync<T>(Action<T> callback) where T : IUIPanel
         {
             Type type = typeof(T);
-            T cache = CheckPanelCache<T>();
+            T cache = TryGetFromClosed<T>();
             if (cache != null)
             {
                 callback?.Invoke(cache);
@@ -246,7 +250,7 @@ namespace UnityToolkit
         public async Task<T> OpenPanelAsync<T>() where T : IUIPanel
         {
             Type type = typeof(T);
-            T cache = CheckPanelCache<T>();
+            T cache = TryGetFromClosed<T>();
             if (cache != null)
             {
                 return cache;
