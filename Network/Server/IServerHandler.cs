@@ -9,6 +9,6 @@ namespace Network.Server
         void OnDisconnected(int connectionId);
         void OnDataSent(int connectionId, ArraySegment<byte> data);
 
-        void OnTick();
+        void OnUpdate();
     }
 }

@@ -1,3 +1,4 @@
+#if UNITY_5_6_OR_NEWER
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -172,3 +173,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif

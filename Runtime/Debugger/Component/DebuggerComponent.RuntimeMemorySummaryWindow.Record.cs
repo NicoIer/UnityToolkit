@@ -1,4 +1,5 @@
-﻿namespace UnityToolkit.Debugger
+﻿#if UNITY_5_6_OR_NEWER
+namespace UnityToolkit.Debugger
 {
     public sealed partial class DebuggerComponent
     {
@@ -52,3 +53,4 @@
         }
     }
 }
+#endif

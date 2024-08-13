@@ -1,19 +1,20 @@
 using System;
 using System.Collections.Generic;
 using MemoryPack;
+using UnityToolkit;
 
 namespace Network
 {
-    public sealed class NetworkServerMessageHandler
+    public sealed class NetworkServerMessageHandler : IDisposable
     {
-        private Dictionary<ushort, Action<int, ArraySegment<byte>>> _handler;
+        private readonly Dictionary<ushort, Action<int, ArraySegment<byte>>> _handler;
 
         public NetworkServerMessageHandler()
         {
             _handler = new Dictionary<ushort, Action<int, ArraySegment<byte>>>(16);
         }
 
-        public void Add<T>(Action<int, T> handler) where T : INetworkMessage
+        public ICommand Add<T>(Action<int, T> handler) where T : INetworkMessage
         {
             ushort id = NetworkId<T>.Value;
             if (!_handler.ContainsKey(id))
@@ -21,7 +22,9 @@ namespace Network
                 _handler[id] = delegate { };
             }
 
-            _handler[id] += Warp(handler);
+            var warp = Warp(handler);
+            _handler[id] += warp;
+            return new CommonCommand(() => { _handler[id] -= warp; });
         }
 
         public void Clear<T>() where T : INetworkMessage
@@ -58,6 +61,11 @@ namespace Network
                 T message = MemoryPackSerializer.Deserialize<T>(data);
                 handler(connectionId, message);
             };
+        }
+
+        public void Dispose()
+        {
+            _handler.Clear();
         }
     }
 }

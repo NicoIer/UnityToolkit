@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_5_6_OR_NEWER
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -186,3 +187,4 @@ namespace UnityToolkit
 #endif
     }
 }
+#endif

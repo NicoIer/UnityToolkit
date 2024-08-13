@@ -1,2 +1,5 @@
 *.meta
 .DS_Store
+
+obj/
+bin/

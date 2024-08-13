@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_5_6_OR_NEWER
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -165,3 +166,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_5_6_OR_NEWER
 using System;
 using System.Threading;
 using UnityEngine;
@@ -137,3 +138,4 @@ namespace UnityToolkit
 #endif
     }
 }
+#endif

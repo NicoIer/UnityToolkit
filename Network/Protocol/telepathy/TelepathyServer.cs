@@ -95,7 +95,7 @@ namespace Network.Telepathy
                 //listener.GameServer.SendTimeout = SendTimeout;
                 //listener.GameServer.ReceiveTimeout = ReceiveTimeout;
                 listener.Start();
-                NetworkLogger.Info("GameServer: listening port=" + port);
+                NetworkLogger.Info($"[{this}]: listening port=" + port);
 
                 // keep accepting new clients
                 while (true)
@@ -138,7 +138,7 @@ namespace Network.Telepathy
                         }
                         catch (Exception exception)
                         {
-                            NetworkLogger.Error("GameServer send thread exception: " + exception);
+                            NetworkLogger.Error($"[{this}]: send thread exception: " + exception);
                         }
                     });
                     sendThread.IsBackground = true;
@@ -172,7 +172,7 @@ namespace Network.Telepathy
                         }
                         catch (Exception exception)
                         {
-                            NetworkLogger.Error("GameServer client thread exception: " + exception);
+                            NetworkLogger.Error($"[{this}]: client thread exception: " + exception);
                         }
                     });
                     receiveThread.IsBackground = true;
@@ -183,18 +183,18 @@ namespace Network.Telepathy
             {
                 // UnityEditor causes AbortException if thread is still
                 // running when we press Play again next time. that's okay.
-                NetworkLogger.Info("GameServer thread aborted. That's okay. " + exception);
+                NetworkLogger.Info($"[{this}]: thread aborted. That's okay. " + exception);
             }
             catch (SocketException exception)
             {
                 // calling StopServer will interrupt this thread with a
                 // 'SocketException: interrupted'. that's okay.
-                NetworkLogger.Info("GameServer Thread stopped. That's okay. " + exception);
+                NetworkLogger.Info($"[{this}]: Thread stopped. That's okay. " + exception);
             }
             catch (Exception exception)
             {
                 // something went wrong. probably important.
-                NetworkLogger.Error("GameServer Exception: " + exception);
+                NetworkLogger.Error($"[{this}]: Exception: " + exception);
             }
         }
 
@@ -215,7 +215,7 @@ namespace Network.Telepathy
             // start the listener thread
             // (on low priority. if main thread is too busy then there is not
             //  much value in accepting even more clients)
-            NetworkLogger.Info("GameServer: Start port=" + port);
+            NetworkLogger.Info($"[{this}]:: Start port=" + port);
             listenerThread = new Thread(() => { Listen(port); });
             listenerThread.IsBackground = true;
             listenerThread.Priority = ThreadPriority.BelowNormal;
@@ -228,7 +228,7 @@ namespace Network.Telepathy
             // only if started
             if (!Active) return;
 
-            NetworkLogger.Info("GameServer: stopping...");
+            NetworkLogger.Info($"[{this}]:: stopping...");
 
             // stop listening to connections so that no one can connect while we
             // close the client connections
@@ -295,7 +295,7 @@ namespace Network.Telepathy
                     else
                     {
                         // log the reason
-                        NetworkLogger.Warning($"GameServer.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
+                        NetworkLogger.Warning($"[{this}]:.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
 
                         // just close it. send thread will take care of the rest.
                         connection.client.Close();
@@ -308,10 +308,10 @@ namespace Network.Telepathy
                 // try to send for one frame before it calls GetNextMessages
                 // again and realizes that a disconnect happened.
                 // so let's not spam the console with log messages.
-                //Logger.Log("GameServer.Send: invalid connectionId: " + connectionId);
+                //Logger.Log($"[{this}]:.Send: invalid connectionId: " + connectionId);
                 return false;
             }
-            NetworkLogger.Error("GameServer.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
+            NetworkLogger.Error($"[{this}]:.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
             return false;
         }
 
@@ -334,7 +334,7 @@ namespace Network.Telepathy
             {
                 // just close it. send thread will take care of the rest.
                 connection.client.Close();
-                NetworkLogger.Info("GameServer.Disconnect connectionId:" + connectionId);
+                NetworkLogger.Info($"[{this}]:.Disconnect connectionId:" + connectionId);
                 return true;
             }
             return false;

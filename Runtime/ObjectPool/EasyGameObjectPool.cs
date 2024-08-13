@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_5_6_OR_NEWER
+using UnityEngine;
 using UnityEngine.Pool;
 
 namespace UnityToolkit
@@ -56,3 +57,4 @@ namespace UnityToolkit
         public void Release(GameObject obj) => _pool.Release(obj);
     }
 }
+#endif

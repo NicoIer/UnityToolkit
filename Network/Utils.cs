@@ -8,11 +8,12 @@ namespace Network
 {
     internal static partial class Utils
     {
-        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string TimeStamp()
         {
-            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return $"{DateTime.Now:HH:mm:ss}";
         }
+
         // IntToBytes version that doesn't allocate a new byte[4] each time.
         // -> important for MMO scale networking performance.
         public static void IntToBytesBigEndianNonAlloc(int value, byte[] bytes, int offset = 0)
@@ -135,12 +136,13 @@ namespace Network
             }
             catch (SocketException)
             {
-                NetworkLogger.Warning($"Kcp: failed to set Socket RecvBufSize = {recvBufferSize} SendBufSize = {sendBufferSize}");
+                NetworkLogger.Warning(
+                    $"Failed to set {socket} RecvBufSize = {recvBufferSize} SendBufSize = {sendBufferSize}");
             }
 
 
             NetworkLogger.Info(
-                $"Kcp: RecvBuf = {initialReceive}=>{socket.ReceiveBufferSize} ({socket.ReceiveBufferSize / initialReceive}x) SendBuf = {initialSend}=>{socket.SendBufferSize} ({socket.SendBufferSize / initialSend}x)");
+                $"Set {socket} RecvBuf = {initialReceive}=>{socket.ReceiveBufferSize} ({socket.ReceiveBufferSize / initialReceive}x) SendBuf = {initialSend}=>{socket.SendBufferSize} ({socket.SendBufferSize / initialSend}x)");
         }
 
         // generate a connection hash from IP+Port.
@@ -153,19 +155,45 @@ namespace Network
         //
         // => using only newClientEP.Port wouldn't work, because
         //    different connections can have the same port.
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ConnectionHash(EndPoint endPoint) =>
             endPoint.GetHashCode();
 
         // cookies need to be generated with a secure random generator.
         // we don't want them to be deterministic / predictable.
         // RNG is cached to avoid runtime allocations.
-        static readonly RNGCryptoServiceProvider cryptoRandom = new RNGCryptoServiceProvider();
-        static readonly byte[] cryptoRandomBuffer = new byte[4];
+        [ThreadStatic] private static RNGCryptoServiceProvider _cryptoRandom;
+        [ThreadStatic] private static byte[] _cryptoRandomBuffer;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint GenerateCookie()
         {
-            cryptoRandom.GetBytes(cryptoRandomBuffer);
-            return BitConverter.ToUInt32(cryptoRandomBuffer, 0);
+            if (_cryptoRandom == null)
+                _cryptoRandom = new RNGCryptoServiceProvider();
+            if (_cryptoRandomBuffer == null)
+                _cryptoRandomBuffer = new byte[4];
+
+            _cryptoRandom.GetBytes(_cryptoRandomBuffer);
+            return BitConverter.ToUInt32(_cryptoRandomBuffer, 0);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static NetworkQuality CalculateQuality(int rttMs)
+        {
+            // 1-30ms
+            if (rttMs <= 30)
+                return NetworkQuality.Excellent;
+            // 31-60ms
+            if (rttMs <= 60)
+                return NetworkQuality.Good;
+            // 61-100ms
+            if (rttMs <= 100)
+                return NetworkQuality.Normal;
+            // 101-200ms
+            if (rttMs <= 200)
+                return NetworkQuality.Poor;
+            // >200ms
+            return NetworkQuality.Bad;
         }
     }
 }

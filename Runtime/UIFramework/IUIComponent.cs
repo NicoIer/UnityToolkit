@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_5_6_OR_NEWER
+using UnityEngine;
 
 namespace UnityToolkit
 {
@@ -26,3 +27,4 @@ namespace UnityToolkit
         public void OnDispose(); //销毁面板时调用
     }
 }
+#endif

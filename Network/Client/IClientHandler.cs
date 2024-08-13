@@ -9,6 +9,6 @@ namespace Network.Client
         void OnDisconnected();
         void OnDataSent(ArraySegment<byte> data);
         
-        void OnTick();
+        void OnUpdate();
     }
 }

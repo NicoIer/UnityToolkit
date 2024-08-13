@@ -22,7 +22,7 @@ namespace Network
             this.id = id;
             this.payload = payload;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NetworkPacket Pack<T>(in T message, NetworkBuffer buffer)
             where T : INetworkMessage
@@ -43,11 +43,11 @@ namespace Network
     [MemoryPackable]
     public partial struct PingMessage : INetworkMessage
     {
-        public readonly long sendTime;
+        public readonly long sendTimeTicks;
 
-        public PingMessage(long sendTime)
+        public PingMessage(long sendTimeTicks)
         {
-            this.sendTime = sendTime;
+            this.sendTimeTicks = sendTimeTicks;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,22 +60,34 @@ namespace Network
     [MemoryPackable]
     public partial struct PongMessage : INetworkMessage
     {
-        // 接收到Ping的时间
-        public readonly long receivePingTime;
+        /// <summary>
+        /// Pong消息发送方接收到Ping的时间
+        /// Pinger -> Ponger -> Pinger
+        /// </summary>
+        public readonly long receivePingTimeTicks;
 
-        // Ping方发送Ping的时间
-        public readonly long sendPingTime;
+        /// <summary>
+        /// Ping方发送Ping的时间
+        /// Pinger -> Ponger -> Pinger
+        /// </summary>
+        public readonly long sendPingTimeTicks;
 
         public PongMessage(ref PingMessage pingMessage)
         {
-            sendPingTime = pingMessage.sendTime;
-            receivePingTime = DateTime.UtcNow.Ticks;
+            sendPingTimeTicks = pingMessage.sendTimeTicks;
+            receivePingTimeTicks = DateTime.UtcNow.Ticks;
         }
+    }
 
-        public PongMessage(long sendPingTime)
+
+    [MemoryPackable]
+    public partial struct RttMessage : INetworkMessage
+    {
+        public readonly int rttMs;
+
+        public RttMessage(int rttMs)
         {
-            this.sendPingTime = sendPingTime;
-            receivePingTime = DateTime.UtcNow.Ticks;
+            this.rttMs = rttMs;
         }
     }
 }

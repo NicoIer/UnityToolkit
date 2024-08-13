@@ -1,9 +1,10 @@
+using System;
 using System.Diagnostics;
 using System.Threading;
 
 namespace Network
 {
-    public struct TimeSample
+    public struct TimeSample : IDisposable
     {
         // UnityEngine.Time isn't thread safe. use stopwatch instead.
         readonly Stopwatch watch;
@@ -50,6 +51,11 @@ namespace Network
 
             // expose new average thread safely
             Interlocked.Exchange(ref average, ema.Value);
+        }
+
+        public void Dispose()
+        {
+            watch.Stop();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_5_6_OR_NEWER
+using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -32,3 +33,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif

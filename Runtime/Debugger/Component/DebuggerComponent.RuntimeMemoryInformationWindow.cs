@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_5_6_OR_NEWER
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_5_5_OR_NEWER
@@ -132,3 +133,4 @@ namespace UnityToolkit.Debugger
         }
     }
 }
+#endif

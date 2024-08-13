@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
@@ -161,3 +162,4 @@ namespace UnityToolkit.Editor
         }
     }
 }
+#endif

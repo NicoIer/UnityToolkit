@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -21,3 +22,4 @@ namespace UnityToolkit.Editor
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_5_6_OR_NEWER
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Serialization;
@@ -558,3 +559,4 @@ namespace UnityToolkit
         #endregion
     }
 }
+#endif
