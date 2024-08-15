@@ -1,6 +1,6 @@
 {
     "name": "UnityToolkit",
-    "rootNamespace": "",
+    "rootNamespace": "UnityToolkit",
     "references": [
         "Unity.TextMeshPro",
         "Unity.RenderPipelines.Universal.Runtime"
