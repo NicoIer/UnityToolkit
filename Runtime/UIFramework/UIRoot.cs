@@ -80,30 +80,46 @@ namespace UnityToolkit
             
         }
 
+
         /// <summary>
         /// 将面板推入栈顶
         /// </summary>
         /// <param name="panel"></param>
         private void Push(IUIPanel panel)
         {
+            // Assert.IsTrue(_helpStack.Count == 0);
+            // Debug.Log($"Pushing {panel.GetType().Name}");
             panel.SetState(UIPanelState.Opening);
+            // Assert.IsTrue(_openedPanelStack.Contains(panel) == false);
             if (_openedPanelStack.Count > 0)
             {
-                IUIPanel top = _openedPanelStack.Peek();
                 //找到当前面板的显示层级
-                while (top.GetSortingOrder() > panel.GetSortingOrder() && _openedPanelStack.Count > 0)
+                IUIPanel top = _openedPanelStack.Pop();
+                while (top.GetSortingOrder() < panel.GetSortingOrder() && _openedPanelStack.Count > 0)
                 {
+                    // Assert.IsTrue(!_helpStack.Contains(top));
                     _helpStack.Push(top);
                     top = _openedPanelStack.Pop();
                 }
 
-                panel.GetRectTransform().SetAsLastSibling();
+                // Assert.IsTrue(!_openedPanelStack.Contains(top));
+                // Assert.IsTrue(!_helpStack.Contains(top));
+                // 放回去 因为 这个top的优先级更高
+                _openedPanelStack.Push(top);
+                // 构造单调递增的栈 从栈底到栈顶 优先级递减
                 _openedPanelStack.Push(panel);
+                // 把前面优先级更低的放回去
                 while (_helpStack.Count > 0)
                 {
                     IUIPanel origin = _helpStack.Pop();
-                    origin.GetRectTransform().SetAsLastSibling();
                     _openedPanelStack.Push(origin);
+                }
+
+                // 优先级高的要调整再Hierarchy中的顺序到最后
+                foreach (var uiPanel in _openedPanelStack)
+                {
+                    // Debug.Log($"Panel {uiPanel.GetType().Name} SortingOrder {uiPanel.GetSortingOrder()}");
+                    uiPanel.GetRectTransform().SetAsLastSibling();
                 }
             }
             else
