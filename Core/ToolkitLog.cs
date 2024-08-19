@@ -14,6 +14,10 @@ namespace UnityToolkit
     {
         public static bool writeLog { get; set; }
 
+        public static Action<string> logAction = delegate { };
+        public static Action<string> warningAction = delegate { };
+        public static Action<string> errorAction = delegate { };
+        
         private static string LogFilePath =>
 #if UNITY_5_6_OR_NEWER
             Application.persistentDataPath + "/Log_" +
@@ -24,7 +28,7 @@ namespace UnityToolkit
 
         // [Conditional("Debugger")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Info(object obj)
+        public static void Info(string obj)
         {
 #if UNITY_5_6_OR_NEWER
             Debug.Log(obj);
@@ -35,7 +39,7 @@ namespace UnityToolkit
 
         // [Conditional("Debugger")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Warning(object obj)
+        public static void Warning(string obj)
         {
 #if UNITY_5_6_OR_NEWER
             Debug.LogWarning(obj);
@@ -46,7 +50,7 @@ namespace UnityToolkit
 
         // [Conditional("Debugger")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Error(object obj)
+        public static void Error(string obj)
         {
 #if UNITY_5_6_OR_NEWER
             Debug.LogError(obj);

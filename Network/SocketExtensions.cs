@@ -34,5 +34,19 @@ namespace Network
             pool.Return(msgBuffer);
             pool.Return(packetBuffer);
         }
+        
+        public static void SendToAll<TMessage>(this IServerSocket socket, TMessage message, NetworkBufferPool pool)
+            where TMessage : INetworkMessage
+        {
+            NetworkBuffer msgBuffer = pool.Get();
+            NetworkBuffer packetBuffer = pool.Get();
+            NetworkPacket packet = NetworkPacket.Pack(message, msgBuffer);
+
+            MemoryPackSerializer.Serialize(packetBuffer, packet);
+            socket.SendToAll(packetBuffer);
+
+            pool.Return(msgBuffer);
+            pool.Return(packetBuffer);
+        }
     }
 }

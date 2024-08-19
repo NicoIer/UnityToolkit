@@ -3,13 +3,14 @@
 // (this way we don't have to depend on UnityEngine)
 
 using System;
+using UnityToolkit;
 
 namespace Network
 {
     public static class NetworkLogger
     {
-        public static Action<string> Info = Console.WriteLine;
-        public static Action<string> Warning = Console.WriteLine;
-        public static Action<string> Error = Console.Error.WriteLine;
+        internal static Action<string> Info = ToolkitLog.Info;
+        internal static Action<string> Warning = ToolkitLog.Warning;
+        internal static Action<string> Error = ToolkitLog.Error;
     }
 }

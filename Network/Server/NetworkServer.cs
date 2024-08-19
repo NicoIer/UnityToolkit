@@ -9,7 +9,7 @@ namespace Network.Server
 {
     public class NetworkServer : IServerHandler, IDisposable
     {
-        private readonly IServerSocket _socket;
+        public IServerSocket socket { get; private set; }
         private readonly NetworkBufferPool _bufferPool;
         private readonly NetworkServerMessageHandler _messageHandler;
 
@@ -20,46 +20,54 @@ namespace Network.Server
 
         private readonly SystemLocator _system;
 
+        #region Status Montior
+
+        /// <summary>
+        /// 是否达到了目标帧率 注意 TargetFrameRate = 0 时会GG
+        /// </summary>
+        public bool ReachFrameRate => DeltaTimeTick > TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks;
+
+        #endregion
+
         public NetworkServer(IServerSocket socket, ushort targetFrameRate = 0)
         {
             ConnectionCount = 0;
-            _socket = socket;
+            this.socket = socket;
             _bufferPool = new NetworkBufferPool(16);
             _messageHandler = new NetworkServerMessageHandler();
             TargetFrameRate = targetFrameRate;
             // Socket event handlers
-            _socket.OnConnected += OnConnected;
-            _socket.OnDataReceived += OnDataReceived;
-            _socket.OnDisconnected += OnDisconnected;
-            _socket.OnDataSent += OnDataSent;
+            this.socket.OnConnected += OnConnected;
+            this.socket.OnDataReceived += OnDataReceived;
+            this.socket.OnDisconnected += OnDisconnected;
+            this.socket.OnDataSent += OnDataSent;
 
             _system = new SystemLocator();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Register<T>(Action<int, T> handler) where T : INetworkMessage
+        public ICommand AddMsgHandler<T>(Action<int, T> handler) where T : INetworkMessage
         {
-            _messageHandler.Add(handler);
+            return _messageHandler.Add(handler);
         }
 
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TSystem Get<TSystem>() where TSystem : ISystem
+        public TSystem GetSystem<TSystem>() where TSystem : ISystem
         {
             return _system.Get<TSystem>();
         }
 
-        
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove<TSystem>() where TSystem : ISystem
+        public void RemoveSystem<TSystem>() where TSystem : ISystem
         {
             _system.UnRegister<TSystem>();
         }
 
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Register<TSystem>(TSystem system) where TSystem : ISystem
+        public void AddSystem<TSystem>(TSystem system) where TSystem : ISystem
         {
             _system.Register(system);
             if (system is IOnInit<NetworkServer> init)
@@ -69,9 +77,21 @@ namespace Network.Server
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddSystem<TSystem>() where TSystem : ISystem, IOnInit<NetworkServer>, new()
+        {
+            AddSystem(new TSystem());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(int connectionId, TMessage message) where TMessage : INetworkMessage
         {
-            _socket.Send(connectionId, message, _bufferPool);
+            socket.Send(connectionId, message, _bufferPool);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SendToAll<T>(T msg) where T : INetworkMessage
+        {
+            socket.SendToAll(msg, _bufferPool);   
         }
 
         public Task Run()
@@ -83,7 +103,8 @@ namespace Network.Server
             }
 
             Cts = new CancellationTokenSource();
-            _socket.Start();
+            socket.Start();
+            long maxFrameTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks;// 一帧最大时间
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
@@ -91,25 +112,17 @@ namespace Network.Server
                 {
                     if (TargetFrameRate == 0)
                     {
-                        stopwatch.Restart(); // 重置计时器
                         OnUpdate(); // 执行一帧
                         DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
                         continue;
                     }
 
-                    long frameTimeTicks = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks;
                     stopwatch.Restart(); // 重置计时器
                     OnUpdate(); // 执行一帧
                     DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
-                    var sleepTimeTicks = frameTimeTicks - DeltaTimeTick; // 当前帧用于睡眠的时间
-                    if (sleepTimeTicks > 0) //真实帧率比目标帧率高
+                    if(DeltaTimeTick < maxFrameTime) // 达到了帧率 休息一下
                     {
-                        await Task.Delay(TimeSpan.FromTicks(sleepTimeTicks), Cts.Token);
-                    }
-                    else // 目标帧率没有达到
-                    {
-                        NetworkLogger.Warning(
-                            $"[{this}]Frame rate is low:{TimeSpan.FromTicks(DeltaTimeTick).Milliseconds}ms>={TimeSpan.FromTicks(frameTimeTicks).Milliseconds}ms");
+                        await Task.Delay(TimeSpan.FromTicks(maxFrameTime - DeltaTimeTick), Cts.Token);
                     }
                 }
             }, Cts.Token);
@@ -140,7 +153,7 @@ namespace Network.Server
 
         public void OnUpdate()
         {
-            _socket.TickIncoming();
+            socket.TickIncoming();
 
             foreach (var system in _system.systems)
             {
@@ -150,7 +163,7 @@ namespace Network.Server
                 }
             }
 
-            _socket.TickOutgoing();
+            socket.TickOutgoing();
         }
 
         public void Dispose()

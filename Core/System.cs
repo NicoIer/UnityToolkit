@@ -12,7 +12,7 @@ namespace UnityToolkit
         public T Get<T>() where T : ISystem;
     }
 
-    public interface ISystem : IDisposable, IOnInit
+    public interface ISystem : IDisposable
     {
     }
 
@@ -23,7 +23,7 @@ namespace UnityToolkit
 
     public interface IOnInit<T>
     {
-        void OnInit(T t);
+        void OnInit(T server);
     }
 
     public interface IOnInit

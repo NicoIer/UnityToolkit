@@ -7,7 +7,7 @@ namespace Network
     public sealed class NetworkBuffer : IBufferWriter<byte>
     {
         public const int DefaultCapacity = 1500;
-        internal byte[] buffer;
+        internal byte[] buffer;// 1500byte = 1.5KB
         public int Position { get; private set; }
         public int Capacity => buffer.Length;
 

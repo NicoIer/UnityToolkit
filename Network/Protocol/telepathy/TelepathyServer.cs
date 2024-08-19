@@ -41,7 +41,7 @@ namespace Network.Telepathy
         public int ReceivePipeTotalCount => receivePipe.TotalCount;
 
         // clients with <connectionId, ConnectionState>
-        readonly ConcurrentDictionary<int, ConnectionState> clients = new ConcurrentDictionary<int, ConnectionState>();
+        public readonly ConcurrentDictionary<int, ConnectionState> clients = new ConcurrentDictionary<int, ConnectionState>();
 
         // connectionId counter
         int counter;

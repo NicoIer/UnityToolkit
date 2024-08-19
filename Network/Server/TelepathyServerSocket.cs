@@ -25,6 +25,8 @@ namespace Network.Server
         public event Action<int, ArraySegment<byte>> OnDataReceived = delegate { };
         public event Action<int> OnDisconnected = delegate { };
         public event Action<int, ArraySegment<byte>> OnDataSent = delegate { };
+        
+        public event Action<ArraySegment<byte>> OnDataSentToAll = delegate { }; 
 
         private TelepathyServer _server = null;
         public EndPoint LocalEndPoint => _server.listener.LocalEndpoint;
@@ -53,7 +55,16 @@ namespace Network.Server
             _server.Send(connectionId, segment);
             OnDataSent(connectionId, segment);
         }
-        
+
+        public void SendToAll(ArraySegment<byte> segment)
+        {
+            foreach (var connectionId in _server.clients.Keys)
+            {
+                Send(connectionId, segment);
+            }
+            OnDataSentToAll(segment);
+        }
+
         public void Disconnect(int connectionId)
         {
             _server.Disconnect(connectionId);

@@ -11,28 +11,35 @@ namespace Network.Server
         public const long DefaultPingInterval = 10000000; // 1s
         public const int PingWindowSize = 24; // average over 10 pings
         public static long LocalTimeTicks => DateTime.UtcNow.Ticks;
-        private readonly IServerSocket _socket;
+        private NetworkServer _server;
         private readonly NetworkBufferPool _bufferPool;
+
         private readonly Dictionary<int, PingPongRecord> _rttDict;
+
         // public ushort targetFrameRate;
+        private ICommand _removeMsgHandlerCommand;
 
-        public NetworkServerTime(IServerSocket socket, NetworkBufferPool bufferPool) //, ushort targetFrameRate)
+        public NetworkServerTime()
         {
-            // this.targetFrameRate = targetFrameRate;
-            _socket = socket;
-            _bufferPool = bufferPool;
+            _bufferPool = new NetworkBufferPool();
             _rttDict = new Dictionary<int, PingPongRecord>(16);
-            socket.OnConnected += OnConnected;
-            socket.OnDisconnected += OnDisconnected;
         }
 
-        public void OnInit()
+        public void OnInit(NetworkServer server)
         {
+            _server = server;
+            _server.socket.OnConnected += OnConnected;
+            _server.socket.OnDisconnected += OnDisconnected;
+            _removeMsgHandlerCommand = _server.AddMsgHandler<PongMessage>(OnReceivePong);
         }
 
-        public void OnInit(NetworkServer t)
+        public void Dispose()
         {
-            t.Register<PongMessage>(OnReceivePong);
+            _rttDict.Clear();
+            _server.socket.OnConnected -= OnConnected;
+            _server.socket.OnDisconnected -= OnDisconnected;
+            _removeMsgHandlerCommand?.Execute();
+            _server = null;
         }
 
         public void OnDisconnected(int connectionId)
@@ -74,7 +81,7 @@ namespace Network.Server
             var rtt = Rtt(connectionId);
             // NetworkLogger.Info($"client[{connectionId}],rtt:{rtt}-{rtt.Milliseconds}ms");
             RttMessage rttMessage = new RttMessage(rtt.Milliseconds);
-            _socket.Send(connectionId, rttMessage, _bufferPool);
+            _server.socket.Send(connectionId, rttMessage, _bufferPool);
             record.pinging = false;
         }
 
@@ -91,7 +98,7 @@ namespace Network.Server
                 if (LocalTimeTicks - record.lastSendPingTime > DefaultPingInterval)
                 {
                     PingMessage pingMessage = new PingMessage(LocalTimeTicks);
-                    _socket.Send(connectionId, pingMessage, _bufferPool);
+                    _server.socket.Send(connectionId, pingMessage, _bufferPool);
                     record.lastSendPingTime = pingMessage.sendTimeTicks;
                     record.pinging = true;
                 }
@@ -104,11 +111,6 @@ namespace Network.Server
             // NetworkLogger.Warning(
             //     $"Cast: {_rttDict[connectionId].rtt.Value} ->{(long)_rttDict[connectionId].rtt.Value}");
             return TimeSpan.FromTicks((long)_rttDict[connectionId].rtt.Value);
-        }
-
-        public void Dispose()
-        {
-            _rttDict.Clear();
         }
     }
 }

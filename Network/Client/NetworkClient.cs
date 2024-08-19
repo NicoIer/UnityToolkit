@@ -9,7 +9,7 @@ namespace Network.Client
 {
     public class NetworkClient : IClientHandler, IDisposable
     {
-        private IClientSocket _socket;
+        public IClientSocket socket { get; private set; }
         private readonly NetworkBufferPool _bufferPool;
         private readonly NetworkClientMessageHandler _messageHandler;
         public ushort TargetFrameRate { get; private set; }
@@ -21,35 +21,40 @@ namespace Network.Client
 
         public NetworkClient(IClientSocket socket, ushort targetFrameRate = 60)
         {
-            _socket = socket;
+            this.socket = socket;
             _bufferPool = new NetworkBufferPool(16);
             _messageHandler = new NetworkClientMessageHandler();
             TargetFrameRate = targetFrameRate;
             _systems = new SystemLocator();
             // Add socket event handlers
-            _socket.OnConnected += OnConnected;
-            _socket.OnDataReceived += OnDataReceived;
-            _socket.OnDisconnected += OnDisconnected;
-            _socket.OnDataSent += OnDataSent;
+            this.socket.OnConnected += OnConnected;
+            this.socket.OnDataReceived += OnDataReceived;
+            this.socket.OnDisconnected += OnDisconnected;
+            this.socket.OnDataSent += OnDataSent;
         }
 
-        public void Register<T>(Action<T> handler) where T : INetworkMessage
+        public ICommand AddMsgHandler<T>(Action<T> handler) where T : INetworkMessage
         {
-            _messageHandler.Add(handler);
+            return _messageHandler.Add(handler);
         }
 
-        public TSystem Get<TSystem>() where TSystem : ISystem
+        public TSystem GetSystem<TSystem>() where TSystem : ISystem
         {
             return _systems.Get<TSystem>();
         }
 
-        public void Register<TSystem>(TSystem system) where TSystem : ISystem
+        public void AddSystem<TSystem>(TSystem system) where TSystem : ISystem
         {
             _systems.Register(system);
             if (system is IOnInit<NetworkClient> init)
             {
                 init.OnInit(this);
             }
+        }
+
+        public void AddSystem<TSystem>() where TSystem : ISystem, IOnInit<NetworkClient>, new()
+        {
+            AddSystem(new TSystem());
         }
 
         public Task Run(Uri uri)
@@ -61,7 +66,7 @@ namespace Network.Client
             }
 
             Cts = new CancellationTokenSource();
-            _socket.Connect(uri);
+            socket.Connect(uri);
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
@@ -98,7 +103,7 @@ namespace Network.Client
 
         public void Stop()
         {
-            _socket.Disconnect();
+            socket.Disconnect();
             Cts.Cancel();
             Cts.Dispose();
         }
@@ -106,7 +111,7 @@ namespace Network.Client
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(TMessage msg) where TMessage : INetworkMessage
         {
-            _socket.Send(msg, _bufferPool);
+            socket.Send(msg, _bufferPool);
         }
 
         public void OnConnected()
@@ -132,7 +137,7 @@ namespace Network.Client
 
         public void OnUpdate()
         {
-            _socket.TickIncoming();
+            socket.TickIncoming();
             foreach (var system in _systems.systems)
             {
                 if (system is IOnUpdate onUpdate)
@@ -141,7 +146,7 @@ namespace Network.Client
                 }
             }
 
-            _socket.TickOutgoing();
+            socket.TickOutgoing();
         }
 
         public void Dispose()

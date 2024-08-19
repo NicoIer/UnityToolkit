@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using UnityToolkit;
@@ -21,25 +22,24 @@ namespace Network.Client
         private NetworkQuality _quality;
         public event Action<NetworkQuality> OnQualityChanged;
         private int _rtt;
-        private readonly IClientSocket _socket;
+        private NetworkClient _client;
         private readonly NetworkBufferPool _pool;
 
 
-        public NetworkClientTime(IClientSocket socket, NetworkBufferPool pool)
+        private List<ICommand> _disposeList;
+
+        public NetworkClientTime()
         {
-            _socket = socket;
-            _pool = pool;
+            _pool = new NetworkBufferPool();
             OnQualityChanged = delegate { };
+            _disposeList = new List<ICommand>();
         }
 
-        public void OnInit()
+        public void OnInit(NetworkClient server)
         {
-        }
-
-        public void OnInit(NetworkClient t)
-        {
-            t.Register<PingMessage>(OnReceivePing);
-            t.Register<RttMessage>(OnReceiveRtt);
+            _client = server;
+            _disposeList.Add(server.AddMsgHandler<PingMessage>(OnReceivePing));
+            _disposeList.Add(server.AddMsgHandler<RttMessage>(OnReceiveRtt));
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Network.Client
         public void OnReceivePing(PingMessage pingMessage)
         {
             PongMessage pongMessage = new PongMessage(ref pingMessage);
-            _socket.Send(pongMessage, _pool);
+            _client.socket.Send(pongMessage, _pool);
         }
 
 
@@ -70,6 +70,13 @@ namespace Network.Client
 
         public void Dispose()
         {
+            foreach (var command in _disposeList)
+            {
+                command.Execute();
+            }
+
+            OnQualityChanged = delegate { };
+            _disposeList.Clear();
         }
     }
 }

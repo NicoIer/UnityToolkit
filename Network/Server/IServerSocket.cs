@@ -9,8 +9,11 @@ namespace Network.Server
         public event Action<int> OnDisconnected;
         public event Action<int, ArraySegment<byte>> OnDataSent;
 
+        public event Action<ArraySegment<byte>> OnDataSentToAll;
+
         public void Start();
         public void Send(int connectionId, ArraySegment<byte> segment);
+        void SendToAll(ArraySegment<byte> segment);
         public void Disconnect(int connectionId);
         public string GetClientAddress(int connectionId);
         public void Stop();
