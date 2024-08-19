@@ -42,6 +42,10 @@ namespace Network
             {
                 _handler[id](connectionId, data);
             }
+            else
+            {
+                NetworkLogger.Warning($"No handler for message {id}");
+            }
         }
 
         public void Handle<T>(int connectionId, in ArraySegment<byte> data) where T : INetworkMessage
@@ -50,6 +54,10 @@ namespace Network
             if (_handler.ContainsKey(id))
             {
                 _handler[id](connectionId, data);
+            }
+            else
+            {
+                NetworkLogger.Warning($"No handler for message {typeof(T).Name}");
             }
         }
 

@@ -9,6 +9,7 @@ namespace Network.Client
 {
     public class NetworkClient : IClientHandler, IDisposable
     {
+        public int connectionId { get; private set; }
         public IClientSocket socket { get; private set; }
         private readonly NetworkBufferPool _bufferPool;
         private readonly NetworkClientMessageHandler _messageHandler;
@@ -18,6 +19,7 @@ namespace Network.Client
         public long DeltaTimeTick { get; private set; }
 
         private readonly SystemLocator _systems;
+        private ICommand _disposer;
 
         public NetworkClient(IClientSocket socket, ushort targetFrameRate = 60)
         {
@@ -31,6 +33,17 @@ namespace Network.Client
             this.socket.OnDataReceived += OnDataReceived;
             this.socket.OnDisconnected += OnDisconnected;
             this.socket.OnDataSent += OnDataSent;
+
+            _disposer = AddMsgHandler<AssignConnectionIdMessage>(OnAssignConnectionId);
+        }
+
+        private void OnAssignConnectionId(AssignConnectionIdMessage serverMessage)
+        {
+            if (connectionId != 0)
+            {
+                NetworkLogger.Warning($"[{this}]Connection id is already assigned");
+            }
+            connectionId = serverMessage.id;
         }
 
         public ICommand AddMsgHandler<T>(Action<T> handler) where T : INetworkMessage
@@ -91,11 +104,11 @@ namespace Network.Client
                     {
                         await Task.Delay(TimeSpan.FromTicks(sleepTimeTicks), Cts.Token);
                     }
-                    else
-                    {
-                        NetworkLogger.Warning(
-                            $"[{this}]Frame rate is low:{TimeSpan.FromTicks(DeltaTimeTick).Milliseconds}ms>={TimeSpan.FromTicks(frameTimeTicks).Milliseconds}ms");
-                    }
+                    // else
+                    // {
+                    //     NetworkLogger.Warning(
+                    //         $"[{this}]Frame rate is low:{TimeSpan.FromTicks(DeltaTimeTick).Milliseconds}ms>={TimeSpan.FromTicks(frameTimeTicks).Milliseconds}ms");
+                    // }
                 }
             }, cancellationToken: Cts.Token);
             return run;
@@ -151,8 +164,11 @@ namespace Network.Client
 
         public void Dispose()
         {
+            _disposer.Execute();
+            socket.Disconnect();
             _messageHandler?.Dispose();
             _systems?.Dispose();
+            Cts?.Cancel();
             Cts?.Dispose();
         }
     }

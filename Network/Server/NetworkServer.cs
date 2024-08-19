@@ -87,11 +87,11 @@ namespace Network.Server
         {
             socket.Send(connectionId, message, _bufferPool);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SendToAll<T>(T msg) where T : INetworkMessage
         {
-            socket.SendToAll(msg, _bufferPool);   
+            socket.SendToAll(msg, _bufferPool);
         }
 
         public Task Run()
@@ -104,7 +104,7 @@ namespace Network.Server
 
             Cts = new CancellationTokenSource();
             socket.Start();
-            long maxFrameTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks;// 一帧最大时间
+            long maxFrameTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
@@ -120,7 +120,7 @@ namespace Network.Server
                     stopwatch.Restart(); // 重置计时器
                     OnUpdate(); // 执行一帧
                     DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
-                    if(DeltaTimeTick < maxFrameTime) // 达到了帧率 休息一下
+                    if (DeltaTimeTick < maxFrameTime) // 达到了帧率 休息一下
                     {
                         await Task.Delay(TimeSpan.FromTicks(maxFrameTime - DeltaTimeTick), Cts.Token);
                     }
@@ -132,6 +132,7 @@ namespace Network.Server
         public void OnConnected(int connectionId)
         {
             ConnectionCount++;
+            Send(connectionId, new AssignConnectionIdMessage(connectionId));
         }
 
         public void OnDataReceived(int connectionId, ArraySegment<byte> data)

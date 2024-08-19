@@ -23,7 +23,7 @@ namespace UnityToolkit
 
     public interface IOnInit<T>
     {
-        void OnInit(T server);
+        void OnInit(T t);
     }
 
     public interface IOnInit

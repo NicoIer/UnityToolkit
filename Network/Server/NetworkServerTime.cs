@@ -25,9 +25,9 @@ namespace Network.Server
             _rttDict = new Dictionary<int, PingPongRecord>(16);
         }
 
-        public void OnInit(NetworkServer server)
+        public void OnInit(NetworkServer t)
         {
-            _server = server;
+            _server = t;
             _server.socket.OnConnected += OnConnected;
             _server.socket.OnDisconnected += OnDisconnected;
             _removeMsgHandlerCommand = _server.AddMsgHandler<PongMessage>(OnReceivePong);

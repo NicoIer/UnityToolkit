@@ -14,10 +14,25 @@ namespace UnityToolkit
     {
         public static bool writeLog { get; set; }
 
-        public static Action<string> logAction = delegate { };
-        public static Action<string> warningAction = delegate { };
-        public static Action<string> errorAction = delegate { };
-        
+        public static Action<string> infoAction =
+#if UNITY_5_6_OR_NEWER
+            Debug.Log;
+#else
+            Console.WriteLine;
+#endif
+        public static Action<string> warningAction =
+#if UNITY_5_6_OR_NEWER
+            Debug.LogWarning;
+#else
+            Console.WriteLine;
+#endif
+        public static Action<string> errorAction =
+#if UNITY_5_6_OR_NEWER
+            Debug.LogError;
+#else
+            Console.WriteLine;
+#endif
+
         private static string LogFilePath =>
 #if UNITY_5_6_OR_NEWER
             Application.persistentDataPath + "/Log_" +
@@ -30,33 +45,21 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Info(string obj)
         {
-#if UNITY_5_6_OR_NEWER
-            Debug.Log(obj);
-#else
-            Console.WriteLine(obj);
-#endif
+            infoAction(obj);
         }
 
         // [Conditional("Debugger")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Warning(string obj)
         {
-#if UNITY_5_6_OR_NEWER
-            Debug.LogWarning(obj);
-#else
-            Console.WriteLine(obj);
-#endif
+            warningAction(obj);
         }
 
         // [Conditional("Debugger")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Error(string obj)
         {
-#if UNITY_5_6_OR_NEWER
-            Debug.LogError(obj);
-#else
-            Console.WriteLine(obj);
-#endif
+            errorAction(obj);
         }
 #if UNITY_5_6_OR_NEWER
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,5 +70,12 @@ namespace UnityToolkit
             sw.Close();
         }
 #endif
+
+        public static void Debug(string msg)
+        {
+#if DEBUG || UNITY_EDITOR
+            infoAction(msg);
+#endif
+        }
     }
 }

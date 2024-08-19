@@ -24,7 +24,11 @@ namespace Network
 
             var warp = Warp(handler);
             _handler[id] += warp;
-            return new CommonCommand(() => { _handler[id] -= warp; });
+            return new CommonCommand(() =>
+            {
+                if (_handler != null && _handler.ContainsKey(id))
+                    _handler[id] -= warp;
+            });
         }
 
         public void Clear<T>() where T : INetworkMessage
@@ -65,8 +69,12 @@ namespace Network
 
         public void Dispose()
         {
-            _handler.Clear();
-            _handler = null;
+            if (_handler != null)
+            {
+                _handler.Clear();
+                _handler = null;
+            }
+            
         }
     }
 }

@@ -35,11 +35,11 @@ namespace Network.Client
             _disposeList = new List<ICommand>();
         }
 
-        public void OnInit(NetworkClient server)
+        public void OnInit(NetworkClient t)
         {
-            _client = server;
-            _disposeList.Add(server.AddMsgHandler<PingMessage>(OnReceivePing));
-            _disposeList.Add(server.AddMsgHandler<RttMessage>(OnReceiveRtt));
+            _client = t;
+            _disposeList.Add(t.AddMsgHandler<PingMessage>(OnReceivePing));
+            _disposeList.Add(t.AddMsgHandler<RttMessage>(OnReceiveRtt));
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Network.Client
             }
 
             TimeSpan span = TimeSpan.FromMilliseconds(obj.rttMs);
-            NetworkLogger.Info($"rtt: {span}-{span.Milliseconds}ms , quality: {_quality}");
+            // NetworkLogger.Info($"rtt: {span}-{span.Milliseconds}ms , quality: {_quality}");
         }
 
         public void Dispose()

@@ -9,8 +9,9 @@ namespace Network
 {
     public static class NetworkLogger
     {
-        internal static Action<string> Info = ToolkitLog.Info;
-        internal static Action<string> Warning = ToolkitLog.Warning;
-        internal static Action<string> Error = ToolkitLog.Error;
+        public static Action<string> Debug = ToolkitLog.Debug;
+        public static Action<string> Info = ToolkitLog.Info;
+        public static Action<string> Warning = ToolkitLog.Warning;
+        public static Action<string> Error = ToolkitLog.Error;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Network
@@ -14,6 +15,8 @@ namespace Network
     public static class NetworkId
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static ushort CalculateId<T>() => typeof(T).FullName.GetStableHashCode16();
+        public static ushort CalculateId<T>() => typeof(T).FullName.GetStableHashCode16();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort CalculateId(Type type) => type.FullName.GetStableHashCode16();
     }
 }

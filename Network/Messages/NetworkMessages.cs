@@ -11,10 +11,19 @@ namespace Network
         public const int IdSize = sizeof(ushort);
     }
 
+    /// <summary>
+    /// 网络数据包
+    /// </summary>
     [MemoryPackable]
-    public partial struct NetworkPacket : INetworkMessage
+    internal partial struct NetworkPacket : INetworkMessage
     {
+        /// <summary>
+        /// 携带数据的类型id
+        /// </summary>
         public readonly ushort id;
+        /// <summary>
+        /// 携带数据的对应的二进制数据
+        /// </summary>
         public readonly ArraySegment<byte> payload;
 
         public NetworkPacket(ushort id, ArraySegment<byte> payload)
@@ -39,7 +48,25 @@ namespace Network
             return packet;
         }
     }
+    
+    /// <summary>
+    /// 服务器为客户端分配的连接ID
+    /// </summary>
+    [MemoryPackable]
+    public partial struct AssignConnectionIdMessage : INetworkMessage
+    {
+        public readonly int id;
 
+        public AssignConnectionIdMessage(int id)
+        {
+            this.id = id;
+        }
+    }
+
+    
+    /// <summary>
+    /// Ping消息
+    /// </summary>
     [MemoryPackable]
     public partial struct PingMessage : INetworkMessage
     {
