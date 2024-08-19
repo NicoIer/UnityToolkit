@@ -1,4 +1,4 @@
-*.meta
+#*.meta
 .DS_Store
 
 .idea/
