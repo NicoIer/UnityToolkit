@@ -27,7 +27,12 @@ namespace Network
     [MemoryPackable]
     public partial struct NetworkComponentUpdate : INetworkMessage
     {
-        public NetworkComponentPacket component;
+        public readonly NetworkComponentPacket component;
+        
+        public NetworkComponentUpdate(NetworkComponentPacket component)
+        {
+            this.component = component;
+        }
     }
     
 

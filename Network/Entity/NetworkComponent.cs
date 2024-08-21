@@ -7,7 +7,7 @@ namespace Network
     {
         public abstract void FromPacket(in NetworkComponentPacket packet);
 
-        public abstract NetworkComponentPacket ToPacket(NetworkBuffer buffer);
+        public abstract NetworkComponentPacket ToDummyPacket(NetworkBuffer buffer);
     }
 
     
@@ -18,7 +18,7 @@ namespace Network
     [MemoryPackable]
     public partial struct NetworkComponentPacket : INetworkMessage
     {
-        public uint? identityId;
+        public uint? entityId;
         public int? idx;
         public ushort? type;
         public ArraySegment<byte> data;
