@@ -12,23 +12,18 @@ namespace Network
         public int owner; // 所有者 0表示服务器
         public List<NetworkComponent> components; // 组件列表
 
-        // public override int GetHashCode()
-        // {
-        //     return (int)id;
-        // }
-
-
 
         private NetworkEntity()
         {
         }
 
-        private NetworkEntity(uint id, int owner)
+        public NetworkEntity(uint id, int owner)
         {
             this.id = id;
             this.owner = owner;
+            components = new List<NetworkComponent>();
         }
-        
+
         /// <summary>
         /// 更新组件
         /// </summary>

@@ -13,6 +13,7 @@ namespace Network.Server
         protected NetworkServer server;
         protected readonly NetworkBufferPool<NetworkComponentPacket> componentBufferPool;
         protected readonly NetworkBufferPool byteBufferPool;
+        protected readonly Pool<List<NetworkBuffer>> _tempBufferListPool;
 
         /// <summary>
         /// 针对不同类型的NetworkComponent的序列化器
@@ -43,6 +44,9 @@ namespace Network.Server
         {
             byteBufferPool = new NetworkBufferPool(16);
             componentBufferPool = new NetworkBufferPool<NetworkComponentPacket>(16);
+            _tempBufferListPool = new Pool<List<NetworkBuffer>>(
+                () => new List<NetworkBuffer>(),
+                list => list.Clear());
             serverEntityMgr = new NetworkEntityMgr();
             disposeCommands = new List<ICommand>();
             entities = new Dictionary<uint, NetworkEntity>();
@@ -58,8 +62,8 @@ namespace Network.Server
             Interlocked.Increment(ref _currentEntityId);
 #else
             long cur = _currentEntityId; // uint 转long 不会丢失精度
-            Interlocked.Increment(ref cur);// 如果是NetStandard2.0 则用long进行增加
-            _currentEntityId = (uint)cur;// 然后再转回uint
+            Interlocked.Increment(ref cur); // 如果是NetStandard2.0 则用long进行增加
+            _currentEntityId = (uint)cur; // 然后再转回uint
 #endif
             return _currentEntityId;
         }
@@ -112,19 +116,17 @@ namespace Network.Server
             ClientEntityMgrs.Add(connectId, new NetworkEntityMgr());
             // 拿一个Buffer来存储所有组件
             var componentListBuffer = componentBufferPool.Get();
-            var byteBuffer = byteBufferPool.Get();
             foreach (var (id, networkEntity) in entities)
             {
-                componentListBuffer.Reset();
-                // 预先分配空间
-                componentListBuffer.Advance(networkEntity.components.Count);
-                // 获取Span
+                var list = _tempBufferListPool.Get();
+                componentListBuffer.Reset(); // 预先分配空间
+                componentListBuffer.Advance(networkEntity.components.Count); // 获取Span
                 var span = componentListBuffer.GetSpan(networkEntity.components.Count);
-                // 依次序列化
-                for (var i = 0; i < networkEntity.components.Count; i++)
+                for (var i = 0; i < networkEntity.components.Count; i++) // 依次序列化
                 {
-                    byteBuffer.Reset();
                     var networkComponent = networkEntity.components[i];
+                    var byteBuffer = byteBufferPool.Get();
+                    list.Add(byteBuffer);
                     NetworkComponentPacket packet = networkComponent.ToDummyPacket(byteBuffer);
                     packet.entityId = networkEntity.id;
                     packet.idx = i;
@@ -134,9 +136,14 @@ namespace Network.Server
                 var spawnMsg = new NetworkEntitySpawn(id, networkEntity.owner, componentListBuffer);
                 NetworkLogger.Info($"发送网络实体{networkEntity}给客户端{connectId} 因为客户端刚刚连接");
                 server.SendToAll<NetworkEntitySpawn>(spawnMsg);
+                foreach (var buffer in list)
+                {
+                    byteBufferPool.Return(buffer);
+                }
+
+                _tempBufferListPool.Return(list);
             }
 
-            byteBufferPool.Return(byteBuffer);
             componentBufferPool.Return(componentListBuffer);
         }
 

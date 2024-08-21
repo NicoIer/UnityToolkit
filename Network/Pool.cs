@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Network
 {
-    internal class Pool<T>
+    public class Pool<T>
     {
         // Mirror is single threaded, no need for concurrent collections
         readonly Stack<T> objects = new Stack<T>();
