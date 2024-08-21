@@ -56,7 +56,7 @@ namespace Network.Server
         {
 #if NET8_0
             Interlocked.Increment(ref _currentEntityId);
-#elif NETCOREAPP2_0_OR_GREATER
+#else
             long cur = _currentEntityId; // uint 转long 不会丢失精度
             Interlocked.Increment(ref cur);// 如果是NetStandard2.0 则用long进行增加
             _currentEntityId = (uint)cur;// 然后再转回uint
