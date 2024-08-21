@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System;
 #if UNITY_5_6_OR_NEWER
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 #endif
 
 namespace UnityToolkit
@@ -16,19 +15,19 @@ namespace UnityToolkit
 
         public static Action<string> infoAction =
 #if UNITY_5_6_OR_NEWER
-            Debug.Log;
+            UnityEngine.Debug.Log;
 #else
             Console.WriteLine;
 #endif
         public static Action<string> warningAction =
 #if UNITY_5_6_OR_NEWER
-            Debug.LogWarning;
+            UnityEngine.Debug.LogWarning;
 #else
             Console.WriteLine;
 #endif
         public static Action<string> errorAction =
 #if UNITY_5_6_OR_NEWER
-            Debug.LogError;
+            UnityEngine.Debug.LogError;
 #else
             Console.WriteLine;
 #endif

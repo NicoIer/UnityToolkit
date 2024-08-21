@@ -17,16 +17,7 @@ namespace Network
         //     return (int)id;
         // }
 
-        /// <summary>
-        /// 更新组件
-        /// </summary>
-        /// <param name="msg"></param>
-        public void UpdateComponent(in NetworkComponentPacket msg)
-        {
-            Debug.Assert(msg.idx != null, "msg.idx != null");
-            NetworkComponent component = components[msg.idx.Value];
-            component.FromPacket(msg);
-        }
+
 
         private NetworkEntity()
         {
@@ -36,6 +27,17 @@ namespace Network
         {
             this.id = id;
             this.owner = owner;
+        }
+        
+        /// <summary>
+        /// 更新组件
+        /// </summary>
+        /// <param name="msg"></param>
+        public void UpdateComponent(in NetworkComponentPacket msg)
+        {
+            Debug.Assert(msg.idx != null, "msg.idx != null");
+            NetworkComponent component = components[msg.idx.Value];
+            component.FromPacket(msg);
         }
 
         public static NetworkEntity From(uint id, int owner, in NetworkEntitySpawn req,

@@ -70,7 +70,13 @@ namespace Network.Client
             AddSystem(new TSystem());
         }
 
-        public Task Run(Uri uri)
+        /// <summary>
+        /// 连接到服务器
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="autoTick">是否开启一个任务在后台处理消息，Unity中我们希望在一帧开始前处理所有网络消息，一帧结束后发送所有消息</param>
+        /// <returns></returns>
+        public Task Run(Uri uri,bool autoTick = true)
         {
             if (Cts != null)
             {
@@ -80,6 +86,12 @@ namespace Network.Client
 
             Cts = new CancellationTokenSource();
             socket.Connect(uri);
+
+            if (!autoTick)
+            {
+                return Task.CompletedTask;
+            }
+            
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
@@ -151,6 +163,12 @@ namespace Network.Client
         public void OnUpdate()
         {
             socket.TickIncoming();
+            UpdateSystems();
+            socket.TickOutgoing();
+        }
+        
+        public void UpdateSystems()
+        {
             foreach (var system in _systems.systems)
             {
                 if (system is IOnUpdate onUpdate)
@@ -158,8 +176,6 @@ namespace Network.Client
                     onUpdate.OnUpdate();
                 }
             }
-
-            socket.TickOutgoing();
         }
 
         public void Dispose()

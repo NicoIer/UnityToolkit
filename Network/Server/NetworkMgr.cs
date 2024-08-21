@@ -125,7 +125,9 @@ namespace Network.Server
                 {
                     byteBuffer.Reset();
                     var networkComponent = networkEntity.components[i];
-                    NetworkComponentPacket packet = networkComponent.ToPacket(byteBuffer);
+                    NetworkComponentPacket packet = networkComponent.ToDummyPacket(byteBuffer);
+                    packet.entityId = networkEntity.id;
+                    packet.idx = i;
                     span[i] = packet;
                 }
 
@@ -306,19 +308,19 @@ namespace Network.Server
 
         private void OnNetworkComponentUpdate(int connectId, NetworkComponentUpdate req)
         {
-            if (!req.component.identityId.HasValue)
+            if (!req.component.entityId.HasValue)
             {
                 NetworkLogger.Error($"组件的identityId不能为空");
                 return;
             }
 
-            if (!entities.ContainsKey(req.component.identityId.Value))
+            if (!entities.ContainsKey(req.component.entityId.Value))
             {
-                NetworkLogger.Error($"实体{req.component.identityId.Value}不存在");
+                NetworkLogger.Error($"实体{req.component.entityId.Value}不存在");
                 return;
             }
 
-            NetworkEntity entity = entities[req.component.identityId.Value];
+            NetworkEntity entity = entities[req.component.entityId.Value];
             if (entity.owner != connectId)
             {
                 NetworkLogger.Error($"客户端{connectId}尝试更新实体{entity}的组件，但它不是所有者");
