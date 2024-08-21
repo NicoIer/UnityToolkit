@@ -78,7 +78,7 @@ namespace Network.Client
         /// <returns></returns>
         public Task Run(Uri uri,bool autoTick = true)
         {
-            if (Cts != null)
+            if (Cts is { IsCancellationRequested: false })
             {
                 NetworkLogger.Error($"NetworkManager:[{this}] is already running");
                 return Task.CompletedTask;
