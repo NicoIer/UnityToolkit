@@ -14,6 +14,7 @@ namespace Network
             // standard N-day EMA alpha calculation
             alpha = 2.0f / (n + 1);
             initialized = false;
+            Value = default;
         }
         
         public void Add(Quaternion newValue)
