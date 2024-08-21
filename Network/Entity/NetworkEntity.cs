@@ -39,8 +39,12 @@ namespace Network
             NetworkComponentSerializer serializer)
         {
             NetworkEntity entity = new NetworkEntity(id, owner);
-            Debug.Assert(req.components.Count > 0);
             entity.components = new List<NetworkComponent>(req.components.Count);
+            if (req.components.Count == 0)
+            {
+                return entity;
+            }
+
             foreach (var packet in req.components)
             {
                 Debug.Assert(packet.type != null, "packet.type != null");
