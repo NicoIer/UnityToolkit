@@ -13,6 +13,12 @@ namespace Network.Client
         /// </summary>
         public static long LocalTimeTicks => DateTime.UtcNow.Ticks;
 
+
+        public long RttTicks
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _rtt * TimeSpan.TicksPerMillisecond;
+        }
         public int Rtt
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -21,16 +27,19 @@ namespace Network.Client
 
         private NetworkQuality _quality;
         public event Action<NetworkQuality> OnQualityChanged;
+
+        /// <summary>
+        /// ms RTT是服务器给的 服务器会做插值 所以客户端不做插值
+        /// </summary>
         private int _rtt;
+
         private NetworkClient _client;
-        private readonly NetworkBufferPool _pool;
 
 
         private List<ICommand> _disposeList;
 
         public NetworkClientTime()
         {
-            _pool = new NetworkBufferPool();
             OnQualityChanged = delegate { };
             _disposeList = new List<ICommand>();
         }
@@ -46,14 +55,14 @@ namespace Network.Client
         /// 客户端收到服务器Ping消息时调用,立刻回复Pong消息
         /// </summary>
         /// <param name="pingMessage"></param>
-        public void OnReceivePing(PingMessage pingMessage)
+        private void OnReceivePing(PingMessage pingMessage)
         {
             PongMessage pongMessage = new PongMessage(ref pingMessage);
-            _client.socket.Send(pongMessage, _pool);
+            _client.Send(pongMessage);
         }
 
 
-        public void OnReceiveRtt(RttMessage obj)
+        private void OnReceiveRtt(RttMessage obj)
         {
             _rtt = obj.rttMs;
             NetworkQuality quality = Utils.CalculateQuality(obj.rttMs);
@@ -64,7 +73,7 @@ namespace Network.Client
                 OnQualityChanged(_quality);
             }
 
-            TimeSpan span = TimeSpan.FromMilliseconds(obj.rttMs);
+            // TimeSpan span = TimeSpan.FromMilliseconds(obj.rttMs);
             // NetworkLogger.Info($"rtt: {span}-{span.Milliseconds}ms , quality: {_quality}");
         }
 

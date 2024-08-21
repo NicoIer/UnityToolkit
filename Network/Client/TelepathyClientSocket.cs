@@ -23,6 +23,17 @@ namespace Network.Client
         private TelepathyClient _client;
 
         private readonly Func<bool> _enabledCheck = () => true;
+
+        public bool connecting
+        {
+            get { return _client != null && _client.Connecting; }
+        }
+
+        public bool connected
+        {
+            get { return _client != null && _client.Connected; }
+        }
+
         public event Action OnConnected = delegate { };
         public event Action<ArraySegment<byte>> OnDataReceived = delegate { };
         public event Action OnDisconnected = delegate { };

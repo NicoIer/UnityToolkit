@@ -19,6 +19,7 @@ namespace Network.Server
         public long DeltaTimeTick { get; private set; }
 
         private readonly SystemLocator _system;
+        private readonly bool _compress;
 
         #region Status Montior
 
@@ -29,8 +30,9 @@ namespace Network.Server
 
         #endregion
 
-        public NetworkServer(IServerSocket socket, ushort targetFrameRate = 0)
+        public NetworkServer(IServerSocket socket, ushort targetFrameRate = 0, bool compress = true)
         {
+            _compress = compress;
             ConnectionCount = 0;
             this.socket = socket;
             _bufferPool = new NetworkBufferPool(16);
@@ -85,14 +87,46 @@ namespace Network.Server
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(int connectionId, TMessage message) where TMessage : INetworkMessage
         {
-            socket.Send(connectionId, message, _bufferPool);
+            NetworkBuffer payloadBuffer = _bufferPool.Get();
+            NetworkBuffer packetBuffer = _bufferPool.Get();
+
+            if (_compress)
+            {
+                NetworkPacker.PackCompressed(message, payloadBuffer, packetBuffer);
+            }
+            else
+            {
+                NetworkPacker.Pack(message, payloadBuffer, packetBuffer);
+            }
+
+
+            socket.Send(connectionId, packetBuffer);
+
+            _bufferPool.Return(payloadBuffer);
+            _bufferPool.Return(packetBuffer);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SendToAll<T>(T msg) where T : INetworkMessage
         {
-            socket.SendToAll(msg, _bufferPool);
+            NetworkBuffer payloadBuffer = _bufferPool.Get();
+            NetworkBuffer packetBuffer = _bufferPool.Get();
+
+            if (_compress)
+            {
+                NetworkPacker.PackCompressed(msg, payloadBuffer, packetBuffer);
+            }
+            else
+            {
+                NetworkPacker.Pack(msg, payloadBuffer, packetBuffer);
+            }
+
+            socket.SendToAll(packetBuffer);
+
+            _bufferPool.Return(payloadBuffer);
+            _bufferPool.Return(packetBuffer);
         }
+
 
         public Task Run()
         {
@@ -137,8 +171,30 @@ namespace Network.Server
 
         public void OnDataReceived(int connectionId, ArraySegment<byte> data)
         {
-            NetworkPacket packet = NetworkPacket.Unpack(data);
-            _messageHandler.Handle(packet.id, connectionId, packet.payload);
+            // NetworkLogger.Debug($"Data received from connection {connectionId} cnt:{data.Count}");
+            NetworkPacket packet = default;
+            if (_compress)
+            {
+                if (!NetworkPacker.UnpackCompressed(data, out packet))
+                {
+                    return;
+                }
+
+                _messageHandler.Handle(packet.id, connectionId, packet.payload);
+                return;
+            }
+
+            if (!_compress)
+            {
+                if (!NetworkPacker.Unpack(data, out packet))
+                {
+                    NetworkLogger.Error($"[{this}]Unpack error from connection {connectionId}");
+                    return;
+                }
+
+                _messageHandler.Handle(packet.id, connectionId, packet.payload);
+                return;
+            }
         }
 
         public void OnDisconnected(int connectionId)

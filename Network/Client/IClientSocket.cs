@@ -4,6 +4,8 @@ namespace Network.Client
 {
     public interface IClientSocket
     {
+        public bool connecting { get; }
+        public bool connected { get; }
         public event Action OnConnected;
         public event Action<ArraySegment<byte>> OnDataReceived;
         public event Action OnDisconnected;

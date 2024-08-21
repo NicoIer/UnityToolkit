@@ -12,7 +12,6 @@ namespace Network.Server
         public const int PingWindowSize = 24; // average over 10 pings
         public static long LocalTimeTicks => DateTime.UtcNow.Ticks;
         private NetworkServer _server;
-        private readonly NetworkBufferPool _bufferPool;
 
         private readonly Dictionary<int, PingPongRecord> _rttDict;
 
@@ -21,7 +20,6 @@ namespace Network.Server
 
         public NetworkServerTime()
         {
-            _bufferPool = new NetworkBufferPool();
             _rttDict = new Dictionary<int, PingPongRecord>(16);
         }
 
@@ -81,7 +79,7 @@ namespace Network.Server
             var rtt = Rtt(connectionId);
             // NetworkLogger.Info($"client[{connectionId}],rtt:{rtt}-{rtt.Milliseconds}ms");
             RttMessage rttMessage = new RttMessage(rtt.Milliseconds);
-            _server.socket.Send(connectionId, rttMessage, _bufferPool);
+            _server.Send(connectionId, rttMessage);
             record.pinging = false;
         }
 
@@ -98,7 +96,7 @@ namespace Network.Server
                 if (LocalTimeTicks - record.lastSendPingTime > DefaultPingInterval)
                 {
                     PingMessage pingMessage = new PingMessage(LocalTimeTicks);
-                    _server.socket.Send(connectionId, pingMessage, _bufferPool);
+                    _server.Send(connectionId, pingMessage);
                     record.lastSendPingTime = pingMessage.sendTimeTicks;
                     record.pinging = true;
                 }

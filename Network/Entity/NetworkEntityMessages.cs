@@ -45,11 +45,11 @@ namespace Network
     [MemoryPackable]
     public partial struct NetworkEntitySpawn : INetworkMessage
     {
-        public readonly uint? id;
-        public readonly int? owner;
+        public readonly uint id;
+        public readonly int owner;
         public readonly ArraySegment<NetworkComponentPacket> components;
 
-        public NetworkEntitySpawn(uint? id, int? owner, ArraySegment<NetworkComponentPacket> components)
+        public NetworkEntitySpawn(uint id, int owner, ArraySegment<NetworkComponentPacket> components)
         {
             this.id = id;
             this.owner = owner;

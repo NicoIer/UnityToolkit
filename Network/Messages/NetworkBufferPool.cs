@@ -1,12 +1,13 @@
 using System;
 using System.Runtime.CompilerServices;
+using UnityToolkit;
 
 namespace Network
 {
     public sealed class NetworkBufferPool
     {
         [ThreadStatic] private static NetworkBufferPool _shared;
-
+        
 
         public static NetworkBufferPool Shared
         {
@@ -28,7 +29,7 @@ namespace Network
         {
             _pool = new Pool<NetworkBuffer>(
                 () => new NetworkBuffer(),
-                writer => writer.Reset(),
+                writer => writer.Clear(),
                 initialCapacity
             );
         }

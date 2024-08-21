@@ -6,21 +6,21 @@ namespace Network
 {
     public class NetworkComponentSerializer
     {
-        private readonly Dictionary<ushort, Func<NetworkComponentPacket, NetworkComponent>> _handler =
-            new Dictionary<ushort, Func<NetworkComponentPacket, NetworkComponent>>();
+        private readonly Dictionary<ushort, Func<NetworkComponentPacket, INetworkComponent>> _handler =
+            new Dictionary<ushort, Func<NetworkComponentPacket, INetworkComponent>>();
 
-        public void Register<T>() where T : NetworkComponent, new()
+        public void Register<T>() where T : INetworkComponent, new()
         {
             ushort id = NetworkId<T>.Value;
-            Func<NetworkComponentPacket, NetworkComponent> handler = packet =>
+            Func<NetworkComponentPacket, INetworkComponent> handler = packet =>
             {
                 T component = new T();
-                component.FromPacket(packet);
+                component.UpdateFromPacket(packet);
                 return component;
             };
             if (!_handler.TryAdd(id, handler))
             {
-                NetworkLogger.Warning($"{nameof(NetworkComponent)} {typeof(T).Name} 已经注册到{this} 中");
+                NetworkLogger.Warning($"{nameof(INetworkComponent)} {typeof(T).Name} 已经注册到{this} 中");
                 return;
             }
         }
@@ -28,16 +28,16 @@ namespace Network
         public void Register(Type type)
         {
             ushort id = NetworkId.CalculateId(type);
-            Func<NetworkComponentPacket, NetworkComponent> handler = packet =>
+            Func<NetworkComponentPacket, INetworkComponent> handler = packet =>
             {
-                NetworkComponent component = (NetworkComponent)Activator.CreateInstance(type);
-                component.FromPacket(packet);
+                INetworkComponent component = (INetworkComponent)Activator.CreateInstance(type);
+                component.UpdateFromPacket(packet);
                 return component;
             };
             _handler.Add(id, handler);
         }
 
-        public NetworkComponent Deserializer(ushort type, NetworkComponentPacket packet)
+        public INetworkComponent Deserializer(ushort type, NetworkComponentPacket packet)
         {
             return _handler[type](packet);
         }

@@ -10,7 +10,26 @@ namespace Network
         //4294967295 假设一秒分配100个id 4294967295/100/60/60/24/365 = 1.36年 服务器该重启了
         public readonly uint id; // 唯一标识 由服务器分配
         public int owner; // 所有者 0表示服务器
-        public List<NetworkComponent> components; // 组件列表
+        public List<INetworkComponent> components; // 组件列表
+
+
+        public static event Action<NetworkEntity> OnEntitySpawned = delegate { };
+        public static event Action<NetworkEntity> OnEntityDespawned = delegate { };
+        public static event Action<NetworkEntity, INetworkComponent> OnComponentAdded = delegate { };
+        public static event Action<NetworkEntity, INetworkComponent> OnComponentUpdated = delegate { };
+        public static event Action<NetworkEntity, INetworkComponent> OnComponentRemoved = delegate { };
+
+#if UNITY_EDITOR
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        public static void RestStatic()
+        {
+            OnComponentAdded = delegate { };
+            OnComponentUpdated = delegate { };
+            OnComponentRemoved = delegate { };
+            OnEntitySpawned = delegate { };
+            OnEntityDespawned = delegate { };
+        }
+#endif
 
 
         private NetworkEntity()
@@ -21,7 +40,7 @@ namespace Network
         {
             this.id = id;
             this.owner = owner;
-            components = new List<NetworkComponent>();
+            components = new List<INetworkComponent>();
         }
 
         /// <summary>
@@ -30,27 +49,30 @@ namespace Network
         /// <param name="msg"></param>
         public void UpdateComponent(in NetworkComponentPacket msg)
         {
-            Debug.Assert(msg.idx != null, "msg.idx != null");
-            NetworkComponent component = components[msg.idx.Value];
-            component.FromPacket(msg);
+            Debug.Assert(msg.mask.HasFlag(NetworkComponentPacket.Mask.Idx), "msg.idx != null");
+            INetworkComponent component = components[msg.idx];
+            component.UpdateFromPacket(msg);
+            OnComponentUpdated(this, component);
         }
 
         public static NetworkEntity From(uint id, int owner, in NetworkEntitySpawn req,
             NetworkComponentSerializer serializer)
         {
             NetworkEntity entity = new NetworkEntity(id, owner);
-            entity.components = new List<NetworkComponent>(req.components.Count);
-            if (req.components.Count == 0)
-            {
-                return entity;
-            }
+            entity.components = new List<INetworkComponent>(req.components.Count);
 
-            foreach (var packet in req.components)
+            if (req.components != null)
             {
-                Debug.Assert(packet.type != null, "packet.type != null");
-                var component = serializer.Deserializer(packet.type.Value, packet);
-                entity.components.Add(component);
+                foreach (var packet in req.components)
+                {
+                    Debug.Assert(packet.mask.HasFlag(NetworkComponentPacket.Mask.Type), "packet.type != null");
+                    var component = serializer.Deserializer(packet.type, packet);
+                    entity.components.Add(component);
+                }
             }
+            
+            OnEntitySpawned(entity);
+
 
             return entity;
         }

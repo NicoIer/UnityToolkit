@@ -19,5 +19,10 @@ namespace Network
         {
             ownedEntities.Remove(entity.id);
         }
+
+        public void Clear()
+        {
+            ownedEntities.Clear();
+        }
     }   
 }

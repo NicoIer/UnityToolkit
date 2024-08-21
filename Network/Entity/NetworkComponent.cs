@@ -1,16 +1,17 @@
 using System;
 using MemoryPack;
+using UnityToolkit;
 
 namespace Network
 {
-    public abstract class NetworkComponent
+    public interface INetworkComponent
     {
-        public abstract void FromPacket(in NetworkComponentPacket packet);
+        void UpdateFromPacket(in NetworkComponentPacket packet);
 
-        public abstract NetworkComponentPacket ToDummyPacket(NetworkBuffer buffer);
+        NetworkComponentPacket ToDummyPacket(NetworkBuffer buffer);
     }
 
-    
+
     /// <summary>
     /// NetworkComponent对应的网络包
     /// 通过type找到原始类型进行反序列化
@@ -18,9 +19,18 @@ namespace Network
     [MemoryPackable]
     public partial struct NetworkComponentPacket : INetworkMessage
     {
-        public uint? entityId;
-        public int? idx;
-        public ushort? type;
+        [Flags]
+        public enum Mask : byte
+        {
+            EntityId = 1 << 0,
+            Idx = 1 << 1,
+            Type = 1 << 2,
+        }
+
+        public Mask mask;
+        public uint entityId;
+        public int idx;
+        public ushort type;
         public ArraySegment<byte> data;
     }
 }

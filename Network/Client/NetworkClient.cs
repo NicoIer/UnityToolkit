@@ -20,9 +20,11 @@ namespace Network.Client
 
         private readonly SystemLocator _systems;
         private ICommand _disposer;
+        private bool _compress;
 
-        public NetworkClient(IClientSocket socket, ushort targetFrameRate = 60)
+        public NetworkClient(IClientSocket socket, ushort targetFrameRate = 60, bool compress = true)
         {
+            _compress = compress;
             this.socket = socket;
             _bufferPool = new NetworkBufferPool(16);
             _messageHandler = new NetworkClientMessageHandler();
@@ -43,6 +45,7 @@ namespace Network.Client
             {
                 NetworkLogger.Warning($"[{this}]Connection id is already assigned");
             }
+
             connectionId = serverMessage.id;
         }
 
@@ -76,7 +79,7 @@ namespace Network.Client
         /// <param name="uri"></param>
         /// <param name="autoTick">是否开启一个任务在后台处理消息，Unity中我们希望在一帧开始前处理所有网络消息，一帧结束后发送所有消息</param>
         /// <returns></returns>
-        public Task Run(Uri uri,bool autoTick = true)
+        public Task Run(Uri uri, bool autoTick = true)
         {
             if (Cts is { IsCancellationRequested: false })
             {
@@ -91,7 +94,7 @@ namespace Network.Client
             {
                 return Task.CompletedTask;
             }
-            
+
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
@@ -136,7 +139,23 @@ namespace Network.Client
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(TMessage msg) where TMessage : INetworkMessage
         {
-            socket.Send(msg, _bufferPool);
+            NetworkBuffer payloadBuffer = _bufferPool.Get();
+            NetworkBuffer packetBuffer = _bufferPool.Get();
+
+            if (_compress)
+            {
+                NetworkPacker.PackCompressed(msg, payloadBuffer, packetBuffer);
+            }
+
+            {
+                NetworkPacker.Pack(msg, payloadBuffer, packetBuffer);
+            }
+
+
+            socket.Send(packetBuffer);
+
+            _bufferPool.Return(payloadBuffer);
+            _bufferPool.Return(packetBuffer);
         }
 
         public void OnConnected()
@@ -146,8 +165,28 @@ namespace Network.Client
 
         public void OnDataReceived(ArraySegment<byte> data)
         {
-            NetworkPacket packet = NetworkPacket.Unpack(data);
-            _messageHandler.Handle(packet.id, packet.payload);
+            NetworkPacket packet = default;
+            if (_compress)
+            {
+                if (!NetworkPacker.UnpackCompressed(data, out packet))
+                {
+                    return;
+                }
+
+                _messageHandler.Handle(packet.id, packet.payload);
+                return;
+            }
+
+            if (!_compress)
+            {
+                if (!NetworkPacker.Unpack(data, out packet))
+                {
+                    return;
+                }
+
+                _messageHandler.Handle(packet.id, packet.payload);
+                return;
+            }
         }
 
         public void OnDisconnected()
@@ -166,7 +205,7 @@ namespace Network.Client
             UpdateSystems();
             socket.TickOutgoing();
         }
-        
+
         public void UpdateSystems()
         {
             foreach (var system in _systems.systems)
@@ -181,7 +220,11 @@ namespace Network.Client
         public void Dispose()
         {
             _disposer.Execute();
-            socket.Disconnect();
+            if (socket.connected)
+            {
+                socket.Disconnect();
+            }
+
             _messageHandler?.Dispose();
             _systems?.Dispose();
             Cts?.Cancel();

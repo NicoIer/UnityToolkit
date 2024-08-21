@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using MemoryPack;
+using MemoryPack.Compression;
 
 namespace Network
 {
@@ -21,34 +22,19 @@ namespace Network
         /// 携带数据的类型id
         /// </summary>
         public readonly ushort id;
+
         /// <summary>
         /// 携带数据的对应的二进制数据
         /// </summary>
-        public readonly ArraySegment<byte> payload;
+        public ArraySegment<byte> payload;
 
         public NetworkPacket(ushort id, ArraySegment<byte> payload)
         {
             this.id = id;
             this.payload = payload;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NetworkPacket Pack<T>(in T message, NetworkBuffer buffer)
-            where T : INetworkMessage
-        {
-            var id = NetworkId<T>.Value;
-            MemoryPackSerializer.Serialize(buffer, message);
-            return new NetworkPacket(id, buffer);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static NetworkPacket Unpack(in ArraySegment<byte> data)
-        {
-            NetworkPacket packet = MemoryPackSerializer.Deserialize<NetworkPacket>(data);
-            return packet;
-        }
     }
-    
+
     /// <summary>
     /// 服务器为客户端分配的连接ID
     /// </summary>
@@ -63,7 +49,7 @@ namespace Network
         }
     }
 
-    
+
     /// <summary>
     /// Ping消息
     /// </summary>

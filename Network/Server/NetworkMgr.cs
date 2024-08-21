@@ -13,7 +13,7 @@ namespace Network.Server
         protected NetworkServer server;
         protected readonly NetworkBufferPool<NetworkComponentPacket> componentBufferPool;
         protected readonly NetworkBufferPool byteBufferPool;
-        protected readonly Pool<List<NetworkBuffer>> _tempBufferListPool;
+        protected readonly Pool<List<NetworkBuffer>> tempBufferListPool;
 
         /// <summary>
         /// 针对不同类型的NetworkComponent的序列化器
@@ -44,7 +44,7 @@ namespace Network.Server
         {
             byteBufferPool = new NetworkBufferPool(16);
             componentBufferPool = new NetworkBufferPool<NetworkComponentPacket>(16);
-            _tempBufferListPool = new Pool<List<NetworkBuffer>>(
+            tempBufferListPool = new Pool<List<NetworkBuffer>>(
                 () => new List<NetworkBuffer>(),
                 list => list.Clear());
             serverEntityMgr = new NetworkEntityMgr();
@@ -118,10 +118,9 @@ namespace Network.Server
             var componentListBuffer = componentBufferPool.Get();
             foreach (var (id, networkEntity) in entities)
             {
-                var list = _tempBufferListPool.Get();
+                var list = tempBufferListPool.Get();
                 componentListBuffer.Reset(); // 预先分配空间
                 componentListBuffer.Advance(networkEntity.components.Count); // 获取Span
-                var span = componentListBuffer.GetSpan(networkEntity.components.Count);
                 for (var i = 0; i < networkEntity.components.Count; i++) // 依次序列化
                 {
                     var networkComponent = networkEntity.components[i];
@@ -130,7 +129,7 @@ namespace Network.Server
                     NetworkComponentPacket packet = networkComponent.ToDummyPacket(byteBuffer);
                     packet.entityId = networkEntity.id;
                     packet.idx = i;
-                    span[i] = packet;
+                    componentListBuffer.Write(packet);
                 }
 
                 var spawnMsg = new NetworkEntitySpawn(id, networkEntity.owner, componentListBuffer);
@@ -141,7 +140,7 @@ namespace Network.Server
                     byteBufferPool.Return(buffer);
                 }
 
-                _tempBufferListPool.Return(list);
+                tempBufferListPool.Return(list);
             }
 
             componentBufferPool.Return(componentListBuffer);
@@ -176,22 +175,16 @@ namespace Network.Server
         /// <param name="req"></param>
         private void OnNetworkEntitySpawn(int connectId, NetworkEntitySpawn req)
         {
-            if (req.id.HasValue)
-            {
-                NetworkLogger.Error($"客户端请求生成网络实体时id必须为null");
-                return;
-            }
-
             // 所有者必须是发送这个请求的客户端或者服务器 不能由客户端A请求生成一个属于客户端B的网络实体
-            if (req.owner.HasValue && req.owner.Value != connectId && req.owner.Value != ServerId)
+            if (req.owner != connectId && req.owner != ServerId)
             {
                 NetworkLogger.Error(
-                    $"客户端{connectId}尝试生成一个属于客户端{req.owner.Value}的网络实体");
+                    $"客户端{connectId}尝试生成一个属于客户端{req.owner}的网络实体");
                 return;
             }
 
             // 不给值表示客户端自己想要生成一个属于自己的网络实体
-            int owner = req.owner.HasValue ? req.owner.Value : connectId;
+            int owner = req.owner;
             uint id = IncreaseId();
             NetworkEntity entity = NetworkEntity.From(id, owner, req, componentSerializer);
             Debug.Assert(entity.id == id && entity.owner == owner);
@@ -315,33 +308,33 @@ namespace Network.Server
 
         private void OnNetworkComponentUpdate(int connectId, NetworkComponentUpdate req)
         {
-            if (!req.component.entityId.HasValue)
+            if (!req.component.mask.HasFlag(NetworkComponentPacket.Mask.EntityId))
             {
                 NetworkLogger.Error($"组件的identityId不能为空");
                 return;
             }
 
-            if (!entities.ContainsKey(req.component.entityId.Value))
+            if (!entities.ContainsKey(req.component.entityId))
             {
-                NetworkLogger.Error($"实体{req.component.entityId.Value}不存在");
+                NetworkLogger.Error($"实体{req.component.entityId}不存在");
                 return;
             }
 
-            NetworkEntity entity = entities[req.component.entityId.Value];
+            NetworkEntity entity = entities[req.component.entityId];
             if (entity.owner != connectId)
             {
                 NetworkLogger.Error($"客户端{connectId}尝试更新实体{entity}的组件，但它不是所有者");
                 return;
             }
 
-            if (req.component.idx == null)
+            if (!req.component.mask.HasFlag(NetworkComponentPacket.Mask.Idx))
             {
                 NetworkLogger.Error($"组件的idx不能为空");
                 return;
             }
 
-            entity.components[req.component.idx.Value].FromPacket(req.component);
-
+            NetworkLogger.Info($"更新实体{entity.id}的组件{req.component.idx}");
+            entity.UpdateComponent(req.component);
             server.SendToAll<NetworkComponentUpdate>(req);
         }
 
@@ -362,13 +355,13 @@ namespace Network.Server
 
             foreach (var componentPacket in req.components)
             {
-                if (componentPacket.idx == null)
+                if (componentPacket.mask.HasFlag(NetworkComponentPacket.Mask.Idx))
                 {
                     NetworkLogger.Error($"组件的idx不能为空");
                     return;
                 }
 
-                entity.components[componentPacket.idx.Value].FromPacket(componentPacket);
+                entity.UpdateComponent(componentPacket);
             }
 
             server.SendToAll<NetworkEntityUpdate>(req);

@@ -7,37 +7,6 @@ using System.Reflection;
 namespace UnityToolkit
 {
     /// <summary>
-    /// 通过反射实现深拷贝
-    /// </summary>
-    public static class DeepCopyByRefection
-    {
-        public static T DeepCopy<T>(T obj)
-        {
-            if (obj is string || obj.GetType().IsValueType)
-            {
-                return obj;
-            }
-
-            T instance = Activator.CreateInstance<T>();
-            var fields = obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
-                                                 BindingFlags.Instance);
-            foreach (var item in fields)
-            {
-                // try
-                // {
-                item.SetValue(instance, DeepCopy(item.GetValue(obj)));
-                // }
-                // catch (Exception ex)
-                // {
-                //     string err = ex.Message;
-                // }
-            }
-
-            return instance;
-        }
-    }
-
-    /// <summary>
     /// 利用表达式树实现高效深复制
     /// </summary>
     public static class DeepCopyByExpressionTrees
