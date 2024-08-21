@@ -1,3 +1,4 @@
+#if UNITY_5_4_OR_NEWER
 using UnityEngine;
 
 namespace Network
@@ -40,3 +41,4 @@ namespace Network
         }
     }
 }
+#endif

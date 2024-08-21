@@ -1,3 +1,4 @@
+#if UNITY_5_4_OR_NEWER
 using UnityEngine;
 
 namespace Network
@@ -13,7 +14,6 @@ namespace Network
             // standard N-day EMA alpha calculation
             alpha = 2.0f / (n + 1);
             initialized = false;
-            Value = Quaternion.identity;
         }
         
         public void Add(Quaternion newValue)
@@ -39,3 +39,4 @@ namespace Network
         }
     }
 }
+#endif
