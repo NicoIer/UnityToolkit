@@ -1,8 +1,7 @@
 using System;
 using MemoryPack;
-using UnityToolkit;
 
-namespace Network
+namespace UnityToolkit.MathTypes
 {
     [MemoryPackable]
     public partial struct Quaternion : IEquatable<Quaternion>

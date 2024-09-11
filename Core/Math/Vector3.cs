@@ -1,9 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
 using MemoryPack;
-using UnityToolkit;
 
-namespace Network
+namespace UnityToolkit.MathTypes
 {
     [MemoryPackable]
     public partial struct Vector3 : IEquatable<Vector3>

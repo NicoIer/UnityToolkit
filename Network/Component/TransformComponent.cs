@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using MemoryPack;
+using UnityToolkit.MathTypes;
 
 namespace Network
 {

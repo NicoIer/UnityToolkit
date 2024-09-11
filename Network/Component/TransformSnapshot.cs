@@ -1,15 +1,16 @@
+using UnityToolkit.MathTypes;
 namespace Network
 {
     public struct TransformSnapshot : ISnapshot
     {
         public double remoteTime { get; set; }
         public double localTime { get; set; }
-        public Network.Vector3 position;
-        public Network.Quaternion rotation;
-        public Network.Vector3 scale;
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 scale;
 
-        public TransformSnapshot(double remoteTime, double localTime, Network.Vector3 position,
-            Network.Quaternion rotation, Network.Vector3 scale)
+        public TransformSnapshot(double remoteTime, double localTime, Vector3 position,
+            Quaternion rotation, Vector3 scale)
         {
             this.remoteTime = remoteTime;
             this.localTime = localTime;

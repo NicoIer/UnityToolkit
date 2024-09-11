@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 namespace UnityToolkit.Editor
 {
     static internal class ScrollListMenuOptions
