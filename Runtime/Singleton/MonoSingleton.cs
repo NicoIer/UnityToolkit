@@ -40,7 +40,7 @@ namespace UnityToolkit
 
 
                 if (_singleton != null) return _singleton; //第一次访问
-                _singleton = FindObjectOfType<T>(); // 从场景中查找
+                _singleton = FindFirstObjectByType<T>(UnityEngine.FindObjectsInactive.Include); // 从场景中查找
                 if (_singleton != null)
                 {
                     _singleton.OnSingletonInit(); //手动初始化
