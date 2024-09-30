@@ -204,7 +204,7 @@ namespace Network.kcp2k
             Utils.Decode32U(segment.Array, segment.Offset + 1, out uint messageCookie);
             if (messageCookie == 0)
             {
-                NetworkLogger.Error($"KcpClient: received message with cookie=0, this should never happen. GameServer should always include the security cookie.");
+                NetworkLogger.Error($"KcpClient: received message with cookie=0, this should never happen. StateSyncDemoServer should always include the security cookie.");
             }
 
             if (cookie == 0)

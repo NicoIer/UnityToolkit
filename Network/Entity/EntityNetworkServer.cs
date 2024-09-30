@@ -8,7 +8,7 @@ namespace Network.Server
     /// <summary>
     /// 服务器端的网络服务器管理
     /// </summary>
-    public class NetworkMgr : IServerSystem
+    public class EntityNetworkServer : IServerSystem
     {
         protected NetworkServer server;
         protected readonly NetworkBufferPool<NetworkComponentPacket> componentBufferPool;
@@ -40,7 +40,7 @@ namespace Network.Server
         private uint _currentEntityId;
         protected readonly List<ICommand> disposeCommands;
 
-        public NetworkMgr()
+        public EntityNetworkServer()
         {
             byteBufferPool = new NetworkBufferPool(16);
             componentBufferPool = new NetworkBufferPool<NetworkComponentPacket>(16);
@@ -102,7 +102,7 @@ namespace Network.Server
                 entity.OnDestroy();
                 entities.Remove(entity.id);
                 NetworkLogger.Info($"销毁属于客户端{connectId}的网络实体{entity}");
-                server.SendToAll<NetworkEntityDestroy>(new NetworkEntityDestroy(entity.id));
+                Broadcast(new NetworkEntityDestroy(entity.id));
             }
 
             NetworkLogger.Info($"客户端{connectId}断开连接，销毁其NetworkEntityMgr");
@@ -134,7 +134,7 @@ namespace Network.Server
 
                 var spawnMsg = new NetworkEntitySpawn(id, networkEntity.owner, componentListBuffer);
                 NetworkLogger.Info($"发送网络实体{networkEntity}给客户端{connectId} 因为客户端刚刚连接");
-                server.SendToAll<NetworkEntitySpawn>(spawnMsg);
+                server.Send(connectId, spawnMsg);
                 foreach (var buffer in list)
                 {
                     byteBufferPool.Return(buffer);
@@ -192,7 +192,7 @@ namespace Network.Server
 
             NetworkLogger.Info($"生成网络实体{entity.id}，所有者{entity.owner}");
             NetworkEntitySpawn spawn = new NetworkEntitySpawn(entity.id, entity.owner, req.components);
-            server.SendToAll<NetworkEntitySpawn>(spawn);
+            Broadcast(spawn);
         }
 
 
@@ -257,7 +257,7 @@ namespace Network.Server
 
             // 广播给所有客户端
             NetworkEntityOwnerUpdate update = new NetworkEntityOwnerUpdate(req.identityId, req.target);
-            server.SendToAll<NetworkEntityOwnerUpdate>(update);
+            Broadcast(update);
         }
 
         private void DestroyNetworkEntity(NetworkEntity entity)
@@ -302,8 +302,9 @@ namespace Network.Server
             DestroyNetworkEntity(entity);
 
             NetworkEntityDestroy destroy = new NetworkEntityDestroy(req.id);
-            server.SendToAll<NetworkEntityDestroy>(destroy);
+            Broadcast<NetworkEntityDestroy>(destroy);
         }
+
 
 
         private void OnNetworkComponentUpdate(int connectId, NetworkComponentUpdate req)
@@ -335,7 +336,7 @@ namespace Network.Server
 
             NetworkLogger.Info($"更新实体{entity.id}的组件{req.component.idx}");
             entity.UpdateComponent(req.component);
-            server.SendToAll<NetworkComponentUpdate>(req);
+            Broadcast(req);
         }
 
         private void OnNetworkEntityUpdate(int connectId, NetworkEntityUpdate req)
@@ -363,10 +364,14 @@ namespace Network.Server
 
                 entity.UpdateComponent(componentPacket);
             }
-
-            server.SendToAll<NetworkEntityUpdate>(req);
+            Broadcast(req);
         }
 
         #endregion
+        
+        private void Broadcast<TMessage>(TMessage msg) where TMessage : INetworkMessage
+        {
+            server.SendToAll<TMessage>(msg);
+        }
     }
 }

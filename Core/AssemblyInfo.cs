@@ -7,6 +7,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: InternalsVisibleTo("UnityToolkit.Editor")]
-
-[assembly: InternalsVisibleTo("DemoServer")]
 [assembly: InternalsVisibleTo("ToolkitTest")]

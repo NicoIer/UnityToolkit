@@ -221,7 +221,7 @@ namespace Network.kcp2k
             if (time >= lastReceiveTime + timeout)
             {
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.Timeout, $"{GetType()}: Connection timed out after not receiving any message for {timeout}ms. Disconnecting.");
                 Disconnect();
             }
@@ -233,7 +233,7 @@ namespace Network.kcp2k
             if (kcp.state == -1)
             {
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.Timeout, $"{GetType()}: dead_link detected: a message was retransmitted {kcp.dead_link} times without ack. Disconnecting.");
                 Disconnect();
             }
@@ -262,7 +262,7 @@ namespace Network.kcp2k
             if (total >= QueueDisconnectThreshold)
             {
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.Congestion,
                         $"{GetType()}: disconnecting connection because it can't process data fast enough.\n" +
                         $"Queue total {total}>{QueueDisconnectThreshold}. rcv_queue={kcp.rcv_queue.Count} snd_queue={kcp.snd_queue.Count} rcv_buf={kcp.rcv_buf.Count} snd_buf={kcp.snd_buf.Count}\n" +
@@ -307,7 +307,7 @@ namespace Network.kcp2k
             {
                 // if receive failed, close everything
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.InvalidReceive, $"{GetType()}: Receive failed with error={received}. closing connection.");
                 Disconnect();
                 return false;
@@ -355,7 +355,7 @@ namespace Network.kcp2k
                     {
                         // everything else is not allowed during handshake!
                         // pass error to user callback. no need to log it manually.
-                        // GetType() shows GameServer/ClientConn instead of just Connection.
+                        // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                         OnError(ErrorCode.InvalidReceive, $"{GetType()}: received invalid header {header} while Connected. Disconnecting the connection.");
                         Disconnect();
                         break;
@@ -381,7 +381,7 @@ namespace Network.kcp2k
                     case KcpHeader.Hello:
                     {
                         // should never receive another hello after auth
-                        // GetType() shows GameServer/ClientConn instead of just Connection.
+                        // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                         NetworkLogger.Warning($"{GetType()}: received invalid header {header} while Authenticated. Disconnecting the connection.");
                         Disconnect();
                         break;
@@ -398,7 +398,7 @@ namespace Network.kcp2k
                         else
                         {
                             // pass error to user callback. no need to log it manually.
-                            // GetType() shows GameServer/ClientConn instead of just Connection.
+                            // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                             OnError(ErrorCode.InvalidReceive, $"{GetType()}: received empty Data message while Authenticated. Disconnecting the connection.");
                             Disconnect();
                         }
@@ -412,7 +412,7 @@ namespace Network.kcp2k
                     case KcpHeader.Disconnect:
                     {
                         // disconnect might happen
-                        // GetType() shows GameServer/ClientConn instead of just Connection.
+                        // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                         NetworkLogger.Info($"{GetType()}: received disconnect message");
                         Disconnect();
                         break;
@@ -451,7 +451,7 @@ namespace Network.kcp2k
             {
                 // this is ok, the connection was closed
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.ConnectionClosed, $"{GetType()}: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
@@ -459,7 +459,7 @@ namespace Network.kcp2k
             {
                 // fine, socket was closed
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.ConnectionClosed, $"{GetType()}: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
@@ -467,7 +467,7 @@ namespace Network.kcp2k
             {
                 // unexpected
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.Unexpected, $"{GetType()}: unexpected Exception: {exception}");
                 Disconnect();
             }
@@ -500,7 +500,7 @@ namespace Network.kcp2k
             {
                 // this is ok, the connection was closed
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.ConnectionClosed, $"{GetType()}: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
@@ -508,7 +508,7 @@ namespace Network.kcp2k
             {
                 // fine, socket was closed
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.ConnectionClosed, $"{GetType()}: Disconnecting because {exception}. This is fine.");
                 Disconnect();
             }
@@ -516,7 +516,7 @@ namespace Network.kcp2k
             {
                 // unexpected
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.Unexpected, $"{GetType()}: unexpected exception: {exception}");
                 Disconnect();
             }
@@ -528,7 +528,7 @@ namespace Network.kcp2k
             int input = kcp.Input(message.Array, message.Offset, message.Count);
             if (input != 0)
             {
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 NetworkLogger.Warning($"{GetType()}: Input failed with error={input} for buffer with length={message.Count - 1}");
             }
         }
@@ -610,7 +610,7 @@ namespace Network.kcp2k
             if (1 + content.Count > kcpSendBuffer.Length) // TODO
             {
                 // otherwise content is larger than MaxMessageSize. let user know!
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.InvalidSend, $"{GetType()}: Failed to send reliable message of size {content.Count} because it's larger than ReliableMaxMessageSize={reliableMax}");
                 return;
             }
@@ -626,7 +626,7 @@ namespace Network.kcp2k
             int sent = kcp.Send(kcpSendBuffer, 0, 1 + content.Count);
             if (sent < 0)
             {
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.InvalidSend, $"{GetType()}: Send failed with error={sent} for content with length={content.Count}");
             }
         }
@@ -637,7 +637,7 @@ namespace Network.kcp2k
             if (message.Count > unreliableMax)
             {
                 // otherwise content is larger than MaxMessageSize. let user know!
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 NetworkLogger.Error($"{GetType()}: Failed to send unreliable message of size {message.Count} because it's larger than UnreliableMaxMessageSize={unreliableMax}");
                 return;
             }
@@ -670,7 +670,7 @@ namespace Network.kcp2k
             // send an empty message with 'Hello' header.
             // cookie is automatically included in all messages.
 
-            // GetType() shows GameServer/ClientConn instead of just Connection.
+            // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
             NetworkLogger.Info($"{GetType()}: sending handshake to other end with cookie={cookie}");
             SendReliable(KcpHeader.Hello, default);
         }
@@ -684,7 +684,7 @@ namespace Network.kcp2k
             if (data.Count == 0)
             {
                 // pass error to user callback. no need to log it manually.
-                // GetType() shows GameServer/ClientConn instead of just Connection.
+                // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
                 OnError(ErrorCode.InvalidSend, $"{GetType()}: tried sending empty message. This should never happen. Disconnecting.");
                 Disconnect();
                 return;
@@ -737,7 +737,7 @@ namespace Network.kcp2k
             }
 
             // set as Disconnected, call event
-            // GetType() shows GameServer/ClientConn instead of just Connection.
+            // GetType() shows StateSyncDemoServer/ClientConn instead of just Connection.
             NetworkLogger.Info($"{GetType()}: Disconnected.");
             state = KcpState.Disconnected;
             OnDisconnected();

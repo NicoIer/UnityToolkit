@@ -92,8 +92,8 @@ namespace Network.Telepathy
                 // https://stackoverflow.com/questions/1917814/eagain-error-for-accept-on-blocking-socket/1918118#1918118
                 // => fixes https://github.com/vis2k/Mirror/issues/2695
                 //
-                //listener.GameServer.SendTimeout = SendTimeout;
-                //listener.GameServer.ReceiveTimeout = ReceiveTimeout;
+                //listener.StateSyncDemoServer.SendTimeout = SendTimeout;
+                //listener.StateSyncDemoServer.ReceiveTimeout = ReceiveTimeout;
                 listener.Start();
                 NetworkLogger.Info($"[{this}]: listening port=" + port);
 

@@ -1,4 +1,4 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("GameServer")]
+[assembly: InternalsVisibleTo("StateSyncDemoServer")]
 [assembly: InternalsVisibleTo("DummyClient")]

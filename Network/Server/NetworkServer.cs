@@ -85,7 +85,8 @@ namespace Network.Server
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<TMessage>(int connectionId, TMessage message) where TMessage : INetworkMessage
+        public void Send<TMessage>(int connectionId, TMessage message, bool noDelay = false)
+            where TMessage : INetworkMessage
         {
             NetworkBuffer payloadBuffer = _bufferPool.Get();
             NetworkBuffer packetBuffer = _bufferPool.Get();
@@ -104,10 +105,15 @@ namespace Network.Server
 
             _bufferPool.Return(payloadBuffer);
             _bufferPool.Return(packetBuffer);
+
+            if (noDelay)
+            {
+                socket.TickOutgoing();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SendToAll<T>(T msg) where T : INetworkMessage
+        public void SendToAll<T>(T msg, bool noDelay = false) where T : INetworkMessage
         {
             NetworkBuffer payloadBuffer = _bufferPool.Get();
             NetworkBuffer packetBuffer = _bufferPool.Get();
@@ -125,6 +131,10 @@ namespace Network.Server
 
             _bufferPool.Return(payloadBuffer);
             _bufferPool.Return(packetBuffer);
+            if (noDelay)
+            {
+                socket.TickOutgoing();
+            }
         }
 
 

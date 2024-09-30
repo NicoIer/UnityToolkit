@@ -15,7 +15,7 @@ using System.Diagnostics;
 
 namespace Network.Client
 {
-    public class NetworkMgr
+    public class EntityNetworkClient
     {
         public IClientSocket socket;
         public NetworkClient client;
