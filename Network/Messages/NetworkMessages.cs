@@ -62,45 +62,31 @@ namespace Network
         {
             this.sendTimeTicks = sendTimeTicks;
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static PingMessage Now()
-        {
-            return new PingMessage(DateTime.UtcNow.Ticks);
-        }
     }
 
     [MemoryPackable]
     public partial struct PongMessage : INetworkMessage
     {
         /// <summary>
-        /// Pong消息发送方接收到Ping的时间
-        /// Pinger -> Ponger -> Pinger
-        /// </summary>
-        public readonly long receivePingTimeTicks;
-
-        /// <summary>
         /// Ping方发送Ping的时间
         /// Pinger -> Ponger -> Pinger
         /// </summary>
-        public readonly long sendPingTimeTicks;
+        public readonly long sendTimeTicks;
 
         public PongMessage(ref PingMessage pingMessage)
         {
-            sendPingTimeTicks = pingMessage.sendTimeTicks;
-            receivePingTimeTicks = DateTime.UtcNow.Ticks;
+            sendTimeTicks = pingMessage.sendTimeTicks;
         }
     }
 
-
     [MemoryPackable]
-    public partial struct RttMessage : INetworkMessage
+    public partial struct TimestampMessage : INetworkMessage
     {
-        public readonly int rttMs;
+        public readonly long timestampTicks;
 
-        public RttMessage(int rttMs)
+        public TimestampMessage(long timestampTicks)
         {
-            this.rttMs = rttMs;
+            this.timestampTicks = timestampTicks;
         }
     }
 }

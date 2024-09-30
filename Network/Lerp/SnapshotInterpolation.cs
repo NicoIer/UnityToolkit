@@ -9,6 +9,7 @@
 //   fakebyte: standard deviation for dynamic adjustment
 //   ninjakicka: math & debugging
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityToolkit;
@@ -38,8 +39,12 @@ namespace Network
         }
     }
 
+
     public static class SnapshotInterpolation
     {
+        
+        public static SnapshotInterpolationSettings snapshotSettings = new SnapshotInterpolationSettings();
+        
         // calculate timescale for catch-up / slow-down
         // note that negative threshold should be <0.
         //   caller should verify (i.e. Unity OnValidate).

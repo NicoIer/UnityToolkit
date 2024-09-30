@@ -112,7 +112,7 @@ namespace Network
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void WriteBlittable<T>(T value)
+        public void WriteBlittable<T>(T value)
             where T : unmanaged
         {
             // check if blittable for safety

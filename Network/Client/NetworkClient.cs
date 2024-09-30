@@ -137,7 +137,7 @@ namespace Network.Client
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<TMessage>(TMessage msg) where TMessage : INetworkMessage
+        public void Send<TMessage>(TMessage msg, bool noDelay = false) where TMessage : INetworkMessage
         {
             NetworkBuffer payloadBuffer = _bufferPool.Get();
             NetworkBuffer packetBuffer = _bufferPool.Get();
@@ -156,6 +156,11 @@ namespace Network.Client
 
             _bufferPool.Return(payloadBuffer);
             _bufferPool.Return(packetBuffer);
+
+            if (noDelay)
+            {
+                socket.TickOutgoing();
+            }
         }
 
         public void OnConnected()
