@@ -8,7 +8,7 @@ namespace Network.Server
     /// <summary>
     /// 服务器端的网络服务器管理
     /// </summary>
-    public class EntityNetworkServer : IServerSystem
+    public class EntitySystem : IServerSystem
     {
         protected NetworkServer server;
         protected readonly NetworkBufferPool<NetworkComponentPacket> componentBufferPool;
@@ -40,7 +40,7 @@ namespace Network.Server
         private uint _currentEntityId;
         protected readonly List<ICommand> disposeCommands;
 
-        public EntityNetworkServer()
+        public EntitySystem()
         {
             byteBufferPool = new NetworkBufferPool(16);
             componentBufferPool = new NetworkBufferPool<NetworkComponentPacket>(16);
