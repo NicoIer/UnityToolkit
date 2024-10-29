@@ -253,11 +253,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4542174788260968814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38d66b28b9073614aa099fa344201ea5, type: 3}
+  m_Script: {fileID: 11500000, guid: 5651f49904d634ec78bb5fb296b43da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: {fileID: 4804004819856385358}
-  bar: {fileID: 1514233175326964903}
+  <title>k__BackingField: {fileID: 4804004819856385358}
+  <bar>k__BackingField: {fileID: 1514233175326964903}
   usingTitle: 0
   max: 100
   value: 50
@@ -331,9 +331,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 50/100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 075a644ae3e0d4f4ba8953c38d0f2e92, type: 2}
-  m_sharedMaterial: {fileID: 2608996104116260222, guid: 075a644ae3e0d4f4ba8953c38d0f2e92,
-    type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

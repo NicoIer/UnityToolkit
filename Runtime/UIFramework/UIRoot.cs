@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Rendering.Universal;
@@ -509,6 +510,27 @@ namespace UnityToolkit
             {
                 Camera camera = uiRoot.GetComponentInChildren<Camera>();
                 root.UICamera = camera;
+            }
+        }
+
+
+        [UnityEditor.MenuItem("Assets/Create/Toolkit/UIPanel", false, 0)]
+        private static void CreateUIPanel()
+        {
+            GameObject prefab = Resources.Load<GameObject>("UnityToolkit/PanelPrefab");
+            // 只有在Project下才可以创建
+            if (UnityEditor.Selection.activeObject is UnityEditor.DefaultAsset)
+            {
+                var folder = UnityEditor.Selection.activeObject;
+                var path = UnityEditor.AssetDatabase.GetAssetPath(folder);
+                var panel = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                PrefabUtility.SaveAsPrefabAsset(panel, path + "/NewPanel.prefab");
+                DestroyImmediate(panel);
+                Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameObject>(path + "/NewPanel.prefab");
+            }
+            else
+            {
+                UnityEditor.EditorUtility.DisplayDialog("Create UIPanel", "Please select a folder in the Project view", "OK");
             }
         }
     }
