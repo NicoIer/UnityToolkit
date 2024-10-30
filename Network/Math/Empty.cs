@@ -7,6 +7,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+
 using MemoryPack;
 
 namespace Network
