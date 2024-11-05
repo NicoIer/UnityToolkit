@@ -12,13 +12,14 @@ namespace UnityToolkit
     {
         void OnInit(T owner, IStateMachine<T> stateMachine);
         void OnEnter(T owner, IStateMachine<T> stateMachine);
+        void Transition(T owner, IStateMachine<T> stateMachine);
         void OnUpdate(T owner, IStateMachine<T> stateMachine);
         void OnExit(T owner, IStateMachine<T> stateMachine);
     }
 
     public interface IStateMachine<TOwner>
     {
-        event Action<Type, Type> OnStateChange;
+        event Action<IState<TOwner>, IState<TOwner>> OnStateChange;
         bool running { get; }
         TOwner owner { get; }
         IState<TOwner> currentState { get; }
@@ -35,20 +36,36 @@ namespace UnityToolkit
         void RemoveParam(string key);
         bool ContainsParam(string battleSettlementData);
     }
+    
+    public interface IBlackboard
+    {
+        event Action<string> OnRemove;
+        event Action<string> OnAdd;
+        event Action<string> OnSet;
+        T Get<T>(in string key);
+        bool TryGetValue(in string key, out object o);
+        bool TryGetValue<T>(in string key, out T o);
+        object this[string key] { get; set; }
+        void Set<T>(in string key, T value);
+        void Remove(in string key);
+        bool ContainsKey(in string key);
+        
+        void Clear();
+    }
 
     public class StateMachine<TOwner> : IStateMachine<TOwner>
     {
-        public event Action<Type, Type> OnStateChange = delegate { };
+        public event Action<IState<TOwner>, IState<TOwner>> OnStateChange = delegate { };
         public bool running { get; protected set; }
         public TOwner owner { get; protected set; }
         public IState<TOwner> currentState { get; protected set; }
-        private readonly Dictionary<string, object> _blackboard;
+        private readonly IBlackboard _blackboard;
         private readonly Dictionary<int, IState<TOwner>> _states;
 
-        public StateMachine(TOwner owner)
+        public StateMachine(TOwner owner,IBlackboard blackboard)
         {
             this.owner = owner;
-            _blackboard = new Dictionary<string, object>();
+            _blackboard = blackboard;
             _states = new Dictionary<int, IState<TOwner>>(8);
             currentState = default;
         }
@@ -73,10 +90,10 @@ namespace UnityToolkit
             var typeId = TypeId<T>.stableId;
             if (_states.TryGetValue(typeId, out var state))
             {
+                OnStateChange(currentState, state);
                 currentState.OnExit(owner, this);
                 currentState = state;
                 currentState.OnEnter(owner, this);
-                OnStateChange(currentState.GetType(), typeof(T));
                 return true;
             }
 
@@ -87,14 +104,19 @@ namespace UnityToolkit
         {
             if (_states.TryGetValue(TypeId.StableId(type), out var state))
             {
+                OnStateChange(currentState, state);
                 currentState.OnExit(owner, this);
                 currentState = state;
                 currentState.OnEnter(owner, this);
-                OnStateChange(currentState.GetType(), type);
                 return true;
             }
 
             return false;
+        }
+
+        public void Add<T>() where T : IState<TOwner>, new()
+        {
+            Add(new T());
         }
 
         public void Add<T>(T state) where T : IState<TOwner>
@@ -107,7 +129,7 @@ namespace UnityToolkit
         {
             currentState = _states[TypeId<T>.stableId];
             currentState.OnEnter(owner, this);
-            OnStateChange(null, typeof(T));
+            OnStateChange(null, currentState);
             running = true;
         }
 
@@ -115,7 +137,7 @@ namespace UnityToolkit
         {
             currentState = _states[TypeId.StableId(type)];
             currentState.OnEnter(owner, this);
-            OnStateChange(null, type);
+            OnStateChange(null, currentState);
             running = true;
         }
 
@@ -123,6 +145,7 @@ namespace UnityToolkit
         public void OnUpdate()
         {
             if (!running) return;
+            currentState.Transition(owner, this);
             currentState.OnUpdate(owner, this);
         }
 
