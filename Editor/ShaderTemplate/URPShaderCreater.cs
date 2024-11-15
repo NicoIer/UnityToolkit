@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -84,3 +86,4 @@ namespace UnityToolkit.Editor
         }
     }
 }
+#endif

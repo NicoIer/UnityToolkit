@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_5_6_OR_NEWER
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -87,3 +88,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif

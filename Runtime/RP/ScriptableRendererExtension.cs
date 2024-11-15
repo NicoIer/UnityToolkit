@@ -1,3 +1,4 @@
+#if UNITY_5_6_OR_NEWER
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.Assertions;
@@ -96,3 +97,5 @@ namespace UnityToolkit
         }
     }
 }
+
+#endif

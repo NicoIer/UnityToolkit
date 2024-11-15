@@ -1,3 +1,4 @@
+#if UNITY_5_6_OR_NEWER
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -55,3 +56,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif
