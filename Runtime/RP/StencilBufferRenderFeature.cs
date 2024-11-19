@@ -1,4 +1,3 @@
-#if UNITY_5_6_OR_NEWER
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,19 +8,26 @@ namespace UnityToolkit
     public class StencilBufferRenderFeature : ScriptableRendererFeature
     {
         [Range(0, 255)] public int stencilRef;
-        public RenderPassEvent passEvent = RenderPassEvent.AfterRenderingTransparents;
-        private StencilWritePass _pass;
+        private StencilWritePass _passAfterTransparent;
+        // private StencilWritePass _passAfterShadow;
+
         public Material material;
 
-        public RTHandle thisFrameRT => _pass.thisFrameRT;
-        public RTHandle lastFrameRT => _pass.lastFrameRT;
+        internal RTHandle rtA;
+        internal RTHandle rtB;
+        public RTHandle thisFrameRT => Time.frameCount % 2 == 0 ? rtA : rtB;
+        public RTHandle lastFrameRT => Time.frameCount % 2 == 0 ? rtB : rtA;
 
         private static readonly int _stencilRef = Shader.PropertyToID("_StencilRef");
 
-        
+
         public override void Create()
         {
-            _pass = new StencilWritePass();
+            // _passAfterShadow = new StencilWritePass(this);
+            // _passAfterShadow.needClear = true;
+
+            _passAfterTransparent = new StencilWritePass(this);
+            _passAfterTransparent.needClear = false;
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -31,23 +37,38 @@ namespace UnityToolkit
                 cameraData.cameraType == CameraType.Reflection)
                 return;
             if (!cameraData.camera.CompareTag("MainCamera")) return;
+
             material.SetInt(_stencilRef, stencilRef);
-            _pass.renderPassEvent = passEvent;
-            _pass.material = material;
-            renderer.EnqueuePass(_pass);
+
+            // _passAfterShadow.renderPassEvent = RenderPassEvent.AfterRenderingShadows;
+            // _passAfterShadow.material = material;
+            // renderer.EnqueuePass(_passAfterShadow);
+
+            _passAfterTransparent.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
+            _passAfterTransparent.material = material;
+            renderer.EnqueuePass(_passAfterTransparent);
         }
 
         protected override void Dispose(bool disposing)
         {
-            _pass.Dispose();
+            rtA?.Release();
+            rtB?.Release();
+
+            _passAfterTransparent.Dispose();
+            // _passAfterShadow.Dispose();
         }
+
         private class StencilWritePass : ScriptableRenderPass, IDisposable
         {
+            public bool needClear = true;
             public Material material;
-            private RTHandle _rtA;
-            private RTHandle _rtB;
-            public RTHandle thisFrameRT => Time.frameCount % 2 == 0 ? _rtA : _rtB;
-            public RTHandle lastFrameRT => Time.frameCount % 2 == 0 ? _rtB : _rtA;
+            private readonly StencilBufferRenderFeature feature;
+
+            public StencilWritePass(StencilBufferRenderFeature feature)
+            {
+                this.feature = feature;
+            }
+
 
             public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
             {
@@ -62,13 +83,17 @@ namespace UnityToolkit
                 // 其实一个bit就够了 因为最终也只能记录对应像素位置的Stencil是不是和stencilRef一样
                 desc.colorFormat = RenderTextureFormat.R8; // GraphicsFormat.R8_UInt; // 8-bit stencil buffer
                 // desc.graphicsFormat = GraphicsFormat.R8_UInt;
-                if (thisFrameRT == _rtA)
+                if (feature.thisFrameRT == feature.rtA)
                 {
-                    RenderingUtils.ReAllocateIfNeeded(ref _rtA, desc, name: "StencilRT_A");
+                    var rt = feature.thisFrameRT;
+                    RenderingUtils.ReAllocateIfNeeded(ref rt, desc, name: "StencilRT_A");
+                    feature.rtA = rt;
                 }
                 else
                 {
-                    RenderingUtils.ReAllocateIfNeeded(ref _rtB, desc, name: "StencilRT_B");
+                    var rt = feature.thisFrameRT;
+                    RenderingUtils.ReAllocateIfNeeded(ref rt, desc, name: "StencilRT_B");
+                    feature.rtB = rt;
                 }
             }
 
@@ -78,24 +103,32 @@ namespace UnityToolkit
 
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
             {
-                if (thisFrameRT == null) return;
+                if (feature.thisFrameRT == null) return;
                 ref var cameraData = ref renderingData.cameraData;
 
-                if (thisFrameRT.rt.width != cameraData.cameraTargetDescriptor.width ||
-                    thisFrameRT.rt.height != cameraData.cameraTargetDescriptor.height)
+                if (feature.thisFrameRT.rt.width != cameraData.cameraTargetDescriptor.width ||
+                    feature.thisFrameRT.rt.height != cameraData.cameraTargetDescriptor.height)
                 {
                     ReAllocate(cameraData.cameraTargetDescriptor);
                 }
 
                 var cmd = CommandBufferPool.Get();
-                cmd.name = "StencilBuffer";
-                
-                // Clear the stencil buffer
-                CoreUtils.SetRenderTarget(cmd, thisFrameRT);
-                cmd.ClearRenderTarget(true, true, Color.clear);
-                
-                CoreUtils.SetRenderTarget(cmd, thisFrameRT, cameraData.renderer.cameraDepthTargetHandle, ClearFlag.None,
+                cmd.name = $"{nameof(StencilWritePass)}";
+
+                if (needClear)
+                {
+                    // Clear the stencil buffer
+                    CoreUtils.SetRenderTarget(cmd, feature.thisFrameRT);
+                    cmd.ClearRenderTarget(true, true, Color.clear);
+                }
+
+
+
+                CoreUtils.SetRenderTarget(cmd, feature.thisFrameRT, cameraData.renderer.cameraDepthTargetHandle,
+                    ClearFlag.None,
                     Color.clear);
+
+
                 cmd.DrawProcedural(Matrix4x4.identity, material, 0, MeshTopology.Triangles, 3, 1);
                 context.ExecuteCommandBuffer(cmd);
                 cmd.Clear();
@@ -104,10 +137,20 @@ namespace UnityToolkit
 
             public void Dispose()
             {
-                _rtA?.Release();
-                _rtB?.Release();
+            }
+        }
+
+        private class ShadowWritePass : ScriptableRenderPass, IDisposable
+        {
+            public void Dispose()
+            {
+                
+            }
+
+            public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+            {
+                
             }
         }
     }
 }
-#endif

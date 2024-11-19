@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace UnityToolkit.Editor
 {
+    using Path = System.IO.Path;
     internal static class URPShaderCreater
     {
         // URP Shader Template for .shader file
@@ -46,7 +47,7 @@ namespace UnityToolkit.Editor
                 path = AssetDatabase.GetAssetPath(obj);
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
-                    path = Path.GetDirectoryName(path);
+                    path = System.IO.Path.GetDirectoryName(path);
                     break;
                 }
             }
