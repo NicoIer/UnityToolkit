@@ -23,20 +23,29 @@ namespace UnityToolkit
             return (T)_data[key];
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue(in string key, out object o)
         {
-            return _data.TryGetValue(key, out o);
+            if (_data.TryGetValue(key, out var value))
+            {
+                o = value;
+                return true;
+            }
+
+            o = null;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue<T>(in string key, out T o)
         {
-            if (_data.TryGetValue(key, out var obj))
+            if (_data.TryGetValue(key, out var value))
             {
-                o = (T)obj;
-                return true;
+                if (value is T value1)
+                {
+                    o = value1;
+                    return true;
+                }
             }
 
             o = default;
@@ -45,12 +54,9 @@ namespace UnityToolkit
 
         public object this[string key]
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _data[key];
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set => Set(key, value);
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set<T>(in string key, T value)
@@ -67,7 +73,7 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ContainsKey(in string key)
+        public bool Contains(in string key)
         {
             return _data.ContainsKey(key);
         }
@@ -77,6 +83,12 @@ namespace UnityToolkit
         {
             OnRemove(key);
             _data.Remove(key);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsKey(in string key)
+        {
+            return _data.ContainsKey(key);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
