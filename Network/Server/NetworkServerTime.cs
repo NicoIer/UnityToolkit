@@ -116,7 +116,7 @@ namespace Network.Server
         }
 
 
-        public void OnUpdate()
+        public void OnUpdate(float deltaTime)
         {
             foreach (var (connectionId, record) in _rttDict)
             {

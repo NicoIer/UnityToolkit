@@ -152,18 +152,20 @@ namespace Network.Server
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
+                float deltaTimeSeconds = 0;
                 while (!Cts.Token.IsCancellationRequested)
                 {
                     if (TargetFrameRate == 0)
                     {
-                        OnUpdate(); // 执行一帧
+                        OnUpdate(deltaTimeSeconds); // 执行一帧
                         DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
                         continue;
                     }
 
                     stopwatch.Restart(); // 重置计时器
-                    OnUpdate(); // 执行一帧
+                    OnUpdate(DeltaTimeTick); // 执行一帧
                     DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
+                    deltaTimeSeconds =  TimeSpan.FromTicks(DeltaTimeTick).Seconds;
                     if (DeltaTimeTick < maxFrameTime) // 达到了帧率 休息一下
                     {
                         await Task.Delay(TimeSpan.FromTicks(maxFrameTime - DeltaTimeTick), Cts.Token);
@@ -218,7 +220,7 @@ namespace Network.Server
         {
         }
 
-        public void OnUpdate()
+        public void OnUpdate(float deltaTime)
         {
             socket.TickIncoming();
 
@@ -226,7 +228,7 @@ namespace Network.Server
             {
                 if (system is IOnUpdate onUpdate)
                 {
-                    onUpdate.OnUpdate();
+                    onUpdate.OnUpdate(deltaTime);
                 }
             }
 

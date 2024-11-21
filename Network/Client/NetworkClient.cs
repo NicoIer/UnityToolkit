@@ -213,11 +213,13 @@ namespace Network.Client
 
         public void UpdateSystems()
         {
+            float deltaTime = TimeSpan.FromTicks(DeltaTimeTick).Seconds;
             foreach (var system in _systems.systems)
             {
                 if (system is IOnUpdate onUpdate)
                 {
-                    onUpdate.OnUpdate();
+                    
+                    onUpdate.OnUpdate(deltaTime);
                 }
             }
         }

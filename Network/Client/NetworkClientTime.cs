@@ -93,7 +93,7 @@ namespace Network.Client
             _stopwatch.Stop();
         }
 
-        public void OnUpdate()
+        public void OnUpdate(float deltaTime)
         {
             if (ServerTimeTicks - _lastPingTimeTicks > PingIntervalTicks)
             {

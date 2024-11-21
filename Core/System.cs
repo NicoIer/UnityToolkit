@@ -18,7 +18,7 @@ namespace UnityToolkit
 
     public interface IOnUpdate
     {
-        void OnUpdate();
+        void OnUpdate(float deltaTime);
     }
 
     public interface IOnInit<T>
