@@ -69,6 +69,13 @@ namespace UnityToolkit
             _states = new Dictionary<int, IState<TOwner>>(8);
             currentState = default;
         }
+        public StateMachine(TOwner owner)
+        {
+            this.owner = owner;
+            _blackboard = new Blackboard();
+            _states = new Dictionary<int, IState<TOwner>>(8);
+            currentState = default;
+        }
 
         public void SetParam<T>(string key, T value)
         {

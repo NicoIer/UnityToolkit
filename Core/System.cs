@@ -43,6 +43,8 @@ namespace UnityToolkit
 
         public virtual void Register<T>(T system) where T : ISystem
         {
+            if(system==null)
+                return;
             _systems.Add(TypeId<T>.stableId, system);
             if (system is IOnInit initSystem)
                 initSystem.OnInit();
