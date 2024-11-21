@@ -29,7 +29,7 @@ Shader "#NAME#"
         Tags
         {
             "RenderType"="Opaque"
-            "RenderPipeLine"="UniversalRenderPipeline" //用于指明使用URP来渲染
+            "RenderPipeLine"="UniversalPipeline" //用于指明使用URP来渲染
         }
         /* 通用区域 这里内容可以在多个Pass中共享 */
 

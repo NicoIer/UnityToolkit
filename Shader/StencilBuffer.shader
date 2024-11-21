@@ -48,13 +48,13 @@ Shader "Hidden/CustomRP/StencilBuffer"
             {
                 float4 positionCS : SV_POSITION;
             };
-            
+
             // Graph Properties
             CBUFFER_START(UnityPerMaterial)
                 int _StencilRef;
-                float _ColorValue;
+                half _ColorValue;
             CBUFFER_END
-            
+
 
             Varyings vert(Attributes input)
             {
@@ -64,9 +64,9 @@ Shader "Hidden/CustomRP/StencilBuffer"
                 return output;
             }
 
-            half4 frag(Varyings packedInput) : SV_Target 
+            half4 frag(Varyings packedInput) : SV_Target
             {
-               return half4(_ColorValue,0,0,0);
+                return half4(_ColorValue, 0, 0, 0);
             }
             ENDHLSL
         }
