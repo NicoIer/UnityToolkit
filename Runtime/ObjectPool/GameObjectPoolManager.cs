@@ -15,6 +15,7 @@ namespace UnityToolkit
         public void OnRelease();
     }
 
+    [DefaultExecutionOrder(1000)]
     [DisallowMultipleComponent]
     public class GameObjectPoolManager : MonoSingleton<GameObjectPoolManager>, IOnlyPlayingModelSingleton
     {
@@ -49,7 +50,9 @@ namespace UnityToolkit
 
         #endregion
 
-
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowInInspector]
+#endif
         private Dictionary<object, ObjectPool<GameObject>> _prefabDict;
 
 
