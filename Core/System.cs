@@ -34,17 +34,23 @@ namespace UnityToolkit
     public class SystemLocator : ISystemLocator
     {
         protected Dictionary<int, ISystem> _systems;
+
+#if UNITY_EDITOR
+        [Sirenix.OdinInspector.ShowInInspector]
+#endif
         public Dictionary<int, ISystem>.ValueCollection systems => _systems.Values;
+
+        private bool _disposing;
 
         public SystemLocator()
         {
             _systems = new Dictionary<int, ISystem>();
+            _disposing = false;
         }
 
         public virtual void Register<T>(T system) where T : ISystem
         {
-            if(system==null)
-                return;
+            if(_disposing)return;
             _systems.Add(TypeId<T>.stableId, system);
             if (system is IOnInit initSystem)
                 initSystem.OnInit();
@@ -52,6 +58,8 @@ namespace UnityToolkit
 
         public virtual void Register<T>() where T : ISystem, new()
         {
+            
+            if(_disposing)return;
             if (_systems.ContainsKey(TypeId<T>.stableId))
             {
                 return;
@@ -63,6 +71,7 @@ namespace UnityToolkit
 
         public virtual void UnRegister<T>() where T : ISystem
         {
+            if(_disposing)return;
             if (_systems.TryGetValue(TypeId<T>.stableId, out ISystem system))
             {
                 system.Dispose();
@@ -83,6 +92,7 @@ namespace UnityToolkit
 
         public virtual void Dispose()
         {
+            _disposing = true;
             foreach (var system in _systems.Values)
             {
                 system.Dispose();
