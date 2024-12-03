@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UnityToolkit
 {
@@ -14,6 +15,12 @@ namespace UnityToolkit
 
     public interface ISystem : IDisposable
     {
+    }
+
+    public interface ITaskSystem : ISystem
+    {
+        public Task task { get; }
+        public Task Run();
     }
 
     public interface IOnUpdate

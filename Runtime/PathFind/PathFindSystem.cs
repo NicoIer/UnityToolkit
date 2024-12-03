@@ -1,3 +1,4 @@
+#if UNITY_5_4_OR_NEWER
 using System;
 using System.Buffers;
 using System.Collections;
@@ -218,3 +219,4 @@ namespace UnityToolkit
         }
     }
 }
+#endif
