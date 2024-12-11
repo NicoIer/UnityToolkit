@@ -175,5 +175,10 @@ namespace UnityToolkit
             currentState = default;
             running = false;
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T GetState<T>() where T : IState<TOwner>
+        {
+            return (T)_states[TypeId<T>.stableId];
+        }
     }
 }
