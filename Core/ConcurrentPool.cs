@@ -9,9 +9,11 @@ namespace UnityToolkit
         readonly ConcurrentBag<T> objects = new ConcurrentBag<T>();
 
         readonly Func<T> objectGenerator;
+        readonly int maxCapacity;
 
-        public ConcurrentPool(Func<T> objectGenerator, int initialCapacity)
+        public ConcurrentPool(Func<T> objectGenerator, int initialCapacity,int maxCapacity=0)
         {
+            this.maxCapacity = maxCapacity;
             this.objectGenerator = objectGenerator;
 
             // allocate an initial pool so we have fewer (if any)
@@ -24,7 +26,11 @@ namespace UnityToolkit
         public T Get() => objects.TryTake(out T obj) ? obj : objectGenerator();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Return(T item) => objects.Add(item);
+        public void Return(T item)
+        {
+            if (maxCapacity > 0 && objects.Count >= maxCapacity) return;
+            objects.Add(item);
+        }
 
         public int Count => objects.Count;
 
