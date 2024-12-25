@@ -1,7 +1,7 @@
 // common config struct, instead of passing 10 parameters manually every time.
 using System;
 
-namespace Network.kcp2k
+namespace kcp2k
 {
     // [Serializable] to show it in Unity inspector.
     // 'class' so we can set defaults easily.

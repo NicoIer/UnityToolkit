@@ -1,4 +1,4 @@
-namespace Network.kcp2k
+namespace kcp2k
 {
     internal struct AckItem
     {
