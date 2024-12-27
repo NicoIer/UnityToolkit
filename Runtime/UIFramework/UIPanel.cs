@@ -4,6 +4,16 @@ using UnityEngine;
 
 namespace UnityToolkit
 {
+    public enum DefualtLayerConfig
+    {
+        Bottom = 0,
+        Middle = 1,
+        Default = 2,
+        Popup = 3,
+        Tip = 4,
+        Top = 5,
+    }
+
     /// <summary>
     /// UI面板 任意一个UI面板同时只能存在一个实例
     /// Panel是唯一的
@@ -34,7 +44,12 @@ namespace UnityToolkit
 
         public UIPanelState state { get; internal set; } = UIPanelState.None;
 
-        public int sortingOrder;
+        [field: SerializeField]
+        public DefualtLayerConfig layerConfig { get; private set; } = DefualtLayerConfig.Default;
+
+        [Tooltip("面板的排序顺序 越大越优先显示")]
+        [field: SerializeField]
+        public int sortingOrder { get; private set; }
 
         // protected List<IUISubPanel> _subPanels;
 
@@ -60,7 +75,7 @@ namespace UnityToolkit
 
         public virtual void OnLoaded()
         {
-            canvas.sortingOrder = sortingOrder;
+            // canvas.sortingOrder = sortingOrder;
         }
 
         public virtual void OnOpened()
@@ -76,6 +91,11 @@ namespace UnityToolkit
         public virtual void OnDispose()
         {
             Destroy(gameObject);
+        }
+
+        public sbyte GetLayer()
+        {
+            return (sbyte)layerConfig;
         }
 
         protected void CloseSelf()
@@ -97,18 +117,22 @@ namespace UnityToolkit
 
 #if UNITY_EDITOR
 
-        private void Reset()
-        {
-            sortingOrder = canvas.sortingOrder;
-            canvas.overrideSorting = true;
-        }
+        // private void Reset()
+        // {
+        //     // sortingOrder = canvas.sortingOrder;
+        //     // canvas.overrideSorting = false;
+        // }
+        //
+        // private void OnValidate()
+        // {
+        //     // if (canvas.overrideSorting)
+        //     // {
+        //     //     UnityEditor.EditorUtility.DisplayDialog("警告", "请勿勾选Canvas的Override Sorting", "确定");
+        //     // }
+        //     // canvas.overrideSorting = false;
+        //     // canvas.sortingOrder = sortingOrder;
+        // }
 
-        private void OnValidate()
-        {
-            canvas.overrideSorting = true;
-            canvas.sortingOrder = sortingOrder;
-        }
-        
 #if ODIN_INSPECTOR
         [Sirenix.OdinInspector.Button]
 #else

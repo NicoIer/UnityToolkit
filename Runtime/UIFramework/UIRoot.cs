@@ -35,17 +35,22 @@ namespace UnityToolkit
 
         [Sirenix.OdinInspector.ShowInInspector]
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
-        
+
         [Sirenix.OdinInspector.ShowInInspector]
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
+
+        [Sirenix.OdinInspector.ShowInInspector]
+        private readonly Dictionary<sbyte, UILayer> _layers = new Dictionary<sbyte, UILayer>();
 #else
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();//辅助栈
-#endif
-
         
+        private readonly Dictionary<sbyte,UILayer> _layers = new Dictionary<sbyte, UILayer>();
+#endif
+        
+        public IReadOnlyDictionary<sbyte, UILayer> Layers => _layers;
 
 
         protected override bool DontDestroyOnLoad() => true;
@@ -71,12 +76,52 @@ namespace UnityToolkit
             {
                 cameraData.cameraStack.Add(UICamera);
             }
-            
+
             // Delete the default canvas child
             for (int i = 0; i < rootCanvas.transform.childCount; i++)
             {
                 Destroy(rootCanvas.transform.GetChild(i));
                 Debug.LogWarning("Delete the default canvas child");
+            }
+
+            float distance = 0;
+            // 根据配置的Layer生成
+            UIDatabase.LayerConfig.Sort((a, b) => -a.order.CompareTo(b.order));
+            foreach (var layerConfig in UIDatabase.LayerConfig)
+            {
+                GameObject layerGo = new GameObject(layerConfig.name,
+                    typeof(RectTransform)
+                    , typeof(CanvasGroup)
+                    // , typeof(Canvas)
+                    // , typeof(GraphicRaycaster)
+                )
+                {
+                    layer = rootCanvas.gameObject.layer
+                };
+
+                // 设置Layer的RectTransform
+                layerGo.transform.SetParent(rootCanvas.transform, false);
+
+                // 全填充
+                RectTransform rectTransform = layerGo.GetComponent<RectTransform>();
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                
+                // 调整顺序
+                rectTransform.SetAsFirstSibling();
+
+
+                // 设置UILayer
+                UILayer uiLayer = layerGo.AddComponent<UILayer>();
+                _layers.Add(layerConfig.order, uiLayer);
+
+                var origin = uiLayer.transform.localPosition;
+                origin.z = distance;
+                uiLayer.transform.localPosition = origin;
+
+                distance += UIDatabase.distanceBetweenLayers;
             }
             
         }
@@ -223,10 +268,25 @@ namespace UnityToolkit
         private void BeforePanelLoaded<T>(T uiPanel) where T : IUIPanel
         {
             RectTransform rectTransform = uiPanel.GetRectTransform();
-            rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
+            sbyte layer = uiPanel.GetLayer();
+            if (_layers.TryGetValue(layer, out UILayer uiLayer))
+            {
+                // rectTransform.SetParent(rootCanvas.transform, false); //这里的false很重要，不然会导致缩放不正确
+                rectTransform.SetParent(uiLayer.transform, false);
+            }
+            else
+            {
+                ToolkitLog.Error($"[{nameof(UIRoot)}]: Layer {layer} not found");
+            }
+            
 
             uiPanel.SetState(UIPanelState.Loaded);
             uiPanel.OnLoaded();
+
+            
+            
+
+            
             Push(uiPanel);
         }
 
@@ -530,7 +590,8 @@ namespace UnityToolkit
             }
             else
             {
-                UnityEditor.EditorUtility.DisplayDialog("Create UIPanel", "Please select a folder in the Project view", "OK");
+                UnityEditor.EditorUtility.DisplayDialog("Create UIPanel", "Please select a folder in the Project view",
+                    "OK");
             }
         }
     }
