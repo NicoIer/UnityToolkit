@@ -27,20 +27,23 @@ namespace UnityToolkit
 
 
 #if ODIN_INSPECTOR
-        [Sirenix.OdinInspector.ShowInInspector]
+        [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
 
-        [Sirenix.OdinInspector.ShowInInspector]
+        [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
 
-        [Sirenix.OdinInspector.ShowInInspector]
+        [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
         private readonly Stack<IUIPanel> _openedPanelStack = new Stack<IUIPanel>(); //已打开面板栈
 
-        [Sirenix.OdinInspector.ShowInInspector]
+        [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();
 
-        [Sirenix.OdinInspector.ShowInInspector]
+        [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
         private readonly Dictionary<sbyte, UILayer> _layers = new Dictionary<sbyte, UILayer>();
+        
+        // [Sirenix.OdinInspector.ShowInInspector, Sirenix.OdinInspector.ReadOnly]
+        // private readonly HashSet<Type> _asyncOpeningPanelTypes = new HashSet<Type>();
 #else
         private readonly Dictionary<Type, IUIPanel> _openedPanelDict = new Dictionary<Type, IUIPanel>(); //已打开面板字典
         private readonly Dictionary<Type, IUIPanel> _closedPanelDict = new Dictionary<Type, IUIPanel>(); //已关闭面板字典
@@ -48,9 +51,13 @@ namespace UnityToolkit
         private readonly Stack<IUIPanel> _helpStack = new Stack<IUIPanel>();//辅助栈
         
         private readonly Dictionary<sbyte,UILayer> _layers = new Dictionary<sbyte, UILayer>();
+        
+        private readonly HashSet<Type> _asyncOpeningPanelTypes = new HashSet<Type>();
 #endif
         
         public IReadOnlyDictionary<sbyte, UILayer> Layers => _layers;
+        
+        // public IReadOnlyCollection<Type> AsyncOpeningPanelTypes => _asyncOpeningPanelTypes;
 
 
         protected override bool DontDestroyOnLoad() => true;
@@ -316,10 +323,12 @@ namespace UnityToolkit
                 return;
             }
 
+            // _asyncOpeningPanelTypes.Add(type);
             // 或许是回调地狱 但是 不能用Task做异步 因为不一定是主线程 会GG
             UIDatabase.CreatePanelAsync<T>(uiPanel =>
             {
                 BeforePanelLoaded(uiPanel);
+                // _asyncOpeningPanelTypes.Remove(type);
                 _openedPanelDict.Add(type, uiPanel);
                 callback?.Invoke(uiPanel);
             });
@@ -335,7 +344,9 @@ namespace UnityToolkit
             }
 
             // 或许是回调地狱 但是 不能用Task做异步 因为不一定是主线程 会GG
+            // _asyncOpeningPanelTypes.Add(type);
             T uiPanel = await UIDatabase.CreatePanelAsync<T>();
+            // _asyncOpeningPanelTypes.Remove(type);
             BeforePanelLoaded(uiPanel);
             _openedPanelDict.Add(type, uiPanel);
             return uiPanel;
@@ -345,6 +356,10 @@ namespace UnityToolkit
         public void ClosePanel<T>() where T : IUIPanel
         {
             Type type = typeof(T);
+            // if(_asyncOpeningPanelTypes.Contains(type))
+            // {
+            //     ToolkitLog.Error($"[{nameof(UIRoot)}]: Panel {type.Name} is opening async, can't close it");
+            // }
             ClosePanel(type);
         }
 
