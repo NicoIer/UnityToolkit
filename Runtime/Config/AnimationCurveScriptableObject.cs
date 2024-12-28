@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityToolkit
 {
-    [CreateAssetMenu(fileName = "AnimationCurve", menuName = "UnityToolkit/AnimationCurve")]
+    [CreateAssetMenu(fileName = "AnimationCurve", menuName = "Toolkit/AnimationCurve")]
     public class AnimationCurveScriptableObject : ScriptableObject
     {
         public AnimationCurve curve;
