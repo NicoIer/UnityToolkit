@@ -168,7 +168,7 @@ namespace UnityToolkit
 
         private bool CalPath(int[] parent, int startIdx, int end, out Path path)
         {
-            path = null;
+            path = default;
             List<int> pathList = _listPool.Get();
             int endIndex = end;
             while (endIndex != startIdx)

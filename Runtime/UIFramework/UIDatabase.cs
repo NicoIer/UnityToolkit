@@ -82,7 +82,7 @@ namespace UnityToolkit
 
             public void Dispose(GameObject panel)
             {
-                DestroyImmediate(panel);
+                Destroy(panel);
             }
         }
 

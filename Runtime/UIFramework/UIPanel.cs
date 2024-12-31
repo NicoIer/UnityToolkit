@@ -1,10 +1,11 @@
 #if UNITY_5_6_OR_NEWER
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityToolkit
 {
-    public enum DefualtLayerConfig
+    public enum DefaultLayerConfig
     {
         Bottom = 0,
         Middle = 1,
@@ -22,6 +23,12 @@ namespace UnityToolkit
     [DisallowMultipleComponent]
     public abstract class UIPanel : MonoBehaviour, IUIPanel
     {
+        public static event Action<UIPanel> OnPanelLoaded = delegate { };
+        public static event Action<UIPanel> OnPanelOpened = delegate { };
+        public static event Action<UIPanel> OnPanelClosed = delegate { };
+        public static event Action<UIPanel> OnPanelDisposed = delegate { };
+
+
         public Canvas canvas
         {
             get
@@ -45,7 +52,7 @@ namespace UnityToolkit
         public UIPanelState state { get; internal set; } = UIPanelState.None;
 
         [field: SerializeField]
-        public DefualtLayerConfig layerConfig { get; private set; } = DefualtLayerConfig.Default;
+        public DefaultLayerConfig layerConfig { get; private set; } = DefaultLayerConfig.Default;
 
         [Tooltip("面板的排序顺序 越大越优先显示")]
         [field: SerializeField]
@@ -75,22 +82,26 @@ namespace UnityToolkit
 
         public virtual void OnLoaded()
         {
+            OnPanelLoaded(this);
             // canvas.sortingOrder = sortingOrder;
         }
 
         public virtual void OnOpened()
         {
             gameObject.SetActive(true);
+            OnPanelOpened(this);
         }
 
         public virtual void OnClosed()
         {
             gameObject.SetActive(false);
+            OnPanelClosed(this);
         }
 
         public virtual void OnDispose()
         {
             Destroy(gameObject);
+            OnPanelDisposed(this);
         }
 
         public sbyte GetLayer()
