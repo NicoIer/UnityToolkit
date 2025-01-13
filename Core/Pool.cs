@@ -126,7 +126,7 @@ namespace UnityToolkit
         public void Dispose() => this.Clear();
     }
 
-    public struct PooledObject<T> : IDisposable where T : class
+    public readonly struct PooledObject<T> : IDisposable where T : class
     {
         private readonly T m_ToReturn;
         private readonly IObjectPool<T> m_Pool;
@@ -140,8 +140,9 @@ namespace UnityToolkit
         void IDisposable.Dispose() => this.m_Pool.Release(this.m_ToReturn);
     }
 
-    public class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
+    internal class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
     {
+        
         internal static readonly ObjectPool<TCollection> s_Pool = new ObjectPool<TCollection>(
             (Func<TCollection>)(() => new TCollection()), actionOnRelease: (Action<TCollection>)(l => l.Clear()));
 
@@ -161,7 +162,7 @@ namespace UnityToolkit
     /// <summary>
     ///   <para>A version of Pool.CollectionPool_2 for Lists.</para>
     /// </summary>
-    public class ListPool<T> : CollectionPool<List<T>, T>
+    internal class ListPool<T> : CollectionPool<List<T>, T>
     {
     }
 }

@@ -89,4 +89,10 @@ namespace Network
             this.timestampTicks = timestampTicks;
         }
     }
+    
+    [MemoryPackable]
+    public partial struct BrodcastMessage : INetworkMessage
+    {
+        public ArraySegment<byte> data;
+    }
 }

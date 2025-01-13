@@ -69,5 +69,44 @@ namespace Network
                 return false;
             }
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool Unpack<T>(in ArraySegment<byte> data, out T packet) where T : INetworkMessage
+        {
+            try
+            {
+                NetworkPacket networkPacket = MemoryPackSerializer.Deserialize<NetworkPacket>(data);
+                packet = MemoryPackSerializer.Deserialize<T>(networkPacket.payload);
+                return true;
+            }
+            catch (Exception e)
+            {
+                NetworkLogger.Error($"Unpack error: {e}");
+                packet = default;
+                return false;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool UnpackCompressed<T>(in ArraySegment<byte> data, out T packet) where T : INetworkMessage
+        {
+            try
+            {
+                using (var decompressor = new BrotliDecompressor())
+                {
+                    var decompress = decompressor.Decompress(data);
+                    NetworkPacket networkPacket = MemoryPackSerializer.Deserialize<NetworkPacket>(decompress);
+                    packet = MemoryPackSerializer.Deserialize<T>(networkPacket.payload);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                NetworkLogger.Error($"UnpackCompressed error: {e}");
+                packet = default;
+                return false;
+            }
+        }
     }
 }
