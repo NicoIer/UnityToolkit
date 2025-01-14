@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using kcp2k;
 
@@ -7,6 +8,8 @@ namespace Network.Server
     public class KcpServerSocket : IServerSocket
     {
         public const string Scheme = "kcp";
+        public event Action OnStarted = delegate { };
+        public event Action OnStopped = delegate { };
         public event Action<int> OnConnected = delegate { };
         public event Action<int, ArraySegment<byte>> OnDataReceived = delegate { };
         public event Action<int> OnDisconnected = delegate { };
@@ -32,9 +35,17 @@ namespace Network.Server
             );
         }
 
+        public int ConnectionsCount => _server.connections.Count;
+        
+        public IEnumerable<int> GetConnections()
+        {
+            return _server.connections.Keys;
+        }
+
         public void Start()
         {
             _server.Start(_port);
+            OnStarted();
         }
 
         public void Send(int connectionId, ArraySegment<byte> segment)
@@ -65,6 +76,7 @@ namespace Network.Server
         public void Stop()
         {
             _server.Stop();
+            OnStopped();
         }
 
         public Uri Uri()

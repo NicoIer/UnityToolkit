@@ -41,7 +41,8 @@ namespace Network.Telepathy
         public int ReceivePipeTotalCount => receivePipe.TotalCount;
 
         // clients with <connectionId, ConnectionState>
-        public readonly ConcurrentDictionary<int, ConnectionState> clients = new ConcurrentDictionary<int, ConnectionState>();
+        public readonly ConcurrentDictionary<int, ConnectionState> clients =
+            new ConcurrentDictionary<int, ConnectionState>();
 
         // connectionId counter
         int counter;
@@ -71,7 +72,9 @@ namespace Network.Telepathy
         public bool Active => listenerThread != null && listenerThread.IsAlive;
 
         // constructor
-        public TelepathyServer(int MaxMessageSize) : base(MaxMessageSize) {}
+        public TelepathyServer(int MaxMessageSize) : base(MaxMessageSize)
+        {
+        }
 
         // the listener thread's listen function
         // note: no maxConnections parameter. high level API should handle that.
@@ -153,7 +156,8 @@ namespace Network.Telepathy
                         {
                             // run the receive loop
                             // (receive pipe is shared across all loops)
-                            ThreadFunctions.ReceiveLoop(connectionId, client, MaxMessageSize, receivePipe, ReceiveQueueLimit);
+                            ThreadFunctions.ReceiveLoop(connectionId, client, MaxMessageSize, receivePipe,
+                                ReceiveQueueLimit);
 
                             // IMPORTANT: do NOT remove from clients after the
                             // thread ends. need to do it in Tick() so that the
@@ -248,7 +252,14 @@ namespace Network.Telepathy
                 TcpClient client = kvp.Value.client;
                 // close the stream if not closed yet. it may have been closed
                 // by a disconnect already, so use try/catch
-                try { client.GetStream().Close(); } catch {}
+                try
+                {
+                    client.GetStream().Close();
+                }
+                catch
+                {
+                }
+
                 client.Close();
             }
 
@@ -263,7 +274,7 @@ namespace Network.Telepathy
         // send message to client using socket connection.
         // arraysegment for allocation free sends later.
         // -> the segment's array is only used until Send() returns!
-        public bool Send(int connectionId, ArraySegment<byte> message)
+        public bool Send(int connectionId, in ArraySegment<byte> message)
         {
             // respect max message size to avoid allocation attacks.
             if (message.Count <= MaxMessageSize)
@@ -295,7 +306,8 @@ namespace Network.Telepathy
                     else
                     {
                         // log the reason
-                        NetworkLogger.Warning($"[{this}]:.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
+                        NetworkLogger.Warning(
+                            $"[{this}]:.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
 
                         // just close it. send thread will take care of the rest.
                         connection.client.Close();
@@ -311,6 +323,7 @@ namespace Network.Telepathy
                 //Logger.Log($"[{this}]:.Send: invalid connectionId: " + connectionId);
                 return false;
             }
+
             NetworkLogger.Error($"[{this}]:.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
             return false;
         }
@@ -323,6 +336,7 @@ namespace Network.Telepathy
             {
                 return ((IPEndPoint)connection.client.Client.RemoteEndPoint).Address.ToString();
             }
+
             return "";
         }
 
@@ -337,6 +351,7 @@ namespace Network.Telepathy
                 NetworkLogger.Info($"[{this}]:.Disconnect connectionId:" + connectionId);
                 return true;
             }
+
             return false;
         }
 

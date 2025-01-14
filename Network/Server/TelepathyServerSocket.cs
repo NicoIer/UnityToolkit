@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Network.Telepathy;
 
@@ -21,17 +22,26 @@ namespace Network.Server
         public int sendQueueLimitPerConnection = 10000;
         public int receiveQueueLimitPerConnection = 10000;
 
+        public event Action OnStarted = delegate { };
+        public event Action OnStopped = delegate { };
         public event Action<int> OnConnected = delegate { };
         public event Action<int, ArraySegment<byte>> OnDataReceived = delegate { };
         public event Action<int> OnDisconnected = delegate { };
         public event Action<int, ArraySegment<byte>> OnDataSent = delegate { };
-        
-        public event Action<ArraySegment<byte>> OnDataSentToAll = delegate { }; 
+
+        public event Action<ArraySegment<byte>> OnDataSentToAll = delegate { };
 
         private TelepathyServer _server = null;
         public EndPoint LocalEndPoint => _server.listener.LocalEndpoint;
         private Func<bool> _enabledCheck = () => true;
-        
+
+        public int ConnectionsCount => _server.clients.Count;
+
+        public IEnumerable<int> GetConnections()
+        {
+            return _server.clients.Keys;
+        }
+
         public void Start()
         {
             _server = new TelepathyServer(maxMessageSize);
@@ -47,7 +57,10 @@ namespace Network.Server
             _server.SendQueueLimit = sendQueueLimitPerConnection;
             _server.ReceiveQueueLimit = receiveQueueLimitPerConnection;
 
-            _server.Start(port);
+            if (_server.Start(port))
+            {
+                OnStarted();
+            }
         }
 
         public void Send(int connectionId, ArraySegment<byte> segment)
@@ -62,6 +75,7 @@ namespace Network.Server
             {
                 Send(connectionId, segment);
             }
+
             OnDataSentToAll(segment);
         }
 
@@ -78,6 +92,7 @@ namespace Network.Server
         public void Stop()
         {
             _server.Stop();
+            OnStopped();
         }
 
         public Uri Uri()

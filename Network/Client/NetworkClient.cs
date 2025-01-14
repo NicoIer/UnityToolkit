@@ -39,14 +39,14 @@ namespace Network.Client
             _disposer = AddMsgHandler<AssignConnectionIdMessage>(OnAssignConnectionId);
         }
 
-        private void OnAssignConnectionId(AssignConnectionIdMessage serverMessage)
+        private void OnAssignConnectionId(AssignConnectionIdMessage server)
         {
             if (connectionId != 0)
             {
                 NetworkLogger.Warning($"[{this}]Connection id is already assigned");
             }
 
-            connectionId = serverMessage.id;
+            connectionId = server.id;
         }
 
         public ICommand AddMsgHandler<T>(Action<T> handler) where T : INetworkMessage

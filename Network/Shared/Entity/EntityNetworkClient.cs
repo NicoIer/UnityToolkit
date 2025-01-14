@@ -57,7 +57,7 @@ namespace Network.Client
             socket = new TelepathyClientSocket();
             client = new NetworkClient(socket, 60);
 
-            client.AddSystem<NetworkClientTime>();
+            // client.AddSystem<NetworkClientTime>();
             client.AddMsgHandler<NetworkEntitySpawn>(OnEntitySpawn);
             client.AddMsgHandler<NetworkEntityUpdate>(OnEntityUpdate);
             client.AddMsgHandler<NetworkComponentUpdate>(OnComponentUpdate);

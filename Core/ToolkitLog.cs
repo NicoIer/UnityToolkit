@@ -117,9 +117,7 @@ namespace UnityToolkit
                 WriteLog(obj, LogLevel.Error);
             }
         }
-
-
-        // [Conditional("DEBUG")]
+        
         public static void Debug(string msg)
         {
 #if DEBUG || UNITY_EDITOR
