@@ -198,6 +198,18 @@ namespace UnityToolkit
             list.RemoveAt(index);
             return t;
         }
+
+        public static T RandomTakeWithoutRemove<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+            {
+                throw new NullReferenceException($"List<{typeof(T)}> is empty");
+            }
+
+            int index = Random.Range(0, list.Count);
+            T t = list[index];
+            return t;
+        }
     }
 }
 #endif
