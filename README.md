@@ -188,4 +188,12 @@ eventSystem.Unlisten<XXXEvent>(OnXXXEvent);
 
 # Network
 
-提供网络游戏开发工具包，依赖于MemoryPack
+提供网络游戏开发工具包，依赖于MemoryPack。
+
+目前支持了TCP,KCP两种通信协议
+
+## 对时服务器
+
+对时是游戏服务器的常见功能，用于同步客户端和服务器的时间。计算RTT，客户端可以估计服务器的时间。
+
+## 广播服务器
