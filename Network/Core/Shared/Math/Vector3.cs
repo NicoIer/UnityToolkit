@@ -1,11 +1,13 @@
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using MemoryPack;
 
 namespace UnityToolkit.MathTypes
 {
     [MemoryPackable]
-    public partial struct Vector3 : IEquatable<Vector3>
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct Vector3
     {
         public float x;
         public float y;
@@ -61,6 +63,29 @@ namespace UnityToolkit.MathTypes
         {
             return $"Vector3({x}, {y}, {z})";
         }
+        
+        public static implicit operator Vector3(System.Numerics.Vector3 v)
+        {
+            return new Vector3(v.X, v.Y, v.Z);
+        }
+        
+        public static implicit operator System.Numerics.Vector3(Vector3 v)
+        {
+            return new System.Numerics.Vector3(v.x, v.y, v.z);
+        }
+        
+        public static bool operator ==(Vector3 a, System.Numerics.Vector3 b)
+        {
+            return ToolkitMath.Approximately(a.x, b.X) && ToolkitMath.Approximately(a.y, b.Y) &&
+                   ToolkitMath.Approximately(a.z, b.Z);
+        }
+        
+        public static bool operator !=(Vector3 a, System.Numerics.Vector3 b)
+        {
+            // 任意一个不相等就返回true
+            return !ToolkitMath.Approximately(a.x, b.X) || !ToolkitMath.Approximately(a.y, b.Y) ||
+                   !ToolkitMath.Approximately(a.z, b.Z);
+        }
 
 #if UNITY_5_6_OR_NEWER
         // UnityEngine.Vector3 -> Network.Vector3
@@ -105,23 +130,7 @@ namespace UnityToolkit.MathTypes
         {
             return this == other;
         }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Vector3 other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = x.GetHashCode();
-                hashCode = (hashCode * 397) ^ y.GetHashCode();
-                hashCode = (hashCode * 397) ^ z.GetHashCode();
-                return hashCode;
-            }
-        }
-
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 LerpUnclamped(Vector3 a, Vector3 b, float t)
         {

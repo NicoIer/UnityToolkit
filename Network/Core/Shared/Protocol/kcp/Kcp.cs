@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Network.kcp2k
+namespace kcp2k
 {
-    internal class Kcp
+    public class Kcp
     {
         // original Kcp has a define option, which is not defined by default:
         // #define FASTACK_CONSERVE
@@ -120,7 +120,7 @@ namespace Network.kcp2k
         // ikcp_segment_new
         // we keep the original function and add our pooling to it.
         // this way we'll never miss it anywhere.
-        Segment SegmentNew() => SegmentPool.Get();
+        Segment SegmentNew() => SegmentPool.Take();
 
         // ikcp_segment_delete
         // we keep the original function and add our pooling to it.

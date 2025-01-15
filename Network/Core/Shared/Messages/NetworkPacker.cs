@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MemoryPack;
 using MemoryPack.Compression;
@@ -23,6 +24,7 @@ namespace Network
             IBufferWriter<byte> packetBuffer)
             where T : INetworkMessage
         {
+            Debug.Assert(packetBuffer!=null);
             using (var compressor = new BrotliCompressor())
             {
                 var id = NetworkId<T>.Value;

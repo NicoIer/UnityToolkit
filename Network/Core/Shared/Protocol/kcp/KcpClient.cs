@@ -4,7 +4,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 
-namespace Network.kcp2k
+namespace kcp2k
 {
     public class KcpClient : KcpPeer
     {
@@ -40,7 +40,7 @@ namespace Network.kcp2k
         protected readonly Action<ErrorCode, string> OnErrorCallback;
 
         // state
-        bool active = false; // active between when connect() and disconnect() are called
+        internal bool active = false; // active between when connect() and disconnect() are called
         public bool connected;
 
         public KcpClient(Action OnConnected,
@@ -65,7 +65,7 @@ namespace Network.kcp2k
         // some callbacks need to wrapped with some extra logic
         protected override void OnAuthenticated()
         {
-            NetworkLogger.Info($"KcpClient: OnConnected");
+            Log.Info($"[KCP] Client: OnConnected");
             connected = true;
             OnConnectedCallback();
         }
@@ -78,7 +78,7 @@ namespace Network.kcp2k
 
         protected override void OnDisconnected()
         {
-            NetworkLogger.Info($"KcpClient: OnDisconnected");
+            Log.Info($"[KCP] Client: OnDisconnected");
             connected = false;
             socket?.Close();
             socket = null;
@@ -92,13 +92,13 @@ namespace Network.kcp2k
         {
             if (connected)
             {
-                NetworkLogger.Warning("KcpClient: already connected!");
+                Log.Warning("[KCP] Client: already connected!");
                 return;
             }
 
             // resolve host name before creating peer.
             // fixes: https://github.com/MirrorNetworking/Mirror/issues/3361
-            if (!Utils.ResolveHostname(address, out IPAddress[] addresses))
+            if (!Common.ResolveHostname(address, out IPAddress[] addresses))
             {
                 // pass error to user callback. no need to log it manually.
                 OnError(ErrorCode.DnsResolve, $"Failed to resolve host: {address}");
@@ -110,7 +110,7 @@ namespace Network.kcp2k
             // client doesn't need secure cookie.
             Reset(config);
 
-            NetworkLogger.Info($"KcpClient: connect to {address}:{port}");
+            Log.Info($"[KCP] Client: connect to {address}:{port}");
 
             // create socket
             remoteEndPoint = new IPEndPoint(addresses[0], port);
@@ -123,7 +123,7 @@ namespace Network.kcp2k
             socket.Blocking = false;
 
             // configure buffer sizes
-            Utils.ConfigureSocketBuffers(socket, config.RecvBufferSize, config.SendBufferSize);
+            Common.ConfigureSocketBuffers(socket, config.RecvBufferSize, config.SendBufferSize);
 
             // bind to endpoint so we can use send/recv instead of sendto/recvfrom.
             socket.Connect(remoteEndPoint);
@@ -156,7 +156,7 @@ namespace Network.kcp2k
                 // at least log a message for easier debugging.
                 // for example, his can happen when connecting without a server.
                 // see test: ConnectWithoutServer().
-                NetworkLogger.Info($"KcpClient: looks like the other end has closed the connection. This is fine: {e}");
+                Log.Info($"[KCP] Client.RawReceive: looks like the other end has closed the connection. This is fine: {e}");
                 base.Disconnect();
                 return false;
             }
@@ -166,13 +166,24 @@ namespace Network.kcp2k
         // virtual so it may be modified for relays, etc.
         protected override void RawSend(ArraySegment<byte> data)
         {
+            // only if socket was connected / created yet.
+            // users may call send functions without having connected, causing NRE.
+            if (socket == null) return;
+
             try
             {
                 socket.SendNonBlocking(data);
             }
             catch (SocketException e)
             {
-                NetworkLogger.Error($"KcpClient: Send failed: {e}");
+                // SendDisconnect() sometimes gets a SocketException with
+                // 'Connection Refused' if the other end already closed.
+                // this is not an 'error', it's expected to happen.
+                // but connections should never just end silently.
+                // at least log a message for easier debugging.
+                Log.Info($"[KCP] Client.RawSend: looks like the other end has closed the connection. This is fine: {e}");
+                // base.Disconnect(); <- don't call this, would deadlock if SendDisconnect() already throws
+
             }
         }
 
@@ -180,7 +191,7 @@ namespace Network.kcp2k
         {
             if (!connected)
             {
-                NetworkLogger.Warning("KcpClient: can't send because not connected!");
+                Log.Warning("[KCP] Client: can't send because not connected!");
                 return;
             }
 
@@ -204,17 +215,17 @@ namespace Network.kcp2k
             Utils.Decode32U(segment.Array, segment.Offset + 1, out uint messageCookie);
             if (messageCookie == 0)
             {
-                NetworkLogger.Error($"KcpClient: received message with cookie=0, this should never happen. StateSyncDemoServer should always include the security cookie.");
+                Log.Error($"[KCP] Client: received message with cookie=0, this should never happen. Server should always include the security cookie.");
             }
 
             if (cookie == 0)
             {
                 cookie = messageCookie;
-                NetworkLogger.Info($"KcpClient: received initial cookie: {cookie}");
+                Log.Info($"[KCP] Client: received initial cookie: {cookie}");
             }
             else if (cookie != messageCookie)
             {
-                NetworkLogger.Warning($"KcpClient: dropping message with mismatching cookie: {messageCookie} expected: {cookie}.");
+                Log.Warning($"[KCP] Client: dropping message with mismatching cookie: {messageCookie} expected: {cookie}.");
                 return;
             }
 
@@ -238,7 +249,7 @@ namespace Network.kcp2k
                     // invalid channel indicates random internet noise.
                     // servers may receive random UDP data.
                     // just ignore it, but log for easier debugging.
-                    NetworkLogger.Warning($"KcpClient: invalid channel header: {channel}, likely internet noise");
+                    Log.Warning($"[KCP] Client: invalid channel header: {channel}, likely internet noise");
                     break;
                 }
             }

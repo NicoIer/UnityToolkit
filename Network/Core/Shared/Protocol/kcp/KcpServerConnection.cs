@@ -3,7 +3,7 @@
 using System;
 using System.Net;
 
-namespace Network.kcp2k
+namespace kcp2k
 {
     public class KcpServerConnection : KcpPeer
     {
@@ -82,15 +82,17 @@ namespace Network.kcp2k
             // parse the cookie and make sure it matches (except for initial hello).
             Utils.Decode32U(segment.Array, segment.Offset + 1, out uint messageCookie);
 
-            // compare cookie to protect against UDP spoofing.
-            // messages won't have a cookie until after handshake.
-            // so only compare if we are authenticated.
+            // security: messages after authentication are expected to contain the cookie.
+            // this protects against UDP spoofing.
             // simply drop the message if the cookie doesn't match.
             if (state == KcpState.Authenticated)
             {
                 if (messageCookie != cookie)
                 {
-                    NetworkLogger.Warning($"KcpServerConnection: dropped message with invalid cookie: {messageCookie} expected: {cookie} state: {state}");
+                    // Info is enough, don't scare users.
+                    // => this can happen for malicious messages
+                    // => it can also happen if client's Hello message was retransmitted multiple times, which is totally normal.
+                    Log.Info($"[KCP] ServerConnection: dropped message with invalid cookie: {messageCookie} from {remoteEndPoint} expected: {cookie} state: {state}. This can happen if the client's Hello message was transmitted multiple times, or if an attacker attempted UDP spoofing.");
                     return;
                 }
             }
@@ -115,7 +117,7 @@ namespace Network.kcp2k
                     // invalid channel indicates random internet noise.
                     // servers may receive random UDP data.
                     // just ignore it, but log for easier debugging.
-                    NetworkLogger.Warning($"KcpServerConnection: invalid channel header: {channel}, likely internet noise");
+                    Log.Warning($"[KCP] ServerConnection: invalid channel header: {channel} from {remoteEndPoint}, likely internet noise");
                     break;
                 }
             }

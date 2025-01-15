@@ -108,6 +108,7 @@ namespace Network.Server
 
         public void TickIncoming()
         {
+            _server.Tick(maxReceivesPerTick, _enabledCheck);
         }
 
         public void TickOutgoing()

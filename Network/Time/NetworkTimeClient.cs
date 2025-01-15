@@ -6,57 +6,39 @@ namespace Network
 {
     public sealed class NetworkTimeClient
     {
-        private readonly NetworkClientMessageHandler _messageHandler;
-        private IClientSocket _socket;
+        private NetworkClient _client;
         public long rttMs { get; private set; }
         public long serverTimeMs { get; private set; }
-        public bool connected => _socket.connected;
+        public bool connected => _client.socket.connected;
 
-        public NetworkTimeClient(IClientSocket socket)
+        private readonly ICommand _removeOnPingMessage;
+        private readonly ICommand _removeOnTimestampMessage;
+
+        public DateTimeOffset Now => DateTimeOffset.FromUnixTimeMilliseconds(serverTimeMs);
+
+        public NetworkTimeClient(NetworkClient client)
         {
-            _socket = socket;
-            _socket.OnDataReceived += OnData;
-
-            _messageHandler = new NetworkClientMessageHandler();
-            _messageHandler.Add<PingMessage>(OnPingMessage);
-            _messageHandler.Add<ServerTimestampMessage>(OnTimestampMessage);
+            _client = client;
+            _removeOnPingMessage = client.messageHandler.Add<PingMessage>(OnPingMessage);
+            _removeOnTimestampMessage = client.messageHandler.Add<ServerTimestampMessage>(OnTimestampMessage);
         }
 
         ~NetworkTimeClient()
         {
-            _socket.OnDataReceived -= OnData;
+            _removeOnPingMessage.Execute();
+            _removeOnTimestampMessage.Execute();
         }
 
-
-        private void OnData(ArraySegment<byte> obj)
-        {
-            NetworkPacker.Unpack(obj, out var message);
-            _messageHandler.Handle(message.id, message.payload);
-        }
-
-        public DateTimeOffset Now => DateTimeOffset.FromUnixTimeMilliseconds(serverTimeMs);
 
         private void OnTimestampMessage(ServerTimestampMessage serverTimestamp)
         {
             rttMs = serverTimestamp.serverAssumeRttMs;
-            serverTimeMs = (long)(serverTimestamp.serverSendMs + rttMs / 2.0f);
-#if DEBUG
-            ToolkitLog.Debug(
-                $"NetworkClientTime->OnTime: RTT: {rttMs}ms ServerTime: {DateTimeOffset.FromUnixTimeMilliseconds(serverTimeMs):h:mm:ss tt zz}");
-#endif
+            serverTimeMs = serverTimestamp.serverSendMs + rttMs / 2;
         }
 
         private void OnPingMessage(PingMessage ping)
         {
-            NetworkBuffer payloadBuffer = NetworkBufferPool.Shared.Get();
-            NetworkBuffer packetBuffer = NetworkBufferPool.Shared.Get();
-
-            PongMessage pongMessage = new PongMessage(ref ping);
-            NetworkPacker.Pack(in pongMessage, payloadBuffer, packetBuffer);
-            _socket.Send(packetBuffer);
-
-            NetworkBufferPool.Shared.Return(payloadBuffer);
-            NetworkBufferPool.Shared.Return(packetBuffer);
+            _client.Send(new PongMessage(ref ping));
         }
     }
 }

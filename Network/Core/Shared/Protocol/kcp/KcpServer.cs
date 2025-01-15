@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-namespace Network.kcp2k
+
+namespace kcp2k
 {
     public class KcpServer
     {
@@ -83,7 +84,7 @@ namespace Network.kcp2k
                 }
                 catch (NotSupportedException e)
                 {
-                    NetworkLogger.Warning($"Failed to set Dual Mode, continuing with IPv6 without Dual Mode. Error: {e}");
+                    Log.Warning($"[KCP] Failed to set Dual Mode, continuing with IPv6 without Dual Mode. Error: {e}");
                 }
 
                 // for windows sockets, there's a rare issue where when using
@@ -150,7 +151,7 @@ namespace Network.kcp2k
             // only start once
             if (socket != null)
             {
-                NetworkLogger.Warning("KcpServer: already started!");
+                Log.Warning("[KCP] Server: already started!");
                 return;
             }
 
@@ -163,7 +164,7 @@ namespace Network.kcp2k
             socket.Blocking = false;
 
             // configure buffer sizes
-            Utils.ConfigureSocketBuffers(socket, config.RecvBufferSize, config.SendBufferSize);
+            Common.ConfigureSocketBuffers(socket, config.RecvBufferSize, config.SendBufferSize);
         }
 
         public void Send(int connectionId, ArraySegment<byte> segment, KcpChannel channel)
@@ -208,7 +209,7 @@ namespace Network.kcp2k
                 if (socket.ReceiveFromNonBlocking(rawReceiveBuffer, out segment, ref newClientEP))
                 {
                     // set connectionId to hash from endpoint
-                    connectionId = Utils.ConnectionHash(newClientEP);
+                    connectionId = Common.ConnectionHash(newClientEP);
                     return true;
                 }
             }
@@ -218,7 +219,7 @@ namespace Network.kcp2k
                 // the other end closing the connection is not an 'error'.
                 // but connections should never just end silently.
                 // at least log a message for easier debugging.
-                NetworkLogger.Info($"KcpServer: ReceiveFrom failed: {e}");
+                Log.Info($"[KCP] Server: ReceiveFrom failed: {e}");
             }
 
             return false;
@@ -232,7 +233,7 @@ namespace Network.kcp2k
             // get the connection's endpoint
             if (!connections.TryGetValue(connectionId, out KcpServerConnection connection))
             {
-                NetworkLogger.Warning($"KcpServer: RawSend invalid connectionId={connectionId}");
+                Log.Warning($"[KCP] Server: RawSend invalid connectionId={connectionId}");
                 return;
             }
 
@@ -242,7 +243,7 @@ namespace Network.kcp2k
             }
             catch (SocketException e)
             {
-                NetworkLogger.Error($"KcpServer: SendTo failed: {e}");
+                Log.Error($"[KCP] Server: SendTo failed: {e}");
             }
         }
 
@@ -250,7 +251,7 @@ namespace Network.kcp2k
         {
             // generate a random cookie for this connection to avoid UDP spoofing.
             // needs to be random, but without allocations to avoid GC.
-            uint cookie = Utils.GenerateCookie();
+            uint cookie = Common.GenerateCookie();
 
             // create empty connection without peer first.
             // we need it to set up peer callbacks.
@@ -273,7 +274,7 @@ namespace Network.kcp2k
             {
                 // add to connections dict after being authenticated.
                 connections.Add(connectionId, conn);
-                NetworkLogger.Info($"KcpServer: added connection({connectionId})");
+                Log.Info($"[KCP] Server: added connection({connectionId})");
 
                 // setup Data + Disconnected events only AFTER the
                 // handshake. we don't want to fire OnServerDisconnected
@@ -283,7 +284,7 @@ namespace Network.kcp2k
                 // setup data event
 
                 // finally, call mirror OnConnected event
-                NetworkLogger.Info($"KcpServer: OnConnected({connectionId})");
+                Log.Info($"[KCP] Server: OnConnected({connectionId})");
                 OnConnected(connectionId);
             }
 
@@ -295,7 +296,7 @@ namespace Network.kcp2k
                 connectionsToRemove.Add(connectionId);
 
                 // call mirror event
-                NetworkLogger.Info($"KcpServer: OnDisconnected({connectionId})");
+                Log.Info($"[KCP] Server: OnDisconnected({connectionId})");
                 OnDisconnected(connectionId);
             }
         }
@@ -304,7 +305,7 @@ namespace Network.kcp2k
         // best to call this as long as there is more data to receive.
         void ProcessMessage(ArraySegment<byte> segment, int connectionId)
         {
-            //Log.Info($"KCP: server raw recv {msgLength} bytes = {BitConverter.ToString(buffer, 0, msgLength)}");
+            //Log.Info($"[KCP] server raw recv {msgLength} bytes = {BitConverter.ToString(buffer, 0, msgLength)}");
 
             // is this a new connection?
             if (!connections.TryGetValue(connectionId, out KcpServerConnection connection))

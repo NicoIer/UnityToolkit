@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Network.Client;
 using Network.Server;
 using Network.Telepathy;
 using UnityToolkit;
@@ -16,132 +17,127 @@ namespace Network
         public class ClientTimeState
         {
             public ExponentialMovingAverage rtt;
+            public ClientTimeState(int n)
+            {
+                rtt = new ExponentialMovingAverage(n);
+            }
         }
+        public const int DefaultEmaWindow = 10;
 
-        private readonly Timer _pushTimer;
-        private readonly Timer _pingTimer;
         private readonly TimeSpan _pushInterval;
         private readonly TimeSpan _pingInterval;
 
         private readonly Dictionary<int, ClientTimeState> _rttDict;
         public IReadOnlyDictionary<int, ClientTimeState> RttDict => _rttDict;
-        private readonly NetworkServerMessageHandler _messageHandler;
-        private readonly IServerSocket _socket;
+        private readonly NetworkServer _server;
+        private readonly ICommand _removeOnPongMessage;
 
-        public NetworkTimeServer(IServerSocket socket, TimeSpan pushInterval, TimeSpan pingInterval)
+        private float _currentPingTimer;
+        private float _currentPushTimer;
+
+        public NetworkTimeServer(NetworkServer server,
+            TimeSpan pushInterval, TimeSpan pingInterval)
         {
             Debug.Assert(pingInterval < pushInterval);
-            _socket = socket;
+
+            _server = server;
             _rttDict = new Dictionary<int, ClientTimeState>();
 
-            _socket.OnConnected += OnConnected;
-            _socket.OnDataReceived += OnData;
-            _socket.OnDisconnected += OnDisconnected;
-            _socket.OnStarted += OnStart;
-            _socket.OnStopped += OnStop;
+            _server.OnUpdateEvent += OnUpdate;
+            _server.socket.OnConnected += OnConnected;
+            _server.socket.OnDisconnected += OnDisconnected;
+            _server.socket.OnStarted += OnStart;
+            _server.socket.OnStopped += OnStop;
 
-            _messageHandler = new NetworkServerMessageHandler();
-            _messageHandler.Add<PongMessage>(OnPongMessage);
+            _removeOnPongMessage = server.messageHandler.Add<PongMessage>(OnPongMessage);
 
             _pushInterval = pushInterval;
             _pingInterval = pingInterval;
-            _pushTimer = new Timer(OnPushTimer, null, Timeout.Infinite, Timeout.Infinite);
-            _pingTimer = new Timer(OnPingTimer, null, Timeout.Infinite, Timeout.Infinite);
         }
+
 
         ~NetworkTimeServer()
         {
-            _pushTimer.Dispose();
-            _pingTimer.Dispose();
+            _removeOnPongMessage.Execute();
 
-            _socket.OnConnected -= OnConnected;
-            _socket.OnDataReceived -= OnData;
-            _socket.OnDisconnected -= OnDisconnected;
-            _socket.OnStarted -= OnStart;
-            _socket.OnStopped -= OnStop;
+            _server.OnUpdateEvent -= OnUpdate;
+            _server.socket.OnConnected -= OnConnected;
+            _server.socket.OnDisconnected -= OnDisconnected;
+            _server.socket.OnStarted -= OnStart;
+            _server.socket.OnStopped -= OnStop;
         }
 
-        private void OnPingTimer(object state)
+
+        private void OnUpdate(in float deltaTime)
         {
-            if (_socket.ConnectionsCount == 0) return;
-            NetworkBuffer payloadBuffer = NetworkBufferPool.Shared.Get();
-            NetworkBuffer packetBuffer = NetworkBufferPool.Shared.Get();
+            _currentPingTimer += deltaTime;
+            _currentPushTimer += deltaTime;
 
-            PingMessage msg = new PingMessage(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-            NetworkPacker.Pack(msg, payloadBuffer, packetBuffer);
+            if (_currentPingTimer >= _pingInterval.TotalSeconds)
+            {
+                _currentPingTimer = 0;
+                OnPingTimer();
+            }
 
-            _socket.SendToAll(packetBuffer);
+            if (_currentPushTimer >= _pushInterval.TotalSeconds)
+            {
+                _currentPushTimer = 0;
+                OnPushTimer();
+            }
+        }
 
-            NetworkBufferPool.Shared.Return(payloadBuffer);
-            NetworkBufferPool.Shared.Return(packetBuffer);
+        private void OnPingTimer()
+        {
+            if (_server.socket.ConnectionsCount == 0) return;
+            _server.SendToAll(new PingMessage(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+        }
+
+        private void OnPushTimer()
+        {
+            long msNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            foreach (var (connectId, value) in _rttDict)
+            {
+                int rttMs = (int)value.rtt.Value;
+                // ToolkitLog.Info(
+                // $"OnPushTimer: {connectId} rtt: {rttMs} now: {DateTimeOffset.FromUnixTimeMilliseconds(msNow):hh:mm:ss t z}");
+                _server.Send(connectId, new ServerTimestampMessage(msNow, rttMs));
+            }
         }
 
         private void OnPongMessage(int connectionId, PongMessage pong)
         {
             long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
             long rtt = now - pong.sendTimeMs;
-            lock (_rttDict)
-            {
-                _rttDict[connectionId].rtt.Add(rtt);
-            }
-
-            ToolkitLog.Debug($"NetworkTimeServer->{connectionId}'s RTT: {rtt}ms");
-        }
-
-        private void OnPushTimer(object state)
-        {
-            NetworkBuffer payloadBuffer = NetworkBufferPool.Shared.Get();
-            NetworkBuffer packetBuffer = NetworkBufferPool.Shared.Get();
-
-            long msNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            foreach (var (connectId, value) in _rttDict)
-            {
-                payloadBuffer.Reset();
-                packetBuffer.Reset();
-                int rttMs = (int)value.rtt.Value;
-#if DEBUG
-                ToolkitLog.Debug($"NetworkTimeServer->Push: {connectId}'s RTT: {rttMs}ms At {DateTimeOffset.FromUnixTimeMilliseconds(msNow):h:mm:ss tt zz}");
-#endif
-                ServerTimestampMessage msg = new ServerTimestampMessage(msNow, rttMs);
-                NetworkPacker.Pack(msg, payloadBuffer, packetBuffer);
-                _socket.Send(connectId, packetBuffer);
-            }
-
-            NetworkBufferPool.Shared.Return(payloadBuffer);
-            NetworkBufferPool.Shared.Return(packetBuffer);
+            _rttDict[connectionId].rtt.Add(rtt);
         }
 
 
         private void OnStart()
         {
-            _pushTimer.Change(_pushInterval, _pushInterval);
-            _pingTimer.Change(_pingInterval, _pingInterval);
         }
 
 
         private void OnStop()
         {
-            _pushTimer.Change(Timeout.Infinite, Timeout.Infinite);
-            _pingTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
-
         private void OnConnected(int connectionId)
         {
-            ToolkitLog.Debug($"NetworkTimeServer->OnConnected: {connectionId}");
-            _rttDict.Add(connectionId, new ClientTimeState());
+            _rttDict.Add(connectionId, new ClientTimeState(DefaultEmaWindow));
+            long frameMaxTime = TimeSpan.FromSeconds(1d / _server.TargetFrameRate).Milliseconds; // 一帧最大时间
+            _rttDict[connectionId].rtt.Add(frameMaxTime);
+            PingTarget(connectionId);
+        }
+
+        private void PingTarget(int connectionId)
+        {
+            _server.Send(connectionId, new PingMessage(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
         }
 
         private void OnDisconnected(int connectionId)
         {
-            ToolkitLog.Debug($"NetworkTimeServer->OnDisconnected: {connectionId}");
             _rttDict.Remove(connectionId);
-        }
-
-        private void OnData(int connectionId, ArraySegment<byte> payload)
-        {
-            NetworkPacker.Unpack(payload, out NetworkPacket packet);
-            _messageHandler.Handle(packet.id, connectionId, packet.payload);
         }
     }
 }

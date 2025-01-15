@@ -1,4 +1,4 @@
-namespace Network.kcp2k
+namespace kcp2k
 {
     // channel type and header for raw messages
     public enum KcpChannel : byte

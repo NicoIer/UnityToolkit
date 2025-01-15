@@ -11,32 +11,28 @@ namespace Network.Server
     {
         public IServerSocket socket { get; private set; }
         private readonly NetworkBufferPool _bufferPool;
-        private readonly NetworkServerMessageHandler _messageHandler;
+        public readonly NetworkServerMessageHandler messageHandler;
 
         public int ConnectionCount { get; private set; }
         public ushort TargetFrameRate { get; private set; }
         public CancellationTokenSource Cts { get; private set; }
         public long DeltaTimeTick { get; private set; }
+        public int Fps => (int)(TimeSpan.TicksPerSecond / DeltaTimeTick);
 
         private readonly SystemLocator _system;
         private readonly bool _compress;
 
-        #region Status Montior
+        public delegate void UpdateDelegate(in float deltaTime);
 
-        /// <summary>
-        /// 是否达到了目标帧率 注意 TargetFrameRate = 0 时会GG
-        /// </summary>
-        public bool ReachFrameRate => DeltaTimeTick > TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks;
-
-        #endregion
-
-        public NetworkServer(IServerSocket socket, ushort targetFrameRate = 0, bool compress = true)
+        public event UpdateDelegate OnUpdateEvent;
+        
+        public NetworkServer(IServerSocket socket, ushort targetFrameRate = 60, bool compress = true)
         {
             _compress = compress;
             ConnectionCount = 0;
             this.socket = socket;
             _bufferPool = new NetworkBufferPool(16);
-            _messageHandler = new NetworkServerMessageHandler();
+            messageHandler = new NetworkServerMessageHandler();
             TargetFrameRate = targetFrameRate;
             // Socket event handlers
             this.socket.OnConnected += OnConnected;
@@ -50,7 +46,7 @@ namespace Network.Server
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ICommand AddMsgHandler<T>(Action<int, T> handler) where T : INetworkMessage
         {
-            return _messageHandler.Add(handler);
+            return messageHandler.Add(handler);
         }
 
 
@@ -148,27 +144,24 @@ namespace Network.Server
 
             Cts = new CancellationTokenSource();
             socket.Start();
-            long maxFrameTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
+            long frameMaxTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
+            DeltaTimeTick = frameMaxTime;
             var run = Task.Run(async () =>
             {
                 Stopwatch stopwatch = new Stopwatch();
-                float deltaTimeSeconds = 0;
                 while (!Cts.Token.IsCancellationRequested)
                 {
-                    if (TargetFrameRate == 0)
-                    {
-                        OnUpdate(deltaTimeSeconds); // 执行一帧
-                        DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
-                        continue;
-                    }
-
                     stopwatch.Restart(); // 重置计时器
-                    OnUpdate(DeltaTimeTick); // 执行一帧
+                    frameMaxTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
+                    // 换成秒
+                    float deltaTime = (float)DeltaTimeTick / TimeSpan.TicksPerSecond;
+                    OnUpdate(deltaTime); // 执行一帧
                     DeltaTimeTick = stopwatch.ElapsedTicks; // 这帧执行的时间
-                    deltaTimeSeconds =  TimeSpan.FromTicks(DeltaTimeTick).Seconds;
-                    if (DeltaTimeTick < maxFrameTime) // 达到了帧率 休息一下
+                    if (DeltaTimeTick < frameMaxTime) // 达到了帧率 休息一下
                     {
-                        await Task.Delay(TimeSpan.FromTicks(maxFrameTime - DeltaTimeTick), Cts.Token);
+                        long sleepMs = (frameMaxTime - DeltaTimeTick) / TimeSpan.TicksPerMillisecond;
+                        DeltaTimeTick = frameMaxTime;
+                        await Task.Delay(TimeSpan.FromMilliseconds(sleepMs), Cts.Token);
                     }
                 }
             }, Cts.Token);
@@ -192,7 +185,7 @@ namespace Network.Server
                     return;
                 }
 
-                _messageHandler.Handle(packet.id, connectionId, packet.payload);
+                messageHandler.Handle(packet.id, connectionId, packet.payload);
                 return;
             }
 
@@ -204,7 +197,7 @@ namespace Network.Server
                     return;
                 }
 
-                _messageHandler.Handle(packet.id, connectionId, packet.payload);
+                messageHandler.Handle(packet.id, connectionId, packet.payload);
                 return;
             }
         }
@@ -232,6 +225,10 @@ namespace Network.Server
                 }
             }
 
+
+            OnUpdateEvent?.Invoke(deltaTime);
+
+
             socket.TickOutgoing();
         }
 
@@ -239,7 +236,7 @@ namespace Network.Server
         {
             _system?.Dispose();
             Cts?.Dispose();
-            _messageHandler?.Dispose();
+            messageHandler?.Dispose();
         }
     }
 }
