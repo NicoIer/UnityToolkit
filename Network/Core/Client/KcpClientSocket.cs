@@ -13,6 +13,7 @@ namespace Network.Client
         public event Action<ArraySegment<byte>> OnDataSent = delegate { };
         private readonly KcpChannel _channel;
         private readonly KcpClient _client;
+        public uint rttMs => _client.rttInMilliseconds;
 
         public KcpClientSocket(KcpConfig config,KcpChannel channel)
         {

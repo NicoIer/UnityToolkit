@@ -37,18 +37,18 @@ namespace Network.Client
             this.socket.OnDisconnected += OnDisconnected;
             this.socket.OnDataSent += OnDataSent;
 
-            _disposer = AddMsgHandler<AssignConnectionIdMessage>(OnAssignConnectionId);
+            // _disposer = AddMsgHandler<AssignConnectionIdMessage>(OnAssignConnectionId);
         }
 
-        private void OnAssignConnectionId(AssignConnectionIdMessage server)
-        {
-            if (connectionId != 0)
-            {
-                NetworkLogger.Warning($"[{this}]Connection id is already assigned");
-            }
-
-            connectionId = server.id;
-        }
+        // private void OnAssignConnectionId(AssignConnectionIdMessage server)
+        // {
+        //     if (connectionId != 0)
+        //     {
+        //         NetworkLogger.Warning($"[{this}]Connection id is already assigned");
+        //     }
+        //
+        //     connectionId = server.id;
+        // }
 
         public ICommand AddMsgHandler<T>(Action<T> handler) where T : INetworkMessage
         {

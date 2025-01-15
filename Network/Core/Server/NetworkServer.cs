@@ -171,7 +171,7 @@ namespace Network.Server
         public void OnConnected(int connectionId)
         {
             ConnectionCount++;
-            Send(connectionId, new AssignConnectionIdMessage(connectionId));
+            // Send(connectionId, new AssignConnectionIdMessage(connectionId));
         }
 
         public void OnDataReceived(int connectionId, ArraySegment<byte> data)
