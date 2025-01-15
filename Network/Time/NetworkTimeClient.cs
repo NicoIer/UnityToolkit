@@ -1,44 +1,80 @@
 using System;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+using MemoryPack;
 using Network.Client;
+using Network.Time;
 using UnityToolkit;
 
-namespace Network
+namespace Network.Time
 {
     public sealed class NetworkTimeClient
     {
-        private NetworkClient _client;
-        public long rttMs { get; private set; }
-        public long serverTimeMs { get; private set; }
-        public bool connected => _client.socket.connected;
+        private CancellationTokenSource _cts;
+        public long serverMs { get; private set; }
+        public double rttMs => _rttEma.Value;
 
-        private readonly ICommand _removeOnPingMessage;
-        private readonly ICommand _removeOnTimestampMessage;
+        private ExponentialMovingAverage _rttEma;
+        public const int EmaSize = 4;
 
-        public DateTimeOffset Now => DateTimeOffset.FromUnixTimeMilliseconds(serverTimeMs);
-
-        public NetworkTimeClient(NetworkClient client)
+        public NetworkTimeClient()
         {
-            _client = client;
-            _removeOnPingMessage = client.messageHandler.Add<PingMessage>(OnPingMessage);
-            _removeOnTimestampMessage = client.messageHandler.Add<ServerTimestampMessage>(OnTimestampMessage);
-        }
-
-        ~NetworkTimeClient()
-        {
-            _removeOnPingMessage.Execute();
-            _removeOnTimestampMessage.Execute();
+            _rttEma = new ExponentialMovingAverage(EmaSize);
         }
 
 
-        private void OnTimestampMessage(ServerTimestampMessage serverTimestamp)
+        public Task Run(string ip, int port, float intervalSeconds = 1.0f)
         {
-            rttMs = serverTimestamp.serverAssumeRttMs;
-            serverTimeMs = serverTimestamp.serverSendMs + rttMs / 2;
+            _cts = new CancellationTokenSource();
+
+            IPEndPoint point = new IPEndPoint(IPAddress.Parse(ip), port);
+            Socket udpClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            udpClient.Connect(point);
+
+            Task sendTask = SendTask(udpClient, intervalSeconds);
+            Task receiveTask = ReceiveTask(udpClient);
+
+            return Task.WhenAll(sendTask, receiveTask);
         }
 
-        private void OnPingMessage(PingMessage ping)
+        private async Task ReceiveTask(Socket udpClient)
         {
-            _client.Send(new PongMessage(ref ping));
+            byte[] receiveBuffer = new byte[1024];
+
+            while (!_cts.Token.IsCancellationRequested)
+            {
+                int length = udpClient.Receive(receiveBuffer);
+
+                ServerSyncTimeMessage serverSyncTimeMessage =
+                    MemoryPackSerializer.Deserialize<ServerSyncTimeMessage>(
+                        new ArraySegment<byte>(receiveBuffer, 0, length));
+
+                long clientSendMs = serverSyncTimeMessage.clientSendMs;
+                long serverReceiveMs = serverSyncTimeMessage.serverReceiveMs;
+                long nowMs = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                _rttEma.Add(nowMs - clientSendMs);
+
+                serverMs = (long)(serverReceiveMs + rttMs / 2);
+                await Task.Yield();
+            }
+        }
+
+        private async Task SendTask(Socket udpClient, float intervalSeconds)
+        {
+            TimeSpan interval = TimeSpan.FromSeconds(intervalSeconds);
+            NetworkBuffer sendBuffer = new NetworkBuffer();
+            while (!_cts.Token.IsCancellationRequested)
+            {
+                sendBuffer.Reset();
+                ClientSyncTimeMessage msg = ClientSyncTimeMessage.Now();
+                MemoryPackSerializer.Serialize(sendBuffer, msg);
+                udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
+                await Task.Delay(interval, _cts.Token);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace Network
@@ -35,7 +36,7 @@ namespace Network
             buffer = segment.Array;
             Position = segment.Offset + segment.Count;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Advance(int count)
         {
@@ -96,6 +97,17 @@ namespace Network
             Array.Resize(ref buffer, newCapacity);
         }
 
+        // private MemoryStream _memoryStream;
+        //
+        // public static implicit operator Stream(NetworkBuffer buffer)
+        // {
+        //     buffer._memoryStream = new MemoryStream(buffer.buffer, 0, buffer.Position);
+        //     buffer._memoryStream.Position = 0;
+        //     buffer._memoryStream.SetLength(buffer.Position);
+        //     return new MemoryStream(buffer.buffer, 0, buffer.Position);
+        //     
+        // }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ReadOnlyMemory<byte>(NetworkBuffer buffer) =>
             buffer.buffer.AsMemory(0, buffer.Position);
@@ -108,6 +120,12 @@ namespace Network
         public ArraySegment<byte> ToArraySegment()
         {
             return new ArraySegment<byte>(buffer, 0, Position);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<byte> AsSpan()
+        {
+            return buffer.AsSpan(0, Position);
         }
 
 
@@ -210,7 +228,7 @@ namespace Network
         {
             buffer = new T[capacity];
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Advance(int count)
         {
@@ -218,6 +236,7 @@ namespace Network
             {
                 throw new InvalidOperationException("Buffer overflow");
             }
+
             Position += count;
         }
 

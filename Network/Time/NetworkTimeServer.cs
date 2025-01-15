@@ -1,143 +1,55 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
-using Network.Client;
-using Network.Server;
-using Network.Telepathy;
-using UnityToolkit;
+using System.Threading.Tasks;
+using MemoryPack;
+using Network;
+using Network.Time;
 
-namespace Network
+namespace Network.Time
 {
-    /// <summary>
-    /// 网络对时服务器
-    /// </summary>
-    public sealed class NetworkTimeServer
+    public class NetworkTimeServer
     {
-        public class ClientTimeState
+        private CancellationTokenSource _cts;
+
+        public NetworkTimeServer()
         {
-            public ExponentialMovingAverage rtt;
-            public ClientTimeState(int n)
+        }
+
+        public void Stop()
+        {
+            _cts?.Cancel();
+        }
+
+        public Task Start(int port)
+        {
+            _cts = new CancellationTokenSource();
+            return Task.Run(async () =>
             {
-                rtt = new ExponentialMovingAverage(n);
-            }
-        }
-        public const int DefaultEmaWindow = 10;
+                IPAddress ip = IPAddress.Any;
+                IPEndPoint point = new IPEndPoint(ip, port);
+                Socket udpServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                udpServer.Bind(point);
+                byte[] receiveBuffer = new byte[1024];
+                NetworkBuffer sendBuffer = new NetworkBuffer();
 
-        private readonly TimeSpan _pushInterval;
-        private readonly TimeSpan _pingInterval;
+                while (!_cts.Token.IsCancellationRequested)
+                {
+                    EndPoint clientPoint = new IPEndPoint(IPAddress.Any, 0);
+                    int length = udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
 
-        private readonly Dictionary<int, ClientTimeState> _rttDict;
-        public IReadOnlyDictionary<int, ClientTimeState> RttDict => _rttDict;
-        private readonly NetworkServer _server;
-        private readonly ICommand _removeOnPongMessage;
+                    sendBuffer.Reset();
+                    ClientSyncTimeMessage msg =
+                        MemoryPackSerializer.Deserialize<ClientSyncTimeMessage>(
+                            new ArraySegment<byte>(receiveBuffer, 0, length));
 
-        private float _currentPingTimer;
-        private float _currentPushTimer;
-
-        public NetworkTimeServer(NetworkServer server,
-            TimeSpan pushInterval, TimeSpan pingInterval)
-        {
-            Debug.Assert(pingInterval < pushInterval);
-
-            _server = server;
-            _rttDict = new Dictionary<int, ClientTimeState>();
-
-            _server.OnUpdateEvent += OnUpdate;
-            _server.socket.OnConnected += OnConnected;
-            _server.socket.OnDisconnected += OnDisconnected;
-            _server.socket.OnStarted += OnStart;
-            _server.socket.OnStopped += OnStop;
-
-            _removeOnPongMessage = server.messageHandler.Add<PongMessage>(OnPongMessage);
-
-            _pushInterval = pushInterval;
-            _pingInterval = pingInterval;
-        }
-
-
-        ~NetworkTimeServer()
-        {
-            _removeOnPongMessage.Execute();
-
-            _server.OnUpdateEvent -= OnUpdate;
-            _server.socket.OnConnected -= OnConnected;
-            _server.socket.OnDisconnected -= OnDisconnected;
-            _server.socket.OnStarted -= OnStart;
-            _server.socket.OnStopped -= OnStop;
-        }
-
-
-        private void OnUpdate(in float deltaTime)
-        {
-            _currentPingTimer += deltaTime;
-            _currentPushTimer += deltaTime;
-
-            if (_currentPingTimer >= _pingInterval.TotalSeconds)
-            {
-                _currentPingTimer = 0;
-                OnPingTimer();
-            }
-
-            if (_currentPushTimer >= _pushInterval.TotalSeconds)
-            {
-                _currentPushTimer = 0;
-                OnPushTimer();
-            }
-        }
-
-        private void OnPingTimer()
-        {
-            if (_server.socket.ConnectionsCount == 0) return;
-            _server.SendToAll(new PingMessage(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
-        }
-
-        private void OnPushTimer()
-        {
-            long msNow = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            foreach (var (connectId, value) in _rttDict)
-            {
-                int rttMs = (int)value.rtt.Value;
-                // ToolkitLog.Info(
-                // $"OnPushTimer: {connectId} rtt: {rttMs} now: {DateTimeOffset.FromUnixTimeMilliseconds(msNow):hh:mm:ss t z}");
-                _server.Send(connectId, new ServerTimestampMessage(msNow, rttMs));
-            }
-        }
-
-        private void OnPongMessage(int connectionId, PongMessage pong)
-        {
-            long now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
-            long rtt = now - pong.sendTimeMs;
-            _rttDict[connectionId].rtt.Add(rtt);
-        }
-
-
-        private void OnStart()
-        {
-        }
-
-
-        private void OnStop()
-        {
-        }
-        private void OnConnected(int connectionId)
-        {
-            _rttDict.Add(connectionId, new ClientTimeState(DefaultEmaWindow));
-            long frameMaxTime = TimeSpan.FromSeconds(1d / _server.TargetFrameRate).Milliseconds; // 一帧最大时间
-            _rttDict[connectionId].rtt.Add(frameMaxTime);
-            PingTarget(connectionId);
-        }
-
-        private void PingTarget(int connectionId)
-        {
-            _server.Send(connectionId, new PingMessage(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
-        }
-
-        private void OnDisconnected(int connectionId)
-        {
-            _rttDict.Remove(connectionId);
+                    ServerSyncTimeMessage serverSyncTimeMessage = ServerSyncTimeMessage.From(ref msg);
+                    MemoryPackSerializer.Serialize(sendBuffer, serverSyncTimeMessage);
+                    // 回复消息
+                    await udpServer.SendToAsync(sendBuffer.ToArraySegment(), SocketFlags.None, clientPoint);
+                }
+            }, cancellationToken: _cts.Token);
         }
     }
 }
