@@ -14,6 +14,11 @@ namespace UnityToolkit
         {
             this._unRegister = unRegister;
         }
+        
+        public void Attach(Action unRegister)
+        {
+            this._unRegister += unRegister;
+        }
 
         public void Execute()
         {

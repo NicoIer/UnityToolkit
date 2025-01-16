@@ -128,5 +128,10 @@ namespace UnityToolkit
             }
 #endif
         }
+
+        public static void Exception(Exception exception)
+        {
+            throw exception;
+        }
     }
 }

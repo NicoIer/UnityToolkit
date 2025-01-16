@@ -12,7 +12,15 @@ namespace Network
         bool initialized;
 
         public double Value;
+
+        /// <summary>
+        /// 方差
+        /// </summary>
         public double Variance;
+
+        /// <summary>
+        /// 标准差
+        /// </summary>
         public double StandardDeviation; // absolute value, see test
 
         public ExponentialMovingAverage(int n)

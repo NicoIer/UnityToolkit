@@ -13,7 +13,7 @@ namespace Network.Server
         public event Action<int, ArraySegment<byte>> OnDataSent;
 
         public event Action<ArraySegment<byte>> OnDataSentToAll;
-        
+        public ushort Port { get; }
         public int ConnectionsCount { get; }
         public IEnumerable<int> GetConnections();
 

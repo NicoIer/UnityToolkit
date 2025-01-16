@@ -22,7 +22,7 @@ namespace Network.Time
             _cts?.Cancel();
         }
 
-        public Task Start(int port)
+        public Task Start(ushort port)
         {
             _cts = new CancellationTokenSource();
             return Task.Run(async () =>
@@ -34,20 +34,26 @@ namespace Network.Time
                 byte[] receiveBuffer = new byte[1024];
                 NetworkBuffer sendBuffer = new NetworkBuffer();
 
+                EndPoint clientPoint = new IPEndPoint(IPAddress.Any, 0);
                 while (!_cts.Token.IsCancellationRequested)
                 {
-                    EndPoint clientPoint = new IPEndPoint(IPAddress.Any, 0);
-                    int length = udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
+                    try
+                    {
+                        int length = udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
 
-                    sendBuffer.Reset();
-                    ClientSyncTimeMessage msg =
-                        MemoryPackSerializer.Deserialize<ClientSyncTimeMessage>(
-                            new ArraySegment<byte>(receiveBuffer, 0, length));
+                        sendBuffer.Reset();
+                        ClientSyncTimeMessage msg =
+                            MemoryPackSerializer.Deserialize<ClientSyncTimeMessage>(
+                                new ArraySegment<byte>(receiveBuffer, 0, length));
 
-                    ServerSyncTimeMessage serverSyncTimeMessage = ServerSyncTimeMessage.From(ref msg);
-                    MemoryPackSerializer.Serialize(sendBuffer, serverSyncTimeMessage);
-                    // 回复消息
-                    await udpServer.SendToAsync(sendBuffer.ToArraySegment(), SocketFlags.None, clientPoint);
+                        ServerSyncTimeMessage serverSyncTimeMessage = ServerSyncTimeMessage.From(ref msg);
+                        MemoryPackSerializer.Serialize(sendBuffer, serverSyncTimeMessage);
+                        // 回复消息
+                        await udpServer.SendToAsync(sendBuffer.ToArraySegment(), SocketFlags.None, clientPoint);
+                    }
+                    catch (SocketException e)
+                    {
+                    }
                 }
             }, cancellationToken: _cts.Token);
         }

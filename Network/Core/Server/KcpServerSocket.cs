@@ -35,6 +35,7 @@ namespace Network.Server
             );
         }
 
+        public ushort Port => _port;
         public int ConnectionsCount => _server.connections.Count;
         
         public IEnumerable<int> GetConnections()

@@ -5,6 +5,7 @@ using UnityToolkit;
 
 namespace Network
 {
+    public delegate void MessageHandler<T>(in int connectionId, in T message) where T : INetworkMessage;
     public sealed class NetworkServerMessageHandler : IDisposable
     {
         private readonly Dictionary<ushort, Action<int, ArraySegment<byte>>> _handler;
@@ -14,7 +15,7 @@ namespace Network
             _handler = new Dictionary<ushort, Action<int, ArraySegment<byte>>>(16);
         }
 
-        public ICommand Add<T>(Action<int, T> handler) where T : INetworkMessage
+        public ICommand Add<T>(MessageHandler<T> handler) where T : INetworkMessage
         {
             ushort id = NetworkId<T>.Value;
             if (!_handler.ContainsKey(id))
@@ -62,7 +63,7 @@ namespace Network
         }
 
 
-        private Action<int, ArraySegment<byte>> Warp<T>(Action<int, T> handler) where T : INetworkMessage
+        private Action<int, ArraySegment<byte>> Warp<T>(MessageHandler<T> handler) where T : INetworkMessage
         {
             return (connectionId, data) =>
             {

@@ -14,20 +14,50 @@ namespace Network.Time
     public sealed class NetworkTimeClient
     {
         private CancellationTokenSource _cts;
-        public long serverMs { get; private set; }
+
+        /// <summary>
+        /// 上一次对时获得的服务器时间
+        /// </summary>
+        private long lastServerMs;
+
+        /// <summary>
+        /// 估算出的RTT
+        /// </summary>
         public double rttMs => _rttEma.Value;
 
-        private ExponentialMovingAverage _rttEma;
-        public const int EmaSize = 4;
+        private readonly Stopwatch _stopwatch;
 
-        public NetworkTimeClient()
+        /// <summary>
+        /// 估算出来的服务器时间
+        /// </summary>
+        public long serverTimeMs => lastServerMs + _stopwatch.ElapsedMilliseconds;
+
+        private ExponentialMovingAverage _rttEma;
+        public const int RttEmaSize = 4;
+        private ExponentialMovingAverage _serverTimeEma;
+
+        public const int ServerTimeEmaSize = 8;
+
+        // public double standardDeviation => _serverTimeEma.StandardDeviation;
+        private double _toleranceMs;
+        public bool reachingAccuracy => _serverTimeEma.StandardDeviation < _toleranceMs;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="toleranceMs">对时误差小于这个值的时候认为对时准备</param>
+        public NetworkTimeClient(double toleranceMs = 10)
         {
-            _rttEma = new ExponentialMovingAverage(EmaSize);
+            _toleranceMs = toleranceMs;
+            _stopwatch = new Stopwatch();
+            _rttEma = new ExponentialMovingAverage(RttEmaSize);
+            _serverTimeEma = new ExponentialMovingAverage(ServerTimeEmaSize);
         }
 
 
         public Task Run(string ip, int port, float intervalSeconds = 1.0f)
         {
+            Debug.Assert(_cts == null, "NetworkTimeClient is already running");
             _cts = new CancellationTokenSource();
 
             IPEndPoint point = new IPEndPoint(IPAddress.Parse(ip), port);
@@ -39,6 +69,14 @@ namespace Network.Time
 
             return Task.WhenAll(sendTask, receiveTask);
         }
+
+        public void Stop()
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = null;
+        }
+
 
         private async Task ReceiveTask(Socket udpClient)
         {
@@ -57,8 +95,17 @@ namespace Network.Time
                 long nowMs = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 _rttEma.Add(nowMs - clientSendMs);
+                _stopwatch.Restart();
+                long beforeServerMs = lastServerMs;
+                lastServerMs = (long)(serverReceiveMs + rttMs / 2);
 
-                serverMs = (long)(serverReceiveMs + rttMs / 2);
+                // 计算服务器时间的EMA 如果对时非常准确 这里应该是0
+                _serverTimeEma.Add(lastServerMs - beforeServerMs);
+
+                // 毫秒级别的标准差
+                // var standardDeviation = _serverTimeEma.StandardDeviation;
+
+
                 await Task.Yield();
             }
         }
@@ -69,10 +116,24 @@ namespace Network.Time
             NetworkBuffer sendBuffer = new NetworkBuffer();
             while (!_cts.Token.IsCancellationRequested)
             {
-                sendBuffer.Reset();
-                ClientSyncTimeMessage msg = ClientSyncTimeMessage.Now();
-                MemoryPackSerializer.Serialize(sendBuffer, msg);
-                udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
+                if (reachingAccuracy)
+                {
+                    Stop();
+                }
+
+                try
+                {
+                    sendBuffer.Reset();
+                    ClientSyncTimeMessage msg = ClientSyncTimeMessage.Now();
+                    MemoryPackSerializer.Serialize(sendBuffer, msg);
+                    udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+
                 await Task.Delay(interval, _cts.Token);
             }
         }

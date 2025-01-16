@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,41 @@ namespace Network
 {
     internal static partial class Utils
     {
+        // /// <summary>
+        // /// 获取本机所有ip地址
+        // /// </summary>
+        // /// <param name="netType">"InterNetwork":ipv4地址，"InterNetworkV6":ipv6地址</param>
+        // /// <returns>ip地址集合</returns>
+        // public static List<string> GetLocalIpAddress(AddressFamily netType = AddressFamily.Unknown)
+        //
+        // {
+        //     string hostName = Dns.GetHostName(); //获取主机名称  
+        //     IPAddress[] addresses = Dns.GetHostAddresses(hostName); //解析主机IP地址  
+        //
+        //     List<string> ipList = new List<string>();
+        //     if (netType == AddressFamily.Unknown)
+        //     {
+        //         for (int i = 0; i < addresses.Length; i++)
+        //         {
+        //             ipList.Add(addresses[i].ToString());
+        //         }
+        //     }
+        //     else
+        //     {
+        //         //AddressFamily.InterNetwork表示此IP为IPv4,
+        //         //AddressFamily.InterNetworkV6表示此地址为IPv6类型
+        //         for (int i = 0; i < addresses.Length; i++)
+        //         {
+        //             if (addresses[i].AddressFamily == netType)
+        //             {
+        //                 ipList.Add(addresses[i].ToString());
+        //             }
+        //         }
+        //     }
+        //
+        //     return ipList;
+        // }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string TimeStamp()
         {
@@ -176,7 +212,7 @@ namespace Network
             _cryptoRandom.GetBytes(_cryptoRandomBuffer);
             return BitConverter.ToUInt32(_cryptoRandomBuffer, 0);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static NetworkQuality CalculateQuality(int rttMs)
         {

@@ -42,9 +42,11 @@ namespace Network.Server
 
             _system = new SystemLocator();
         }
+        
+       
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ICommand AddMsgHandler<T>(Action<int, T> handler) where T : INetworkMessage
+        public ICommand AddMsgHandler<T>(MessageHandler<T> handler) where T : INetworkMessage
         {
             return messageHandler.Add(handler);
         }

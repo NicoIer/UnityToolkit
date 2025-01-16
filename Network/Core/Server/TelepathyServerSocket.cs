@@ -7,6 +7,10 @@ namespace Network.Server
 {
     public class TelepathyServerSocket : IServerSocket
     {
+        public TelepathyServerSocket(ushort port)
+        {
+            this.port = port;
+        }
         public const string Scheme = "tcp4";
 
         public ushort port = 7777;
@@ -35,6 +39,7 @@ namespace Network.Server
         public EndPoint LocalEndPoint => _server.listener.LocalEndpoint;
         private Func<bool> _enabledCheck = () => true;
 
+        public ushort Port => port;
         public int ConnectionsCount => _server.clients.Count;
 
         public IEnumerable<int> GetConnections()
