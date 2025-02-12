@@ -29,5 +29,11 @@ namespace UnityToolkit
             t = default(T);
             return false;
         }
+
+        public void Remove<T>()
+        {
+            var key = typeof(T);
+            _mInstances.Remove(key);
+        }
     }
 }

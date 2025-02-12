@@ -4,14 +4,13 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using MemoryPack;
-using Network;
-using Network.Time;
 
 namespace Network.Time
 {
     public class NetworkTimeServer
     {
         private CancellationTokenSource _cts;
+        public long timestampMs => DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         public NetworkTimeServer()
         {

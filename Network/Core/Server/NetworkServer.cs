@@ -25,9 +25,12 @@ namespace Network.Server
         public delegate void UpdateDelegate(in float deltaTime);
 
         public event UpdateDelegate OnUpdateEvent;
+
+        private IOCContainer _container;
         
         public NetworkServer(IServerSocket socket, ushort targetFrameRate = 60, bool compress = true)
         {
+            _container = new IOCContainer();
             _compress = compress;
             ConnectionCount = 0;
             this.socket = socket;
@@ -81,6 +84,7 @@ namespace Network.Server
         {
             AddSystem(new TSystem());
         }
+        
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(int connectionId, TMessage message, bool noDelay = false)
@@ -150,6 +154,7 @@ namespace Network.Server
             DeltaTimeTick = frameMaxTime;
             var run = Task.Run(async () =>
             {
+                ToolkitLog.Debug($"NetworkServer:[{this}] is running");
                 Stopwatch stopwatch = new Stopwatch();
                 while (!Cts.Token.IsCancellationRequested)
                 {

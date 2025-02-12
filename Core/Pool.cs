@@ -140,7 +140,7 @@ namespace UnityToolkit
         void IDisposable.Dispose() => this.m_Pool.Release(this.m_ToReturn);
     }
 
-    internal class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
+    internal static class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
     {
         
         internal static readonly ObjectPool<TCollection> s_Pool = new ObjectPool<TCollection>(
@@ -158,11 +158,26 @@ namespace UnityToolkit
             CollectionPool<TCollection, TItem>.s_Pool.Release(toRelease);
         }
     }
-
-    /// <summary>
-    ///   <para>A version of Pool.CollectionPool_2 for Lists.</para>
-    /// </summary>
-    internal class ListPool<T> : CollectionPool<List<T>, T>
+    
+    public static class QueuePool<T>
     {
+        [ThreadStatic]private static ObjectPool<Queue<T>> _shared;
+    
+        public static ObjectPool<Queue<T>> Shared
+        {
+            get
+            {
+                if (_shared == null)
+                {
+                    _shared = new ObjectPool<Queue<T>>(() => new Queue<T>(), 
+                        queue => queue.Clear(), 
+                        queue => queue.Clear(), 
+                        queue => queue.Clear(),
+                        true, 0, 1024);
+                }
+    
+                return _shared;
+            }
+        }
     }
 }
