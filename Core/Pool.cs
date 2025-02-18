@@ -125,7 +125,7 @@ namespace UnityToolkit
 
         public void Dispose() => this.Clear();
     }
-
+    
     public readonly struct PooledObject<T> : IDisposable where T : class
     {
         private readonly T m_ToReturn;
@@ -142,7 +142,6 @@ namespace UnityToolkit
 
     internal static class CollectionPool<TCollection, TItem> where TCollection : class, ICollection<TItem>, new()
     {
-        
         internal static readonly ObjectPool<TCollection> s_Pool = new ObjectPool<TCollection>(
             (Func<TCollection>)(() => new TCollection()), actionOnRelease: (Action<TCollection>)(l => l.Clear()));
 
@@ -158,26 +157,68 @@ namespace UnityToolkit
             CollectionPool<TCollection, TItem>.s_Pool.Release(toRelease);
         }
     }
-    
+
     public static class QueuePool<T>
     {
-        [ThreadStatic]private static ObjectPool<Queue<T>> _shared;
-    
+        [ThreadStatic] private static ObjectPool<Queue<T>> _shared;
+
         public static ObjectPool<Queue<T>> Shared
         {
             get
             {
                 if (_shared == null)
                 {
-                    _shared = new ObjectPool<Queue<T>>(() => new Queue<T>(), 
-                        queue => queue.Clear(), 
-                        queue => queue.Clear(), 
+                    _shared = new ObjectPool<Queue<T>>(() => new Queue<T>(),
+                        queue => queue.Clear(),
+                        queue => queue.Clear(),
                         queue => queue.Clear(),
                         true, 0, 1024);
                 }
-    
+
                 return _shared;
             }
         }
     }
+
+
+    internal class Pool<T>
+    {
+        // Mirror is single threaded, no need for concurrent collections
+        readonly Stack<T> objects = new Stack<T>();
+
+        // some types might need additional parameters in their constructor, so
+        // we use a Func<T> generator
+        readonly Func<T> objectGenerator;
+
+        // some types might need additional cleanup for returned objects
+        readonly Action<T> objectResetter;
+
+        public Pool(Func<T> objectGenerator, Action<T> objectResetter = null, int initialCapacity = 0)
+        {
+            this.objectGenerator = objectGenerator;
+            this.objectResetter = objectResetter;
+
+            // allocate an initial pool so we have fewer (if any)
+            // allocations in the first few frames (or seconds).
+            for (int i = 0; i < initialCapacity; ++i)
+                objects.Push(objectGenerator());
+        }
+
+        // take an element from the pool, or create a new one if empty
+        public T Get() => objects.Count > 0 ? objects.Pop() : objectGenerator();
+
+        // return an element to the pool
+        public void Return(T item)
+        {
+            objectResetter?.Invoke(item);
+            objects.Push(item);
+        }
+
+        // clear the pool
+        public void Clear() => objects.Clear();
+
+        // count to see how many objects are in the pool. useful for tests.
+        public int Count => objects.Count;
+    }
+    
 }

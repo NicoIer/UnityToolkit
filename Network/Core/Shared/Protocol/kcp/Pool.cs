@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace kcp2k
 {
-    public class Pool<T>
+    internal class Pool<T>
     {
         // Mirror is single threaded, no need for concurrent collections
         readonly Stack<T> objects = new Stack<T>();
