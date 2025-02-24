@@ -19,6 +19,11 @@ namespace UnityToolkit
         {
             this._unRegister += unRegister;
         }
+        
+        public void Attach(ICommand command)
+        {
+            this._unRegister += command.Execute;
+        }
 
         public void Execute()
         {

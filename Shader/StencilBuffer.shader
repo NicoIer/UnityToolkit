@@ -3,7 +3,7 @@ Shader "Hidden/CustomRP/StencilBuffer"
     Properties
     {
         _StencilRef("Stencil Ref", Range(0, 255)) = 2
-        _ColorValue("Color Value", Range(0, 1)) = 1
+        _ColorValue("Color Value", Range(0, 255)) = 1
     }
     SubShader
     {
@@ -66,7 +66,7 @@ Shader "Hidden/CustomRP/StencilBuffer"
 
             half4 frag(Varyings packedInput) : SV_Target
             {
-                return half4(_ColorValue, 0, 0, 0);
+                return half4(_ColorValue/255, 0, 0, 0);
             }
             ENDHLSL
         }
