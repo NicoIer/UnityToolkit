@@ -42,7 +42,7 @@ namespace UnityToolkit
     {
         protected Dictionary<int, ISystem> _systems;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
 #endif
         public Dictionary<int, ISystem>.ValueCollection systems => _systems.Values;
