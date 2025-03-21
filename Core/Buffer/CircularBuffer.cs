@@ -137,6 +137,12 @@ namespace UnityToolkit
             ThrowIfEmpty();
             return _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void PeekBack(out T result)
+        {
+            ThrowIfEmpty();
+            result = _buffer[(_end != 0 ? _end : Capacity) - 1];
+        }
 
         /// <summary>
         /// Index access to elements in buffer.

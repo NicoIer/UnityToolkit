@@ -27,7 +27,7 @@ namespace Network.Server
         public event UpdateDelegate OnUpdateEvent;
 
         private IOCContainer _container;
-        
+
         public NetworkServer(IServerSocket socket, ushort targetFrameRate = 60, bool compress = true)
         {
             _container = new IOCContainer();
@@ -45,8 +45,7 @@ namespace Network.Server
 
             _system = new SystemLocator();
         }
-        
-       
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ICommand AddMsgHandler<T>(MessageHandler<T> handler) where T : INetworkMessage
@@ -84,7 +83,7 @@ namespace Network.Server
         {
             AddSystem(new TSystem());
         }
-        
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(int connectionId, TMessage message, bool noDelay = false)
@@ -173,6 +172,20 @@ namespace Network.Server
                 }
             }, Cts.Token);
             return run;
+        }
+
+        public void Stop()
+        {
+            if (Cts == null)
+            {
+                NetworkLogger.Error($"NetworkManager:[{this}] is not running");
+                return;
+            }
+
+            Cts.Cancel();
+            socket.Stop();
+            Cts = null;
+            ToolkitLog.Debug($"NetworkServer:[{this}] is stopped");
         }
 
         public void OnConnected(int connectionId)
