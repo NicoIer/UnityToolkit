@@ -9,12 +9,13 @@ namespace Network
     {
         private Dictionary<ushort, Action<ArraySegment<byte>>> _handler;
 
+        public delegate void MessageHandler<T>(in T message) where T : INetworkMessage;
         public NetworkClientMessageHandler()
         {
             _handler = new Dictionary<ushort, Action<ArraySegment<byte>>>(16);
         }
 
-        public ICommand Add<T>(Action<T> handler) where T : INetworkMessage
+        public ICommand Add<T>(MessageHandler<T> handler) where T : INetworkMessage
         {
             ushort id = NetworkId<T>.Value;
             if (!_handler.ContainsKey(id))
@@ -58,12 +59,12 @@ namespace Network
         }
 
 
-        private Action<ArraySegment<byte>> Warp<T>(Action<T> handler) where T : INetworkMessage
+        private Action<ArraySegment<byte>> Warp<T>(MessageHandler<T> handler) where T : INetworkMessage
         {
             return data =>
             {
                 T message = MemoryPackSerializer.Deserialize<T>(data);
-                handler(message);
+                handler(in message);
             };
         }
 

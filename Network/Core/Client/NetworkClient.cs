@@ -50,10 +50,10 @@ namespace Network.Client
         //     connectionId = server.id;
         // }
 
-        public ICommand AddMsgHandler<T>(Action<T> handler) where T : INetworkMessage
-        {
-            return messageHandler.Add(handler);
-        }
+        // public ICommand AddMsgHandler<T>(MessageHandler<T> handler) where T : INetworkMessage
+        // {
+        //     return messageHandler.Add<T>(handler);
+        // }
 
         public TSystem GetSystem<TSystem>() where TSystem : ISystem
         {
@@ -125,7 +125,6 @@ namespace Network.Client
         {
             socket.Disconnect();
             Cts.Cancel();
-            Cts.Dispose();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -218,7 +217,7 @@ namespace Network.Client
 
         public void Dispose()
         {
-            _disposer.Execute();
+            _disposer?.Execute();
             if (socket.connected)
             {
                 socket.Disconnect();

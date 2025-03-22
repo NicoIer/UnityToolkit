@@ -1,4 +1,5 @@
 // https://github.com/joaoportela/CircularBuffer-CSharp/blob/master/CircularBuffer/CircularBuffer.cs
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace UnityToolkit
     public class CircularBuffer<T> : IEnumerable<T>
     {
         private readonly T[] _buffer;
+        
+        internal T[] buffer => _buffer;
 
         /// <summary>
         /// The _start. Index of the first element in buffer.
@@ -126,6 +129,7 @@ namespace UnityToolkit
             ThrowIfEmpty();
             return _buffer[_start];
         }
+        public int frontIndex => _start;
 
         /// <summary>
         /// Element at the back of the buffer - this[Size - 1].
@@ -137,12 +141,9 @@ namespace UnityToolkit
             ThrowIfEmpty();
             return _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PeekBack(out T result)
-        {
-            ThrowIfEmpty();
-            result = _buffer[(_end != 0 ? _end : Capacity) - 1];
-        }
+
+        public int backIndex => (_end != 0 ? _end : Capacity) - 1;
+        
 
         /// <summary>
         /// Index access to elements in buffer.
@@ -191,6 +192,10 @@ namespace UnityToolkit
             }
         }
 
+        public delegate void OnRemoveDelegate(in T item);
+
+        public event OnRemoveDelegate OnRemove = (in T item) => { };
+
         /// <summary>
         /// Pushes a new element to the back of the buffer. Back()/this[Size-1]
         /// will now return this element.
@@ -204,6 +209,8 @@ namespace UnityToolkit
         {
             if (IsFull)
             {
+                ref var removed = ref _buffer[_end];
+                OnRemove(removed);
                 _buffer[_end] = item;
                 Increment(ref _end);
                 _start = _end;
@@ -231,6 +238,8 @@ namespace UnityToolkit
             {
                 Decrement(ref _start);
                 _end = _start;
+                ref var removed = ref _buffer[_start];
+                OnRemove(removed);
                 _buffer[_start] = item;
             }
             else
