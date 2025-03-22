@@ -9,6 +9,7 @@ namespace UnityToolkit
     public static class TypeId<T>
     {
         public static readonly int stableId = TypeId.StableId(typeof(T));
+        public static readonly ushort stableId16 = typeof(T).FullName.GetStableHashCode16();
     }
 
     public static class TypeId
