@@ -139,7 +139,7 @@ namespace Network.Server
         }
 
 
-        public Task Run()
+        public Task Run(bool autoTick)
         {
             if (Cts != null)
             {
@@ -149,6 +149,7 @@ namespace Network.Server
 
             Cts = new CancellationTokenSource();
             socket.Start();
+            if (!autoTick) return Task.CompletedTask;
             long frameMaxTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
             DeltaTimeTick = frameMaxTime;
             var run = Task.Run(async () =>
