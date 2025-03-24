@@ -563,7 +563,7 @@ namespace Octree
                     }
                 }
 
-                // Handle the new object we're adding now
+                // HandleRequest the new object we're adding now
                 int bestFit = BestFitChild(objBounds.Center);
                 if (Encapsulates(_children[bestFit]._bounds, objBounds))
                 {

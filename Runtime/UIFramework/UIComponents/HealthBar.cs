@@ -54,7 +54,7 @@ namespace UnityToolkit
             /* Update health bar */
             _healthBar.fillAmount = healthPercentage;
 
-            /* Handle drop effect */
+            /* HandleRequest drop effect */
             if (_dropEffectPercentage > healthPercentage)
             {
                 _dropEffectPercentage -= Time.deltaTime * dropSpeed;

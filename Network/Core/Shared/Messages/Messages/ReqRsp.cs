@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MemoryPack;
+using Network.Client;
 using UnityToolkit;
 
 namespace Network
@@ -21,10 +22,8 @@ namespace Network
     // }
 
 
-    public class ReqRspCenter
+    public class ReqRspServerCenter
     {
-        #region Server
-
         public delegate void ReqHandleDelegate<TReq, TRsp>(in int connectionId, in TReq message,
             out TRsp rsp, out ErrorCode errorCode, out string errorMsg);
 
@@ -32,7 +31,7 @@ namespace Network
 
         private readonly Dictionary<ushort, ReqHandler> _handlers = new Dictionary<ushort, ReqHandler>();
 
-        public RspHead Handle(in int connectionId, in ReqHead head)
+        public RspHead HandleRequest(in int connectionId, in ReqHead head)
         {
             if (_handlers.TryGetValue(head.reqHash, out var handler))
             {
@@ -57,54 +56,9 @@ namespace Network
             };
         }
 
-        #endregion
-
-        public delegate void OnResponseHandleDelegate();
-
-        private readonly Dictionary<ushort, OnResponseHandleDelegate> _requesting = new();
-
-        private readonly List<ushort> _idPool = new List<ushort>();
-        private ushort _currentId = 0;
-
-        public void PackRequest<TReq>(in TReq req, out ReqHead reqHead) where TReq : INetworkReq
-        {
-            ushort reqHash = TypeId<TReq>.stableId16;
-
-            if (_idPool.Count == 0)
-            {
-                _idPool.Add(_currentId++);
-            }
-
-            var reqIndex = _idPool[^1];
-
-            _idPool.RemoveAt(_idPool.Count - 1);
-
-            reqHead = new ReqHead
-            {
-                reqHash = reqHash,
-                index = reqIndex,
-                payload = MemoryPackSerializer.Serialize(req),
-            };
-        }
-
-        public void OnResponse(in ushort index, in RspHead rspHead)
-        {
-            if (rspHead.error != ErrorCode.Success)
-            {
-                ToolkitLog.Warning($"收到了一个发生错误的响应:{rspHead.error},{rspHead.errorMessage}");
-                return;
-            }
-
-            if (!_requesting.TryGetValue(index, out var value))
-            {
-                ToolkitLog.Warning($"收到了一个未请求的响应:{rspHead}");
-                return;
-            }
-
-            value();
-            _requesting.Remove(index);
-        }
     }
+    
+
 
     public enum ErrorCode
     {
@@ -150,6 +104,7 @@ namespace Network
             this.reqHash = reqHash;
             this.rspHash = rspHash;
             this.error = error;
+            this.errorMessage = errorMessage;
             this.payload = payload;
         }
     }

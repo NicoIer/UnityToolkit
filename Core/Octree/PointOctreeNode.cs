@@ -500,7 +500,7 @@ namespace Octree
                     }
                 }
 
-                // Handle the new object we're adding now
+                // HandleRequest the new object we're adding now
                 int bestFit = BestFitChild(objPos);
                 _children[bestFit].SubAdd(obj, objPos);
             }
