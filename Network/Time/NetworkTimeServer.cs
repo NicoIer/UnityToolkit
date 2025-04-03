@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using MemoryPack;
+using UnityToolkit;
 
 namespace Network.Time
 {
@@ -52,6 +53,7 @@ namespace Network.Time
                     }
                     catch (SocketException e)
                     {
+                        ToolkitLog.Error(e);
                     }
                 }
             }, cancellationToken: _cts.Token);

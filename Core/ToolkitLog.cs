@@ -117,6 +117,15 @@ namespace UnityToolkit
                 WriteLog(obj, LogLevel.Error);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Error(Exception ex)
+        {
+            errorAction(ex.ToString());
+            if (writeLog)
+            {
+                WriteLog(ex.ToString(), LogLevel.Error);
+            }
+        }
         
         public static void Debug(string msg)
         {
