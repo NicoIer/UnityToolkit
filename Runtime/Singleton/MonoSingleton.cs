@@ -129,7 +129,6 @@ namespace UnityToolkit
         }
 
 #if UNITY_EDITOR
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatic()
         {

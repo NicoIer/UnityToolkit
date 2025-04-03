@@ -8,3 +8,5 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("UnityToolkit.Editor")]
 [assembly: InternalsVisibleTo("ToolkitTest")]
+
+[assembly: InternalsVisibleTo("Jolt.Unity")]

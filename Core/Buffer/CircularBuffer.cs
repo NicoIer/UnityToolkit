@@ -22,8 +22,9 @@ namespace UnityToolkit
     public class CircularBuffer<T> : IEnumerable<T>
     {
         private readonly T[] _buffer;
-        
+
         internal T[] buffer => _buffer;
+
 
         /// <summary>
         /// The _start. Index of the first element in buffer.
@@ -129,6 +130,7 @@ namespace UnityToolkit
             ThrowIfEmpty();
             return _buffer[_start];
         }
+
         public int frontIndex => _start;
 
         /// <summary>
@@ -143,7 +145,9 @@ namespace UnityToolkit
         }
 
         public int backIndex => (_end != 0 ? _end : Capacity) - 1;
-        
+
+
+        public ref T backValue => ref _buffer[backIndex];
 
         /// <summary>
         /// Index access to elements in buffer.
