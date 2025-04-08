@@ -31,6 +31,7 @@ namespace Network.Time
                 IPEndPoint point = new IPEndPoint(ip, port);
                 Socket udpServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 udpServer.Bind(point);
+                ToolkitLog.Info($"NetworkTimeServer Start At {ip}:{port} {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 byte[] receiveBuffer = new byte[1024];
                 NetworkBuffer sendBuffer = new NetworkBuffer();
 
@@ -39,9 +40,8 @@ namespace Network.Time
                 {
                     try
                     {
-                        var result = await udpServer.ReceiveFromAsync(receiveBuffer, SocketFlags.None, clientPoint);
-                        int length = result.ReceivedBytes;
-                        // udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
+                        // var result = await udpServer.ReceiveFromAsync(receiveBuffer, SocketFlags.None, clientPoint);
+                        int length = udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
 
                         sendBuffer.Reset();
                         ClientSyncTimeMessage msg =
@@ -51,6 +51,7 @@ namespace Network.Time
                         ServerSyncTimeMessage serverSyncTimeMessage = ServerSyncTimeMessage.From(ref msg);
                         MemoryPackSerializer.Serialize(sendBuffer, serverSyncTimeMessage);
                         // 回复消息
+                        // udpServer.Send(sendBuffer.buffer);
                         await udpServer.SendToAsync(sendBuffer.ToArraySegment(), SocketFlags.None, clientPoint);
                     }
                     catch (SocketException e)

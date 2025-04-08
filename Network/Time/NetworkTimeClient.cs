@@ -149,7 +149,7 @@ namespace Network.Time
                     ClientSyncTimeMessage msg = ClientSyncTimeMessage.Now();
                     MemoryPackSerializer.Serialize(sendBuffer, msg);
                     await udpClient.SendAsync(sendBuffer, SocketFlags.None, _cts.Token);
-                    ToolkitLog.Debug("向服务器发送对时请求");
+                    // ToolkitLog.Debug("向服务器发送对时请求");
                     // udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
                 }
                 catch (SocketException e)

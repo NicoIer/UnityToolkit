@@ -37,6 +37,7 @@ namespace Network.Server
             _bufferPool = new NetworkBufferPool(16);
             messageHandler = new NetworkServerMessageHandler();
             TargetFrameRate = targetFrameRate;
+            messageHandler.Add<HeartBeat>(OnHeartBeat);
             // Socket event handlers
             this.socket.OnConnected += OnConnected;
             this.socket.OnDataReceived += OnDataReceived;
@@ -44,6 +45,13 @@ namespace Network.Server
             this.socket.OnDataSent += OnDataSent;
 
             _system = new SystemLocator();
+        }
+
+        private void OnHeartBeat(in int connectionid, in HeartBeat message)
+        {
+#if DEBUG || UNITY_EDITOR
+            ToolkitLog.Debug($"Heartbeat received from connection {connectionid}");
+#endif
         }
 
 
@@ -191,6 +199,7 @@ namespace Network.Server
 
         public void OnConnected(int connectionId)
         {
+            NetworkLogger.Info($"Client {connectionId} connected");
             ConnectionCount++;
             // Send(connectionId, new AssignConnectionIdMessage(connectionId));
         }
