@@ -57,6 +57,7 @@ namespace Network.Time
         private bool _autoStop;
 
         private IPEndPoint _remoteEP;
+
         public async Task Run(string ip, int port, bool autoStop = false, float intervalSeconds = 1.0f)
         {
             this._autoStop = autoStop;
@@ -65,9 +66,14 @@ namespace Network.Time
 
             IPEndPoint point = new IPEndPoint(IPAddress.Parse(ip), port);
             _remoteEP = point;
-            Socket udpClient = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            var udpClient =
+                // new UdpClient(ip, port);
+                new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+// #if DEBUG || UNITY_EDITOR
+// #endif
             await udpClient.ConnectAsync(point);
 
+            ToolkitLog.Info($"{nameof(NetworkTimeClient)} connected to {ip}:{port}");
             Task sendTask = SendTask(udpClient, intervalSeconds);
             Task receiveTask = ReceiveTask(udpClient);
 
@@ -86,14 +92,16 @@ namespace Network.Time
         private async Task ReceiveTask(Socket udpClient)
         {
             byte[] receiveBuffer = new byte[1024];
-
+            Memory<byte> receiveSegment = new Memory<byte>(receiveBuffer);
             while (!_cts.Token.IsCancellationRequested)
             {
-                int length = udpClient.Receive(receiveBuffer);
+                int length =
+                    await udpClient.ReceiveAsync(receiveSegment, SocketFlags.None, _cts.Token);
+                // udpClient.Receive(receiveBuffer);
 
                 ServerSyncTimeMessage serverSyncTimeMessage =
                     MemoryPackSerializer.Deserialize<ServerSyncTimeMessage>(
-                        new ArraySegment<byte>(receiveBuffer, 0, length));
+                        new ReadOnlySpan<byte>(receiveBuffer, 0, length));
 
                 long clientSendMs = serverSyncTimeMessage.clientSendMs;
                 long serverReceiveMs = serverSyncTimeMessage.serverReceiveMs;
@@ -101,7 +109,9 @@ namespace Network.Time
 
                 _rttEma.Add(nowMs - clientSendMs);
                 _stopwatch.Restart();
-                // ToolkitLog.Debug(_rttEma.Value.ToString("F"));
+                
+                // ToolkitLog.Info(_rttEma.Value.ToString("F"));
+                
                 long beforeServerMs = lastServerMs;
                 lastServerMs = (long)(serverReceiveMs + rttMs / 2);
 
@@ -138,7 +148,9 @@ namespace Network.Time
                     sendBuffer.Reset();
                     ClientSyncTimeMessage msg = ClientSyncTimeMessage.Now();
                     MemoryPackSerializer.Serialize(sendBuffer, msg);
-                    udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
+                    await udpClient.SendAsync(sendBuffer, SocketFlags.None, _cts.Token);
+                    ToolkitLog.Debug("向服务器发送对时请求");
+                    // udpClient.Send(sendBuffer.buffer, 0, sendBuffer.Position, SocketFlags.None);
                 }
                 catch (SocketException e)
                 {
@@ -148,6 +160,7 @@ namespace Network.Time
                         await udpClient.ConnectAsync(_remoteEP);
                         return;
                     }
+
                     throw;
                 }
 

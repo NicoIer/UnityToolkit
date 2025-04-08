@@ -39,7 +39,9 @@ namespace Network.Time
                 {
                     try
                     {
-                        int length = udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
+                        var result = await udpServer.ReceiveFromAsync(receiveBuffer, SocketFlags.None, clientPoint);
+                        int length = result.ReceivedBytes;
+                        // udpServer.ReceiveFrom(receiveBuffer, ref clientPoint);
 
                         sendBuffer.Reset();
                         ClientSyncTimeMessage msg =
