@@ -128,7 +128,7 @@ namespace Network.Client
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Send<TMessage>(TMessage msg, bool noDelay = false) where TMessage : INetworkMessage
+        public void Send<TMessage>(in TMessage msg, bool noDelay = false) where TMessage : INetworkMessage
         {
             NetworkBuffer payloadBuffer = _bufferPool.Get();
             NetworkBuffer packetBuffer = _bufferPool.Get();
