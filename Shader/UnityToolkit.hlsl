@@ -1,11 +1,17 @@
-﻿#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityInput.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
+﻿
 // URP下的环境光颜色
 // half3 AambientColor()
 // {
 //     return _GlossyEnvironmentColor.rgb;
 //     // return half3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
 // }
+
+half luminance(float3 color)
+{
+    // 计算颜色灰度值
+    // 0.2125,0.7154,0.0721
+    return color.r * 0.2125 + color.g * 0.7154 + color.b * 0.0721;
+}
 
 // 兰伯特漫反射光照模型
 half LambertDiffuse(float3 normal, float3 lightDir)
