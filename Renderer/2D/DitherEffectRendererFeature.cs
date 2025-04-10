@@ -1,11 +1,9 @@
+#if UNITY_6000_0_OR_NEWER
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
-
-#if UNITY_6000_0_OR_NEWER
-
 namespace UnityToolkit
 {
     public class DitherEffectRendererFeature : ScriptableRendererFeature

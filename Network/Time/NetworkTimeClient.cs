@@ -158,7 +158,7 @@ namespace Network.Time
                     {
                         ToolkitLog.Warning("对时服务器拒绝连接 重新连接");
                         await udpClient.ConnectAsync(_remoteEP);
-                        return;
+                        continue;
                     }
 
                     throw;
