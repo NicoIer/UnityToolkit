@@ -66,6 +66,7 @@ namespace UnityToolkit
         private int[][] parents;
         private ushort[] costs;
 
+        public IReadOnlyList<ushort> costList => costs;
         public event Action OnPathUpdate = delegate { };
 
 

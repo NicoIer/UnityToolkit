@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace UnityToolkit
 {
     [Serializable]
-    public struct Path
+    public class Path
     {
         private IReadOnlyList<int> internalList;
 
