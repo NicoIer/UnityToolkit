@@ -138,10 +138,16 @@ namespace UnityToolkit
         /// </summary>
         /// <returns>The value of the element of type T at the back of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Back()
+        // public T Back()
+        // {
+        //     ThrowIfEmpty();
+        //     return _buffer[(_end != 0 ? _end : Capacity) - 1];
+        // }
+
+        public ref T Back()
         {
             ThrowIfEmpty();
-            return _buffer[(_end != 0 ? _end : Capacity) - 1];
+            return ref _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
 
         public int backIndex => (_end != 0 ? _end : Capacity) - 1;
@@ -408,7 +414,7 @@ namespace UnityToolkit
         /// External index.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int InternalIndex(int index)
+        internal int InternalIndex(int index)
         {
             return _start + (index < (Capacity - _start) ? index : index - Capacity);
         }
