@@ -1,0 +1,7 @@
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+[*.cs]
+# License header
+file_header_template = Copyright (c) 2023 NicoIer and Contributors.\nLicensed under the MIT License (MIT). See LICENSE in the repository root for more information.
