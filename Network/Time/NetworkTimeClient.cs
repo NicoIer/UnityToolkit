@@ -26,6 +26,8 @@ namespace Network.Time
         public double rttMs => _rttEma.Value;
 
         private readonly Stopwatch _stopwatch;
+        
+        public bool isRunning => _cts is { IsCancellationRequested: false };
 
         /// <summary>
         /// 估算出来的服务器时间
