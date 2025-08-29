@@ -6,7 +6,7 @@ using Network;
 
 namespace kcp2k
 {
-    public static class Log
+    internal static class Log
     {
         public static Action<string> Info = NetworkLogger.Info;
         public static Action<string> Warning = NetworkLogger.Warning;

@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -61,3 +62,6 @@ namespace UnityToolkit.Editor
         }
     }
 }
+
+
+#endif

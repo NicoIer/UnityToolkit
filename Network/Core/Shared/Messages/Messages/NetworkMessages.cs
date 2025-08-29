@@ -2,6 +2,12 @@ using MemoryPack;
 
 namespace Network
 {
+
+    [MemoryPackable]
+    public partial struct HeartBeat : INetworkMessage
+    {
+        public static readonly HeartBeat Default = new HeartBeat();
+    }
     // /// <summary>
     // /// 服务器为客户端分配的连接ID
     // /// </summary>

@@ -1,4 +1,5 @@
 // https://github.com/joaoportela/CircularBuffer-CSharp/blob/master/CircularBuffer/CircularBuffer.cs
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ namespace UnityToolkit
     public class CircularBuffer<T> : IEnumerable<T>
     {
         private readonly T[] _buffer;
+
+        internal T[] buffer => _buffer;
+
 
         /// <summary>
         /// The _start. Index of the first element in buffer.
@@ -127,16 +131,29 @@ namespace UnityToolkit
             return _buffer[_start];
         }
 
+        public int frontIndex => _start;
+
         /// <summary>
         /// Element at the back of the buffer - this[Size - 1].
         /// </summary>
         /// <returns>The value of the element of type T at the back of the buffer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Back()
+        // public T Back()
+        // {
+        //     ThrowIfEmpty();
+        //     return _buffer[(_end != 0 ? _end : Capacity) - 1];
+        // }
+
+        public ref T Back()
         {
             ThrowIfEmpty();
-            return _buffer[(_end != 0 ? _end : Capacity) - 1];
+            return ref _buffer[(_end != 0 ? _end : Capacity) - 1];
         }
+
+        public int backIndex => (_end != 0 ? _end : Capacity) - 1;
+
+
+        public ref T backValue => ref _buffer[backIndex];
 
         /// <summary>
         /// Index access to elements in buffer.
@@ -185,6 +202,10 @@ namespace UnityToolkit
             }
         }
 
+        public delegate void OnRemoveDelegate(in T item);
+
+        public event OnRemoveDelegate OnRemove = (in T item) => { };
+
         /// <summary>
         /// Pushes a new element to the back of the buffer. Back()/this[Size-1]
         /// will now return this element.
@@ -198,6 +219,8 @@ namespace UnityToolkit
         {
             if (IsFull)
             {
+                ref var removed = ref _buffer[_end];
+                OnRemove(removed);
                 _buffer[_end] = item;
                 Increment(ref _end);
                 _start = _end;
@@ -225,6 +248,8 @@ namespace UnityToolkit
             {
                 Decrement(ref _start);
                 _end = _start;
+                ref var removed = ref _buffer[_start];
+                OnRemove(removed);
                 _buffer[_start] = item;
             }
             else
@@ -389,7 +414,7 @@ namespace UnityToolkit
         /// External index.
         /// </param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int InternalIndex(int index)
+        internal int InternalIndex(int index)
         {
             return _start + (index < (Capacity - _start) ? index : index - Capacity);
         }

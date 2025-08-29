@@ -146,7 +146,7 @@
 //             componentBufferPool.Return(componentListBuffer);
 //         }
 //
-//         #region Handle Message Req
+//         #region HandleRequest Message Req
 //
 //         /// <summary>
 //         /// 生成一个新的网络实体

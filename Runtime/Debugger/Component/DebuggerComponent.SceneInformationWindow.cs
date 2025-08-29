@@ -18,7 +18,7 @@ namespace UnityToolkit.Debugger
 
                     Scene activeScene = SceneManager.GetActiveScene();
 #if UNITY_2018_3_OR_NEWER
-                    DrawItem("Active Scene Handle", activeScene.handle.ToString());
+                    DrawItem("Active Scene HandleRequest", activeScene.handle.ToString());
 #endif
                     DrawItem("Active Scene Name", activeScene.name);
                     DrawItem("Active Scene Path", activeScene.path);

@@ -27,7 +27,7 @@ namespace Network.Server
         public event UpdateDelegate OnUpdateEvent;
 
         private IOCContainer _container;
-        
+
         public NetworkServer(IServerSocket socket, ushort targetFrameRate = 60, bool compress = true)
         {
             _container = new IOCContainer();
@@ -37,6 +37,7 @@ namespace Network.Server
             _bufferPool = new NetworkBufferPool(16);
             messageHandler = new NetworkServerMessageHandler();
             TargetFrameRate = targetFrameRate;
+            messageHandler.Add<HeartBeat>(OnHeartBeat);
             // Socket event handlers
             this.socket.OnConnected += OnConnected;
             this.socket.OnDataReceived += OnDataReceived;
@@ -45,8 +46,14 @@ namespace Network.Server
 
             _system = new SystemLocator();
         }
-        
-       
+
+        private void OnHeartBeat(in int connectionid, in HeartBeat message)
+        {
+#if DEBUG || UNITY_EDITOR
+            ToolkitLog.Debug($"Heartbeat received from connection {connectionid}");
+#endif
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ICommand AddMsgHandler<T>(MessageHandler<T> handler) where T : INetworkMessage
@@ -84,7 +91,7 @@ namespace Network.Server
         {
             AddSystem(new TSystem());
         }
-        
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Send<TMessage>(int connectionId, TMessage message, bool noDelay = false)
@@ -140,7 +147,7 @@ namespace Network.Server
         }
 
 
-        public Task Run()
+        public Task Run(bool autoTick)
         {
             if (Cts != null)
             {
@@ -150,6 +157,7 @@ namespace Network.Server
 
             Cts = new CancellationTokenSource();
             socket.Start();
+            if (!autoTick) return Task.CompletedTask;
             long frameMaxTime = TimeSpan.FromSeconds(1d / TargetFrameRate).Ticks; // 一帧最大时间
             DeltaTimeTick = frameMaxTime;
             var run = Task.Run(async () =>
@@ -175,8 +183,23 @@ namespace Network.Server
             return run;
         }
 
+        public void Stop()
+        {
+            if (Cts == null)
+            {
+                NetworkLogger.Error($"NetworkManager:[{this}] is not running");
+                return;
+            }
+
+            Cts.Cancel();
+            socket.Stop();
+            Cts = null;
+            ToolkitLog.Debug($"NetworkServer:[{this}] is stopped");
+        }
+
         public void OnConnected(int connectionId)
         {
+            NetworkLogger.Info($"Client {connectionId} connected");
             ConnectionCount++;
             // Send(connectionId, new AssignConnectionIdMessage(connectionId));
         }
