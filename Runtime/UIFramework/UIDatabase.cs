@@ -17,7 +17,7 @@ namespace UnityToolkit
 
         public Task<GameObject> LoadAsync<T>() where T : IUIPanel;
 
-        public void Dispose(GameObject panel);
+        public void Dispose<T>(T panel) where T : IUIPanel;
     }
 
     [Serializable]
@@ -80,9 +80,9 @@ namespace UnityToolkit
                 return tcs.Task.Result;
             }
 
-            public void Dispose(GameObject panel)
+            public void Dispose<T>(T panel) where T : IUIPanel
             {
-                Destroy(panel);
+                Destroy(panel.GetGameObject());
             }
         }
 
@@ -135,7 +135,7 @@ namespace UnityToolkit
             return go.GetComponent<T>();
         }
 
-        public void DisposePanel(GameObject panel)
+        public void DisposePanel(IUIPanel panel)
         {
             Loader.Dispose(panel);
         }

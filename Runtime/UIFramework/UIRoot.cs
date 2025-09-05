@@ -416,7 +416,7 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _openedPanelDict.Remove(type);
-                Dispose(value.GetGameObject());
+                Dispose(value);
                 return;
             }
 
@@ -425,7 +425,7 @@ namespace UnityToolkit
                 value.SetState(UIPanelState.Disposing);
                 value.OnDispose();
                 _closedPanelDict.Remove(type);
-                Dispose(value.GetGameObject());
+                Dispose(value);
             }
         }
 
@@ -438,7 +438,7 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Closed);
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
-                Dispose(kvp.Value.GetGameObject());
+                Dispose(kvp.Value);
             }
 
             _openedPanelDict.Clear();
@@ -448,7 +448,7 @@ namespace UnityToolkit
                 kvp.Value.SetState(UIPanelState.Disposing);
                 kvp.Value.OnDispose();
                 kvp.Value.SetState(UIPanelState.Closed);
-                Dispose(kvp.Value.GetGameObject());
+                Dispose(kvp.Value);
             }
 
             _closedPanelDict.Clear();
@@ -457,9 +457,9 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Dispose(GameObject go)
+        private void Dispose(IUIPanel panel)
         {
-            UIDatabase.DisposePanel(go);
+            UIDatabase.DisposePanel(panel);
         }
 
 

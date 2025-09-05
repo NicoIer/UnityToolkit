@@ -41,7 +41,7 @@ namespace UnityToolkit
 
             vh.AddTriangle(vh.currentVertCount - 1, 1, 0); // 闭合三角形
         }
-#if UNITY_EDITOR
+
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -61,7 +61,7 @@ namespace UnityToolkit
                 Initialize();
             }
         }
-#endif
+
         public float radius
         {
             get
