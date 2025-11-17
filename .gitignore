@@ -22,3 +22,5 @@ README-En.md.meta
 
 # LICENSE相关也不需要.meta
 LICENSE.meta
+
+*.py.meta

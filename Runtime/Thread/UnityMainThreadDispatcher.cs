@@ -1,3 +1,5 @@
+// Copyright (c) 2023 NicoIer and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 ﻿/*
 Copyright 2015 Pim de Witte All Rights Reserved.
 Copyright 2023 NicoIer

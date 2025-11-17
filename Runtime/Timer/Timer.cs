@@ -1,3 +1,5 @@
+// Copyright (c) 2023 NicoIer and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 /*
  * The MIT License (MIT)
  * Copyright (c) 2016 Alexander Biggs & Adam Robinson-Yu

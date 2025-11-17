@@ -1,3 +1,5 @@
+// Copyright (c) 2023 NicoIer and Contributors.
+// Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 #if UNITY_5_6_OR_NEWER
 using System;
 using System.Runtime.CompilerServices;
