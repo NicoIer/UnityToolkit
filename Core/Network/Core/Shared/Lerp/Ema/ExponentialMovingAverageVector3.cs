@@ -3,7 +3,7 @@
 #if UNITY_5_4_OR_NEWER
 using Vector3 = UnityEngine.Vector3;
 #else
-using Vector3 = System.Numerics.Vector3;
+using Vector3 = UnityToolkit.MathTypes.Vector3;
 #endif
 
 namespace Network

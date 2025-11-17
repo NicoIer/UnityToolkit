@@ -1,7 +1,10 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 #if UNITY_5_4_OR_NEWER
-using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+#else
+using Quaternion = UnityToolkit.MathTypes.Quaternion;
+#endif
 
 namespace Network
 {
@@ -25,8 +28,8 @@ namespace Network
             // https://en.wikipedia.org/wiki/Moving_average#Exponentially_weighted_moving_variance_and_standard_deviation
             if (initialized)
             {
-                Quaternion delta = newValue * UnityEngine.Quaternion.Inverse(Value);
-                Value = Value * UnityEngine.Quaternion.Slerp(Quaternion.identity, delta, alpha);
+                Quaternion delta = newValue * Quaternion.Inverse(Value);
+                Value = Value * Quaternion.Slerp(Quaternion.identity, delta, alpha);
             }
             else
             {
@@ -42,4 +45,3 @@ namespace Network
         }
     }
 }
-#endif

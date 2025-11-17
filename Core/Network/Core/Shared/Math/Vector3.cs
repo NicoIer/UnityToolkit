@@ -14,6 +14,11 @@ namespace UnityToolkit.MathTypes
         public float x;
         public float y;
         public float z;
+        public float sqrMagnitude
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return x * x + y * y + z * z; }
+        }
 
         public Vector3(float x, float y, float z)
         {
@@ -137,6 +142,12 @@ namespace UnityToolkit.MathTypes
         public static Vector3 LerpUnclamped(Vector3 a, Vector3 b, float t)
         {
             return new Vector3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+        }
+
+        public static Vector3 Lerp(Vector3 fromPosition, Vector3 toPosition, float t)
+        {
+            t = ToolkitMath.Clamp01(t);
+            return LerpUnclamped(fromPosition, toPosition, t);
         }
     }
 }

@@ -110,17 +110,25 @@ namespace UnityToolkit
         /// cause elements to be removed from the other end
         /// of the buffer.
         /// </summary>
-        public bool IsFull => Size == Capacity;
+        public bool IsFull => _size == Capacity;
 
         /// <summary>
         /// True if has no elements.
         /// </summary>
-        public bool IsEmpty => Size == 0;
+        public bool IsEmpty => _size == 0;
 
         /// <summary>
         /// Current buffer size (the number of elements that the buffer has).
         /// </summary>
+        public int Count => _size;
+
+
+        /// <summary>
+        /// Current buffer size (the number of elements that the buffer has).
+        /// </summary>
+        [Obsolete("Use Count property instead.")]
         public int Size => _size;
+
 
         /// <summary>
         /// Element at the front of the buffer - this[0].
@@ -145,7 +153,6 @@ namespace UnityToolkit
         //     ThrowIfEmpty();
         //     return _buffer[(_end != 0 ? _end : Capacity) - 1];
         // }
-
         public ref T Back()
         {
             ThrowIfEmpty();
@@ -310,7 +317,7 @@ namespace UnityToolkit
         /// <returns>A new array with a copy of the buffer contents.</returns>
         public T[] ToArray()
         {
-            T[] newArray = new T[Size];
+            T[] newArray = new T[_size];
             int newArrayOffset = 0;
             var segments = ToArraySegments();
             foreach (ArraySegment<T> segment in segments)

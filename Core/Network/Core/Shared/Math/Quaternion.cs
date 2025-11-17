@@ -1,5 +1,6 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
 using System;
 using MemoryPack;
 
@@ -62,6 +63,40 @@ namespace UnityToolkit.MathTypes
                    !ToolkitMath.Approximately(a.z, b.z) || !ToolkitMath.Approximately(a.w, b.w);
         }
 
+
+        public static Quaternion operator +(Quaternion a, Quaternion b)
+        {
+            return new Quaternion(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+        }
+
+
+        public static Quaternion operator -(Quaternion a, Quaternion b)
+        {
+            return new Quaternion(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+        }
+
+
+        public static Quaternion operator *(Quaternion a, float b)
+        {
+            return new Quaternion(a.x * b, a.y * b, a.z * b, a.w * b);
+        }
+
+        public static Quaternion operator *(float a, Quaternion b)
+        {
+            return new Quaternion(b.x * a, b.y * a, b.z * a, b.w * a);
+        }
+
+        public static Quaternion operator *(Quaternion a, Quaternion b)
+        {
+            return new Quaternion(
+                a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,
+                a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,
+                a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w,
+                a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z
+            );
+        }
+
+
         public bool Equals(Quaternion other)
         {
             return this == other;
@@ -122,6 +157,30 @@ namespace UnityToolkit.MathTypes
             float ratioB = ToolkitMath.Sin(f * halfAngle) / sinHalfAngle;
             return new Quaternion(a.x * ratioA + b.x * ratioB, a.y * ratioA + b.y * ratioB,
                 a.z * ratioA + b.z * ratioB, a.w * ratioA + b.w * ratioB);
+        }
+
+        public static Quaternion Slerp(Quaternion fromRotation, Quaternion toRotation, float t)
+        {
+            t = ToolkitMath.Clamp01(t);
+            return SlerpUnclamped(fromRotation, toRotation, t);
+        }
+
+        public static Quaternion Inverse(in Quaternion value)
+        {
+            float lengthSq = value.x * value.x + value.y * value.y + value.z * value.z + value.w * value.w;
+            if (lengthSq != 0.0f)
+            {
+                float i = 1.0f / lengthSq;
+                return new Quaternion(-value.x * i, -value.y * i, -value.z * i, value.w * i);
+            }
+
+            return value;
+        }
+
+        public static float Angle(Quaternion a, Quaternion b)
+        {
+            float dot = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+            return ToolkitMath.Acos(ToolkitMath.Min(ToolkitMath.Abs(dot), 1.0f)) * 2.0f * ToolkitMath.Rad2Deg;
         }
     }
 }

@@ -1,5 +1,6 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+
 using System;
 using System.Runtime.CompilerServices;
 
@@ -14,6 +15,8 @@ namespace UnityToolkit
         public static readonly float epsilon =
             IsFlushToZeroEnabled ? ToolkitMath.FloatMinNormal : ToolkitMath.FloatMinDenormal;
 
+        public static float Rad2Deg = 57.29578f;
+        public static float Deg2Rad = 0.0174532924f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Approximately(double a, double b)
@@ -28,10 +31,17 @@ namespace UnityToolkit
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static double Abs(double a)
+        public static double Abs(double a)
         {
             return Math.Abs(a);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Abs(float a)
+        {
+            return MathF.Abs(a);
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp(double value, double min, double max)
@@ -45,6 +55,15 @@ namespace UnityToolkit
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp01(double value) => Clamp(value, 0, 1);
 
+
+        /// <summary>Clamps value between 0 and 1 and returns value.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp01(float value)
+        {
+            return (float)Clamp(value, 0, 1);
+        }
+
+
         /// <summary>Calculates the linear parameter t that produces the interpolant value within the range [a, b].</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double InverseLerp(double a, double b, double value) =>
@@ -55,7 +74,7 @@ namespace UnityToolkit
         public static double LerpUnclamped(double a, double b, double t) =>
             a + (b - a) * t;
 
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Acos(float dot)
         {
@@ -66,6 +85,12 @@ namespace UnityToolkit
         public static float Sin(float angle)
         {
             return MathF.Sin(angle);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Min(float a, float b)
+        {
+            return Math.Min(a, b);
         }
     }
 }
