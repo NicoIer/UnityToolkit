@@ -1,10 +1,6 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-#if UNITY_5_4_OR_NEWER
-using Vector3 = UnityEngine.Vector3;
-#else
 using Vector3 = UnityToolkit.MathTypes.Vector3;
-#endif
 
 namespace Network
 {

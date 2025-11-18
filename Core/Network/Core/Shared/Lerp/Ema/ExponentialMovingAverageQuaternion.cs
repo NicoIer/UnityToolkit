@@ -1,10 +1,6 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-#if UNITY_5_4_OR_NEWER
-using Quaternion = UnityEngine.Quaternion;
-#else
 using Quaternion = UnityToolkit.MathTypes.Quaternion;
-#endif
 
 namespace Network
 {
