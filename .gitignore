@@ -3,15 +3,7 @@
 
 .idea/
 
-
 # 忽略Network下所有的.meta文件
-Network.meta
-Network/*.meta
-Network/**/*.meta
-# Core下的所有.meta文件
-Core.meta
-Core/*.meta
-Core/**/*.meta
 
 obj/
 bin/
