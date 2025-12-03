@@ -176,7 +176,7 @@ namespace UnityToolkit
             set.Remove(t);
             return t;
         }
-        
+
         public static List<T> Shuffle<T>(this List<T> list)
         {
             for (int i = 0; i < list.Count; i++)
@@ -211,6 +211,48 @@ namespace UnityToolkit
             int index = Random.Range(0, list.Count);
             T t = list[index];
             return t;
+        }
+
+        public static System.Numerics.Vector3 ToSystemVector3(this UnityEngine.Vector3 vector)
+        {
+            return new System.Numerics.Vector3()
+            {
+                X = vector.x,
+                Y = vector.y,
+                Z = vector.z
+            };
+        }
+
+        public static UnityEngine.Vector3 ToUntiyVector3(this System.Numerics.Vector3 vector)
+        {
+            return new UnityEngine.Vector3()
+            {
+                x = vector.X,
+                y = vector.Y,
+                z = vector.Z
+            };
+        }
+
+        public static System.Numerics.Quaternion ToSystemQuaternion(this UnityEngine.Quaternion quaternion)
+        {
+            return new System.Numerics.Quaternion()
+            {
+                X = quaternion.x,
+                Y = quaternion.y,
+                Z = quaternion.z,
+                W = quaternion.w
+            };
+        }
+
+        public static UnityEngine.Quaternion ToUnityQuaternion(this System.Numerics.Quaternion quaternion)
+        {
+            return new UnityEngine.Quaternion()
+            {
+                x = quaternion.X,
+                y = quaternion.Y,
+                z = quaternion.Z,
+                w = quaternion.W
+            };
         }
     }
 }

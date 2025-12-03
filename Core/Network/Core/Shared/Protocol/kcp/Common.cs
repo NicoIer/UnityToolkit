@@ -66,7 +66,7 @@ namespace kcp2k
         // cookies need to be generated with a secure random generator.
         // we don't want them to be deterministic / predictable.
         // RNG is cached to avoid runtime allocations.
-        static readonly RNGCryptoServiceProvider cryptoRandom = new RNGCryptoServiceProvider();
+        private static readonly RandomNumberGenerator cryptoRandom = RandomNumberGenerator.Create();
         static readonly byte[] cryptoRandomBuffer = new byte[4];
         public static uint GenerateCookie()
         {

@@ -1,6 +1,7 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-﻿using System;
+
+using System;
 using System.Runtime.Serialization;
 
 namespace UnityToolkit.Debugger
@@ -9,7 +10,7 @@ namespace UnityToolkit.Debugger
     /// 游戏框架异常类。
     /// </summary>
     [Serializable]
-    public class DebuggerException : Exception
+    public class DebuggerException: Exception
     {
         /// <summary>
         /// 初始化游戏框架异常类的新实例。
@@ -23,7 +24,7 @@ namespace UnityToolkit.Debugger
         /// </summary>
         /// <param name="message">描述错误的消息。</param>
         public DebuggerException(string message)
-            : base(message)
+                : base(message)
         {
         }
 
@@ -33,10 +34,10 @@ namespace UnityToolkit.Debugger
         /// <param name="message">解释异常原因的错误消息。</param>
         /// <param name="innerException">导致当前异常的异常。如果 innerException 参数不为空引用，则在处理内部异常的 catch 块中引发当前异常。</param>
         public DebuggerException(string message, Exception innerException)
-            : base(message, innerException)
+                : base(message, innerException)
         {
         }
-
+#if NETFRAMEWORK || NETSTANDARD2_0
         /// <summary>
         /// 用序列化数据初始化游戏框架异常类的新实例。
         /// </summary>
@@ -46,5 +47,6 @@ namespace UnityToolkit.Debugger
             : base(info, context)
         {
         }
+#endif
     }
 }

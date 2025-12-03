@@ -1,6 +1,7 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-﻿#if UNITY_5_6_OR_NEWER
+
+#if UNITY_5_6_OR_NEWER
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,18 +20,18 @@ namespace UnityToolkit.Debugger
         /// 默认调试器漂浮框大小。
         /// </summary>
         internal static readonly Rect DefaultIconRect = new Rect(10f, 10f, 60f, 60f);
- 
+
         /// <summary>
         /// 默认调试器窗口大小。
         /// </summary>
         internal static readonly Rect DefaultWindowRect = new Rect(10f, 10f, 640f, 480f);
-        
+
         /// <summary>
         /// 默认调试器窗口缩放比例。
         /// </summary>
         internal static readonly float DefaultWindowScale = 1f;
 
-        private static TextEditor s_TextEditor = new TextEditor();
+        private static TextEditor s_TextEditor;
         private IDebuggerManager m_DebuggerManager = null;
         private Rect m_DragRect = new Rect(0f, 0f, float.MaxValue, 25f);
         private Rect m_IconRect = DefaultIconRect;
@@ -147,9 +148,7 @@ namespace UnityToolkit.Debugger
         public void Awake()
         {
             /*base.Awake();*/
-
             s_TextEditor = new TextEditor();
-
             m_DebuggerManager = new DebuggerManager();
             m_FpsCounter = new FpsCounter(0.5f);
         }

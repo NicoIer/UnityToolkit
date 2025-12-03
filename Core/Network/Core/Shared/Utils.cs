@@ -200,14 +200,14 @@ namespace Network
         // cookies need to be generated with a secure random generator.
         // we don't want them to be deterministic / predictable.
         // RNG is cached to avoid runtime allocations.
-        [ThreadStatic] private static RNGCryptoServiceProvider _cryptoRandom;
+        [ThreadStatic] private static RandomNumberGenerator _cryptoRandom;
         [ThreadStatic] private static byte[] _cryptoRandomBuffer;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint GenerateCookie()
         {
             if (_cryptoRandom == null)
-                _cryptoRandom = new RNGCryptoServiceProvider();
+                _cryptoRandom = RandomNumberGenerator.Create();
             if (_cryptoRandomBuffer == null)
                 _cryptoRandomBuffer = new byte[4];
 

@@ -17,25 +17,25 @@ namespace Capabilities
         // public SheetAsset[] sheetAssets;
 
         // Runtime  
-#if  SIRIXIN_INSPECTOR
+#if  ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
 #endif
         protected Dictionary<TTag, List<Instigator>> tagBlockers = new Dictionary<TTag, List<Instigator>>();
 
      
-#if  SIRIXIN_INSPECTOR
+#if  ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
 #endif
         protected ICapability<TTag, GameObject>[] capabilities;
 
         
-#if  SIRIXIN_INSPECTOR
+#if  ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
 #endif
         protected IComponent[] components;
 
         
-#if  SIRIXIN_INSPECTOR
+#if  ODIN_INSPECTOR
         [Sirenix.OdinInspector.ShowInInspector]
 #endif
         protected IConfig[] configs;

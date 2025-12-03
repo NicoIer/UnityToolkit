@@ -9,8 +9,24 @@ namespace UnityToolkit.MathTypes
 {
     [MemoryPackable]
     [StructLayout(LayoutKind.Sequential)]
-    public partial struct Vector3
+    public partial struct Vector3: IEquatable<Vector3>
     {
+        public override bool Equals(object obj)
+        {
+            return obj is Vector3 other && this.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = this.x.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.y.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.z.GetHashCode();
+                return hashCode;
+            }
+        }
+
         public float x;
         public float y;
         public float z;
