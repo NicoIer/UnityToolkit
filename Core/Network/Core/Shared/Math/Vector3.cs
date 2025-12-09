@@ -8,6 +8,7 @@ using MemoryPack;
 namespace UnityToolkit.MathTypes
 {
     [MemoryPackable]
+    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public partial struct Vector3: IEquatable<Vector3>
     {
@@ -134,6 +135,16 @@ namespace UnityToolkit.MathTypes
             return !ToolkitMath.Approximately(a.x, b.x) || !ToolkitMath.Approximately(a.y, b.y) ||
                    !ToolkitMath.Approximately(a.z, b.z);
         }
+        
+        public static UnityEngine.Vector3 operator+(UnityEngine.Vector3 a, Vector3 b)
+        {
+            return new UnityEngine.Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
+        
+        public static Vector3 operator+(Vector3 a, UnityEngine.Vector3 b)
+        {
+            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
 #endif
 
         public static bool operator ==(Vector3 a, Vector3 b)
@@ -148,6 +159,9 @@ namespace UnityToolkit.MathTypes
             return !ToolkitMath.Approximately(a.x, b.x) || !ToolkitMath.Approximately(a.y, b.y) ||
                    !ToolkitMath.Approximately(a.z, b.z);
         }
+        
+
+        
 
         public bool Equals(Vector3 other)
         {

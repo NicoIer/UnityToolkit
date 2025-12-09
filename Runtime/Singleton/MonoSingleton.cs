@@ -130,7 +130,7 @@ namespace UnityToolkit
             }
         }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_6000_3_OR_NEWER
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatic()
         {

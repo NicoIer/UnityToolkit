@@ -223,7 +223,7 @@ namespace UnityToolkit
             };
         }
 
-        public static UnityEngine.Vector3 ToUntiyVector3(this System.Numerics.Vector3 vector)
+        public static UnityEngine.Vector3 ToUnityVector3(this System.Numerics.Vector3 vector)
         {
             return new UnityEngine.Vector3()
             {
@@ -232,6 +232,39 @@ namespace UnityToolkit
                 z = vector.Z
             };
         }
+        
+        public static UnityEngine.Vector2 ToUnityVector2(this System.Numerics.Vector2 vector)
+        {
+            return new UnityEngine.Vector2()
+            {
+                x = vector.X,
+                y = vector.Y
+            };
+        }
+        
+        
+        public static System.Numerics.Vector2 ToSystemVector2(this UnityEngine.Vector2 vector)
+        {
+            return new System.Numerics.Vector2()
+            {
+                X = vector.x,
+                Y = vector.y
+            };
+        }
+        
+        
+        public static System.Numerics.Vector4 ToSystemVector4(this UnityEngine.Vector4 vector)
+        {
+            return new System.Numerics.Vector4()
+            {
+                X = vector.x,
+                Y = vector.y,
+                Z = vector.z,
+                W = vector.w
+            };
+        }
+        
+        
 
         public static System.Numerics.Quaternion ToSystemQuaternion(this UnityEngine.Quaternion quaternion)
         {
