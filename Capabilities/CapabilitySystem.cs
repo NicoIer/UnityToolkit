@@ -6,7 +6,9 @@ namespace Capabilities
 {
     public class CapabilitySystem :  ICapabilitySystem
     {
-
+#if ODIN_INSPECTOR
+        [Sirenix.OdinInspector.ShowInInspector]
+#endif
         Dictionary<ETickGroup, List<ICapability>> capabilitiesByTickGroup =
             new Dictionary<ETickGroup, List<ICapability>>();
 

@@ -33,7 +33,7 @@ namespace UnityToolkit.Debugger
 #if UNITY_5_4_OR_NEWER
                     DrawItem("Supports Audio", SystemInfo.supportsAudio.ToString());
 #endif
-                    DrawItem("Supports Location Service", SystemInfo.supportsLocationService.ToString());
+                    //DrawItem("Supports Location Service", SystemInfo.supportsLocationService.ToString());
                     DrawItem("Supports Accelerometer", SystemInfo.supportsAccelerometer.ToString());
                     DrawItem("Supports Gyroscope", SystemInfo.supportsGyroscope.ToString());
                     DrawItem("Supports Vibration", SystemInfo.supportsVibration.ToString());

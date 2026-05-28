@@ -9,7 +9,6 @@ namespace Capabilities
     public abstract class ComponentAsset : ScriptableObject
     {
         public abstract IEnumerable<IComponent> GetDependencies();
-        public abstract int GetDependencyCount();
     }
 }
 #endif

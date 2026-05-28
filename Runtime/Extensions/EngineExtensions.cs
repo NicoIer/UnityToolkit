@@ -287,6 +287,29 @@ namespace UnityToolkit
                 w = quaternion.W
             };
         }
+
+        /// <summary>
+        /// 显示并且允许所有交互
+        /// </summary>
+        /// <param name="canvas"></param>
+        public static void UnBlockAll(this CanvasGroup canvas)
+        {
+            canvas.alpha = 1f;
+            canvas.blocksRaycasts = true;
+            canvas.interactable = true;
+        }
+        
+        /// <summary>
+        /// 隐藏并阻止所有交互
+        /// </summary>
+        /// <param name="canvas"></param>
+        public static void BlockAll(this CanvasGroup canvas)
+        {
+            canvas.alpha = 0;
+            canvas.blocksRaycasts = false;
+            canvas.interactable = false;
+        }
+        
     }
 }
 #endif

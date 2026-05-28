@@ -2,7 +2,14 @@
   "name": "UnityToolkit.Editor",
   "rootNamespace": "UnityToolkit.Editor",
   "references": [
-    "UnityToolkit"
+    "UnityToolkit",
+    "Unity.RenderPipeline.Universal.ShaderLibrary",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Core.Runtime.Shared",
+    "Unity.RenderPipelines.GPUDriven.Runtime",
+    "Unity.RenderPipelines.Universal.Config.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.UnifiedRayTracing.Runtime"
   ],
   "includePlatforms": [
     "Editor"

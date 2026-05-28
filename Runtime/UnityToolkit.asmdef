@@ -4,7 +4,12 @@
     "references": [
         "Unity.TextMeshPro",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.Core.Runtime"
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.RenderPipeline.Universal.ShaderLibrary",
+        "Unity.RenderPipelines.Core.Runtime.Shared",
+        "Unity.RenderPipelines.GPUDriven.Runtime",
+        "Unity.RenderPipelines.Universal.Config.Runtime",
+        "Unity.UnifiedRayTracing.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

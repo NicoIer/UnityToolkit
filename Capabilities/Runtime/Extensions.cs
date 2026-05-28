@@ -36,6 +36,15 @@ namespace Capabilities
 
             return mergedComponents.ToArray();
         }
+        
+        public static IComponent[] MergeComponents(this IComponent[] baseComponents,
+            List<IComponent> additionalComponents)
+        {
+            List<IComponent> mergedComponents = new List<IComponent>(baseComponents);
+            mergedComponents.AddRange(additionalComponents);
+            return mergedComponents.ToArray();
+        }
+        
 
         public static ICapability[] MergeCapabilities(this ICapability[] baseCapabilities,
             CapabilityAsset[] additionalCapabilities)
@@ -47,6 +56,14 @@ namespace Capabilities
                 mergedCapabilities.AddRange(dependencies);
             }
 
+            return mergedCapabilities.ToArray();
+        }
+
+        public static ICapability<TTag,TOwner>[] MergeCapabilities<TTag,TOwner>(this ICapability<TTag,TOwner>[] baseCapabilities,
+            List<ICapability<TTag,TOwner>> additionalCapabilities)
+        {
+            List<ICapability<TTag,TOwner>> mergedCapabilities = new List<ICapability<TTag,TOwner>>(baseCapabilities);
+            mergedCapabilities.AddRange(additionalCapabilities);
             return mergedCapabilities.ToArray();
         }
     }

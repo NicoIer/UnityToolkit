@@ -1,8 +1,10 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-﻿using System;
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace UnityToolkit
 {
@@ -13,11 +15,13 @@ namespace UnityToolkit
     public interface IState<T> : IState
     {
         void OnInit(T owner, IStateMachine<T> stateMachine);
+        void OnDispose(T owner, IStateMachine<T> stateMachine);
         void OnEnter(T owner, IStateMachine<T> stateMachine);
         void Transition(T owner, IStateMachine<T> stateMachine);
         void OnUpdate(T owner, IStateMachine<T> stateMachine);
         void OnExit(T owner, IStateMachine<T> stateMachine);
     }
+
 
     public interface IStateMachine<TOwner>
     {
@@ -38,7 +42,7 @@ namespace UnityToolkit
         void RemoveParam(string key);
         bool ContainsParam(string battleSettlementData);
     }
-    
+
     public interface IBlackboard
     {
         event Action<string> OnRemove;
@@ -51,7 +55,7 @@ namespace UnityToolkit
         void Set<T>(in string key, T value);
         void Remove(in string key);
         bool ContainsKey(in string key);
-        
+
         void Clear();
     }
 
@@ -64,13 +68,16 @@ namespace UnityToolkit
         private readonly IBlackboard _blackboard;
         private readonly Dictionary<int, IState<TOwner>> _states;
 
-        public StateMachine(TOwner owner,IBlackboard blackboard)
+        public IEnumerable<IState<TOwner>> States => _states.Values;
+
+        public StateMachine(TOwner owner, IBlackboard blackboard)
         {
             this.owner = owner;
             _blackboard = blackboard;
             _states = new Dictionary<int, IState<TOwner>>(8);
             currentState = default;
         }
+
         public StateMachine(TOwner owner)
         {
             this.owner = owner;
@@ -106,6 +113,7 @@ namespace UnityToolkit
                 return true;
             }
 
+            ToolkitLog.Error("StateMachine Change State Failed: State Not Found Type=" + typeof(T).FullName);
             return false;
         }
 
@@ -175,12 +183,54 @@ namespace UnityToolkit
         {
             currentState.OnExit(owner, this);
             currentState = default;
+
+            foreach (var statesValue in _states.Values)
+            {
+                statesValue.OnDispose(owner, this);
+            }
+
             running = false;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T GetState<T>() where T : IState<TOwner>
         {
             return (T)_states[TypeId<T>.stableId];
         }
     }
+
+
+    public interface ITaskState<TOwner> : IState
+    {
+        Task OnInit(TOwner owner, IStateMachine<TOwner> stateMachine);
+        Task OnDispose(TOwner owner, IStateMachine<TOwner> stateMachine);
+        Task OnEnter(TOwner owner, IStateMachine<TOwner> stateMachine);
+        Task Transition(TOwner owner, IStateMachine<TOwner> stateMachine);
+        Task OnUpdate(TOwner owner, IStateMachine<TOwner> stateMachine);
+        Task OnExit(TOwner owner, IStateMachine<TOwner> stateMachine);
+    }
+
+    public interface ITaskStateMachine<TOwner>
+    {
+        event Action<ITaskState<TOwner>, ITaskState<TOwner>> OnStateChange;
+        bool running { get; }
+        TOwner owner { get; }
+        ITaskState<TOwner> currentState { get; }
+        void SetParam<T>(string key, T value);
+        Task<T> GetParam<T>(string key);
+        Task<bool> Change<T>() where T : ITaskState<TOwner>;
+        Task<bool> Change(Type type);
+        Task Run<T>() where T : ITaskState<TOwner>;
+        Task Run(Type type);
+        Task Add<T>(T state) where T : ITaskState<TOwner>;
+        Task Stop();
+        Task OnUpdate();
+        bool RemoveParam(string key);
+        bool ContainsParam(string battleSettlementData);
+    }
+
+
+    // public class TaskStateMachine<TOwner> : ITaskStateMachine<TOwner>
+    // {
+    // }
 }

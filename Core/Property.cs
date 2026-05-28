@@ -7,7 +7,7 @@ namespace UnityToolkit
     [Serializable]
     public class Property<T> where T : IComparable
     {
-#if UNITY_EDITOR
+#if UNITY_5_3_OR_NEWER
         [UnityEngine.SerializeField] private T _maxValue;
         [UnityEngine.SerializeField] private T _minValue;
         [UnityEngine.SerializeField] private T _value;

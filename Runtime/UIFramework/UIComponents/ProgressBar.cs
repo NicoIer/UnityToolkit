@@ -165,6 +165,12 @@ namespace UnityToolkit
             UpdateVisualDirect();
         }
 
+        public void SetBarColor(Color color)
+        {
+            if (bar != null)
+                bar.color = color;
+        }
+
 
 #if UNITY_EDITOR
         private void OnValidate()

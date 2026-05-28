@@ -163,5 +163,13 @@ namespace Network
         {
             _transformBuffer.PushBack(snapshot);
         }
+
+        public void Reset()
+        {
+            _transformBuffer.Clear();
+            emaPosition.Reset();
+            emaRotation.Reset();
+            _initialized = false;
+        }
     }
 }

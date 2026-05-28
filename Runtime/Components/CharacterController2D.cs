@@ -120,8 +120,8 @@ namespace UnityToolkit
         /// <summary>
         /// curve for multiplying speed based on slope (negative = down slope and positive = up slope)
         /// </summary>
-        public AnimationCurve slopeSpeedMultiplier =
-            new AnimationCurve(new Keyframe(-90f, 1.5f), new Keyframe(0f, 1f), new Keyframe(90f, 0f));
+        public UnityEngine.AnimationCurve slopeSpeedMultiplier =
+            new UnityEngine.AnimationCurve(new UnityEngine.Keyframe(-90f, 1.5f), new UnityEngine.Keyframe(0f, 1f), new Keyframe(90f, 0f));
 
         [Range(2, 20)] public int totalHorizontalRays = 8;
         [Range(2, 20)] public int totalVerticalRays = 4;

@@ -23,6 +23,18 @@ namespace UnityToolkit.MathTypes
         }
 
         public static Quaternion identity => new Quaternion(0, 0, 0, 0);
+        
+        
+        public static implicit operator Quaternion(System.Numerics.Quaternion v)
+        {
+            return new Quaternion(v.X, v.Y, v.Z, v.W);
+        }
+        
+        public static implicit operator System.Numerics.Quaternion(Quaternion v)
+        {
+            return new System.Numerics.Quaternion(v.x, v.y, v.z, v.w);
+        }
+        
         public override string ToString()
         {
             return $"Quaternion({x}, {y}, {z}, {w})";

@@ -81,7 +81,9 @@ namespace Capabilities
         bool HasBlockedTag(TTag tag);
         bool TryGetComp<T>(out T component) where T : IComponent;
         bool TryGetConfig<T>(out T config) where T : IConfig;
+        bool TryGetCapability<T>(out T capability) where T : ICapability;
         TOwner GetOwner();
+        bool IsCapabilityActive<TCapability>() where TCapability : ICapability;
     }
 
 

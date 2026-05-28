@@ -11,7 +11,7 @@ namespace Capabilities
     public abstract class MonoBehaviorCapabilityHolder<TTag> : MonoBehaviour, ICapabilityHolder<TTag, GameObject>
     {
         // Editor
-        // public CapabilityAsset[] capabilityAssets;,
+        public CapabilityAsset[] capabilityAssets;
         public ComponentAsset[] componentAssets;
         public ConfigAsset[] configAssets;
         // public SheetAsset[] sheetAssets;
@@ -83,7 +83,7 @@ namespace Capabilities
                 }
             }
 
-            Debug.LogError("TryGetComp failed for type: " + typeof(T).Name);
+            // Debug.LogError("TryGetComp failed for type: " + typeof(T).Name);
             return false;
         }
 
@@ -99,7 +99,23 @@ namespace Capabilities
                 }
             }
 
-            Debug.LogError("TryGetConfig failed for type: " + typeof(T).Name);
+            // Debug.LogError("TryGetConfig failed for type: " + typeof(T).Name);
+            return false;
+        }
+
+        public bool TryGetCapability<T>(out T capability) where T : ICapability
+        {
+            capability = default(T);
+            foreach (var cap in capabilities)
+            {
+                if (cap is T tCap)
+                {
+                    capability = tCap;
+                    return true;
+                }
+            }
+
+            // Debug.LogError("TryGetCapability failed for type: " + typeof(T).Name);
             return false;
         }
 
@@ -107,6 +123,19 @@ namespace Capabilities
         public GameObject GetOwner()
         {
             return gameObject;
+        }
+
+        public bool IsCapabilityActive<TCapability>() where TCapability : ICapability
+        {
+            foreach (var capability in capabilities)
+            {
+                if (capability is TCapability tCapability)
+                {
+                    return tCapability.active;
+                }
+            }
+
+            return false;
         }
     }
 }

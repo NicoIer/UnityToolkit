@@ -1,6 +1,6 @@
 // Copyright (c) 2023 NicoIer and Contributors.
 // Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
-﻿#if UNITY_5_6_OR_NEWER
+#if UNITY_5_6_OR_NEWER
 using UnityEngine;
 
 namespace UnityToolkit
@@ -50,6 +50,26 @@ namespace UnityToolkit
             {
                 var child = trans.GetChild(i);
                 UnityEngine.Object.DestroyImmediate(child.gameObject);
+            }
+        }
+
+        public static void DestroyAllChild(this Transform trans)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                for (int i = trans.childCount - 1; i >= 0; i--)
+                {
+                    var child = trans.GetChild(i);
+                    UnityEngine.Object.DestroyImmediate(child.gameObject);
+                }
+                return;
+            }
+#endif
+            for (int i = trans.childCount - 1; i >= 0; i--)
+            {
+                var child = trans.GetChild(i);
+                UnityEngine.Object.Destroy(child.gameObject);
             }
         }
     }

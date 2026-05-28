@@ -46,6 +46,24 @@ namespace UnityToolkit
                 TriggerStay(other);
             }
         }
+
+        private void OnValidate()
+        {
+            foreach (var component in GetComponents<Collider>())
+            {
+                component.isTrigger = true;
+            }
+        }
+
+        public bool IsInSide(CharacterController currentController)
+        {
+            if (collider3D.bounds.Contains(currentController.transform.position))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 #endif
