@@ -29,18 +29,26 @@ namespace Network
         public delegate void ReqHandleDelegate<TReq, TRsp>(in int connectionId, in TReq message,
             out TRsp rsp, out ErrorCode errorCode, out string errorMsg);
 
-        private delegate RspHead ReqHandler(in int connectionId, in ReqHead head);
+        public delegate ValueTask<(TRsp rsp, ErrorCode errorCode, string errorMsg)> ReqValueTaskHandleDelegate<TReq, TRsp>(
+            int connectionId, TReq message);
+
+        private delegate ValueTask<RspHead> ReqHandler(int connectionId, ReqHead head);
 
         private readonly Dictionary<ushort, ReqHandler> _handlers = new Dictionary<ushort, ReqHandler>();
 
         public RspHead HandleRequest(in int connectionId, in ReqHead head)
         {
+            return HandleRequestAsync(connectionId, head).GetAwaiter().GetResult();
+        }
+
+        public ValueTask<RspHead> HandleRequestAsync(int connectionId, ReqHead head)
+        {
             if (_handlers.TryGetValue(head.reqHash, out var handler))
             {
-                return handler(connectionId, in head);
+                return handler(connectionId, head);
             }
 
-            return new RspHead(head.index, head.reqHash, 0, ErrorCode.NotSupported, null, default);
+            return new ValueTask<RspHead>(new RspHead(head.index, head.reqHash, 0, ErrorCode.NotSupported, null, default));
         }
 
         public void Register<TReq, TRsp>(ReqHandleDelegate<TReq, TRsp> handleDelegate)
@@ -49,12 +57,27 @@ namespace Network
         {
             ushort reqHash = TypeId<TReq>.stableId16;
             ushort rspHash = TypeId<TRsp>.stableId16;
-            _handlers[reqHash] = (in int connectionId, in ReqHead head) =>
+            _handlers[reqHash] = (connectionId, head) =>
             {
                 var req = MemoryPackSerializer.Deserialize<TReq>(head.payload);
                 handleDelegate(connectionId, req, out var rsp, out var errorCode, out var errorMsg);
                 var payload = MemoryPackSerializer.Serialize(rsp);
-                return new RspHead(head.index, reqHash, rspHash, errorCode, errorMsg, payload);
+                return new ValueTask<RspHead>(new RspHead(head.index, reqHash, rspHash, errorCode, errorMsg, payload));
+            };
+        }
+
+        public void Register<TReq, TRsp>(ReqValueTaskHandleDelegate<TReq, TRsp> handleDelegate)
+            where TReq : INetworkReq
+            where TRsp : INetworkRsp
+        {
+            ushort reqHash = TypeId<TReq>.stableId16;
+            ushort rspHash = TypeId<TRsp>.stableId16;
+            _handlers[reqHash] = async (connectionId, head) =>
+            {
+                var req = MemoryPackSerializer.Deserialize<TReq>(head.payload);
+                var result = await handleDelegate(connectionId, req);
+                var payload = MemoryPackSerializer.Serialize(result.rsp);
+                return new RspHead(head.index, reqHash, rspHash, result.errorCode, result.errorMsg, payload);
             };
         }
 
