@@ -52,10 +52,10 @@ namespace Network.Client
         //     connectionId = server.id;
         // }
 
-        // public ICommand AddMsgHandler<T>(MessageHandler<T> handler) where T : INetworkMessage
-        // {
-        //     return messageHandler.Add<T>(handler);
-        // }
+        public ICommand AddMsgHandler<T>(NetworkClientMessageHandler.MessageHandler<T> handler) where T : INetworkMessage
+        {
+            return messageHandler.Add(handler);
+        }
 
         public TSystem GetSystem<TSystem>() where TSystem : ISystem
         {
