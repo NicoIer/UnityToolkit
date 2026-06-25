@@ -125,6 +125,12 @@ namespace Network
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ArraySegment<byte> ToArraySegment(int offset, int count)
+        {
+            return new ArraySegment<byte>(buffer, offset, count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> AsSpan()
         {
             return buffer.AsSpan(0, Position);
@@ -302,5 +308,29 @@ namespace Network
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ArraySegment<T>(NetworkBuffer<T> buffer) =>
             new ArraySegment<T>(buffer.buffer, 0, buffer.Position);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ArraySegment<T> ToArraySegment()
+        {
+            return new ArraySegment<T>(buffer, 0, Position);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ArraySegment<T> ToArraySegment(int offset, int count)
+        {
+            return new ArraySegment<T>(buffer, offset, count);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<T> AsSpan()
+        {
+            return buffer.AsSpan(0, Position);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Span<T> AsSpan(int offset, int count)
+        {
+            return buffer.AsSpan(offset, count);
+        }
     }
 }
