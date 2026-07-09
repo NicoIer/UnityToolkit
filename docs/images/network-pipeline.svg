@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">Network message pipeline</title>
+  <desc id="desc">Network message pipeline between client and server using MemoryPack, optional compression and TCP or KCP socket.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .lane { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .client { fill: #eff6ff; stroke: #2563eb; }
+      .server { fill: #fef2f2; stroke: #dc2626; }
+      .pack { fill: #ecfeff; stroke: #0891b2; }
+      .socket { fill: #fff7ed; stroke: #ea580c; }
+      .handler { fill: #f0fdf4; stroke: #16a34a; }
+      .title { font: 700 24px Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif; fill: #0f172a; }
+      .label { font: 700 16px Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif; fill: #0f172a; }
+      .small { font: 400 12px Inter, "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif; fill: #334155; }
+      .code { font: 600 12px "SFMono-Regular", Consolas, monospace; fill: #1e293b; }
+      .line { fill: none; stroke: #64748b; stroke-width: 1.6; marker-end: url(#arrow); }
+      .return { fill: none; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6 5; marker-end: url(#arrowMuted); }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowMuted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="960" height="420" rx="16"/>
+  <text class="title" x="42" y="46">Network 消息链路</text>
+
+  <rect class="lane" x="42" y="78" width="876" height="128" rx="12"/>
+  <text class="label" x="66" y="108">发送路径</text>
+
+  <rect class="client" x="72" y="126" width="138" height="54" rx="9"/>
+  <text class="label" x="96" y="149">NetworkClient</text>
+  <text class="code" x="96" y="168">Send&lt;T&gt;()</text>
+
+  <rect class="pack" x="254" y="126" width="150" height="54" rx="9"/>
+  <text class="label" x="277" y="149">NetworkPacker</text>
+  <text class="small" x="277" y="168">MemoryPack 序列化</text>
+
+  <rect class="pack" x="448" y="126" width="150" height="54" rx="9"/>
+  <text class="label" x="471" y="149">NetworkPacket</text>
+  <text class="small" x="471" y="168">id + payload</text>
+
+  <rect class="socket" x="642" y="126" width="118" height="54" rx="9"/>
+  <text class="label" x="667" y="149">Socket</text>
+  <text class="small" x="667" y="168">TCP / KCP</text>
+
+  <rect class="server" x="804" y="126" width="84" height="54" rx="9"/>
+  <text class="label" x="823" y="149">Server</text>
+  <text class="small" x="823" y="168">Receive</text>
+
+  <path class="line" d="M210 153 H254"/>
+  <path class="line" d="M404 153 H448"/>
+  <path class="line" d="M598 153 H642"/>
+  <path class="line" d="M760 153 H804"/>
+
+  <rect class="lane" x="42" y="236" width="876" height="128" rx="12"/>
+  <text class="label" x="66" y="266">接收与分发</text>
+
+  <rect class="server" x="72" y="284" width="142" height="54" rx="9"/>
+  <text class="label" x="96" y="307">NetworkServer</text>
+  <text class="code" x="96" y="326">OnDataReceived</text>
+
+  <rect class="pack" x="258" y="284" width="140" height="54" rx="9"/>
+  <text class="label" x="282" y="307">Unpack</text>
+  <text class="small" x="282" y="326">可选 Brotli 解压</text>
+
+  <rect class="handler" x="442" y="284" width="180" height="54" rx="9"/>
+  <text class="label" x="466" y="307">MessageHandler</text>
+  <text class="small" x="466" y="326">按 NetworkId&lt;T&gt; 分发</text>
+
+  <rect class="handler" x="666" y="284" width="222" height="54" rx="9"/>
+  <text class="label" x="690" y="307">Gameplay / Systems</text>
+  <text class="small" x="690" y="326">ISystem / IOnUpdate / 业务处理</text>
+
+  <path class="line" d="M214 311 H258"/>
+  <path class="line" d="M398 311 H442"/>
+  <path class="line" d="M622 311 H666"/>
+  <path class="return" d="M846 284 C878 235 834 206 746 180"/>
+
+  <text class="small" x="436" y="212">compress = true 时：MemoryPack 后再 Brotli 压缩</text>
+</svg>
