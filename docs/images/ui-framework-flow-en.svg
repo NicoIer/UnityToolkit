@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="410" viewBox="0 0 960 410" role="img" aria-labelledby="title desc">
+  <title id="title">UIFramework flow</title>
+  <desc id="desc">Flow diagram for creating UIRoot, loading panels and managing panel lifecycle.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.4; }
+      .menu { fill: #fff7ed; stroke: #ea580c; }
+      .root { fill: #f0fdf4; stroke: #16a34a; }
+      .db { fill: #ecfeff; stroke: #0891b2; }
+      .panel { fill: #f5f3ff; stroke: #7c3aed; }
+      .life { fill: #eff6ff; stroke: #2563eb; }
+      .title { font: 700 24px Inter, Arial, sans-serif; fill: #0f172a; }
+      .label { font: 700 16px Inter, Arial, sans-serif; fill: #0f172a; }
+      .small { font: 400 12px Inter, Arial, sans-serif; fill: #334155; }
+      .code { font: 600 12px "SFMono-Regular", Consolas, monospace; fill: #1e293b; }
+      .line { fill: none; stroke: #64748b; stroke-width: 1.6; marker-end: url(#arrow); }
+      .muted { fill: #e2e8f0; stroke: #94a3b8; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="960" height="410" rx="16"/>
+  <text class="title" x="42" y="46">UIFramework Panel Flow</text>
+
+  <rect class="box menu" x="54" y="92" width="180" height="96" rx="10"/>
+  <text class="label" x="78" y="123">Editor Menu</text>
+  <text class="code" x="78" y="150">GameObject/UI/UIRoot</text>
+  <text class="code" x="78" y="171">Assets/Create/Toolkit/UIPanel</text>
+
+  <rect class="box root" x="286" y="92" width="180" height="96" rx="10"/>
+  <text class="label" x="310" y="123">UIRoot</text>
+  <text class="small" x="310" y="150">Single UI root</text>
+  <text class="small" x="310" y="171">Layers and panel stack</text>
+
+  <rect class="box db" x="518" y="92" width="180" height="96" rx="10"/>
+  <text class="label" x="542" y="123">UIDatabase</text>
+  <text class="small" x="542" y="150">LayerConfig</text>
+  <text class="small" x="542" y="171">IUILoader</text>
+
+  <rect class="box panel" x="750" y="92" width="160" height="96" rx="10"/>
+  <text class="label" x="774" y="123">UIPanel Prefab</text>
+  <text class="small" x="774" y="150">Inherits UIPanel</text>
+  <text class="small" x="774" y="171">or implements IUIPanel</text>
+
+  <path class="line" d="M234 140 H286"/>
+  <path class="line" d="M466 140 H518"/>
+  <path class="line" d="M698 140 H750"/>
+
+  <rect class="box life" x="70" y="258" width="820" height="92" rx="12"/>
+  <text class="label" x="96" y="291">Runtime Lifecycle</text>
+  <text class="code" x="96" y="318">OpenPanel&lt;T&gt;()</text>
+  <path class="line" d="M210 314 H292"/>
+  <text class="code" x="310" y="318">Loaded</text>
+  <path class="line" d="M374 314 H456"/>
+  <text class="code" x="474" y="318">Opened</text>
+  <path class="line" d="M542 314 H624"/>
+  <text class="code" x="642" y="318">Closed</text>
+  <path class="line" d="M710 314 H792"/>
+  <text class="code" x="810" y="318">Disposed</text>
+
+  <rect class="muted" x="320" y="214" width="70" height="24" rx="6"/>
+  <rect class="muted" x="400" y="214" width="70" height="24" rx="6"/>
+  <rect class="muted" x="480" y="214" width="70" height="24" rx="6"/>
+  <rect class="muted" x="560" y="214" width="70" height="24" rx="6"/>
+  <text class="small" x="336" y="231">Bottom</text>
+  <text class="small" x="419" y="231">Default</text>
+  <text class="small" x="501" y="231">Popup</text>
+  <text class="small" x="585" y="231">Top</text>
+  <text class="small" x="318" y="203">UILayer controls display order by order value</text>
+  <path class="line" d="M608 188 C608 214 604 222 630 226"/>
+  <path class="line" d="M830 188 C830 236 730 258 650 274"/>
+</svg>
