@@ -6,6 +6,9 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_2_OR_NEWER
+using TreeView = UnityEditor.IMGUI.Controls.TreeView<int>;
+#endif
 using Object = UnityEngine.Object;
 
 
@@ -25,19 +28,31 @@ namespace UnityToolkit.Editor
         {
             icon = new HierarchyIcon();
             content = new GUIContent();
+#if UNITY_6000_4_OR_NEWER
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HierarchyOnGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HierarchyOnGUI;
+#else
             EditorApplication.hierarchyWindowItemOnGUI -= HierarchyOnGUI;
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyOnGUI;
+#endif
         }
 
         [InitializeOnLoadMethod]
         private static void Enable() => instance = new HierarchyEditor();
 
-        private void HierarchyOnGUI(int instanceId, Rect selectionRect)
+#if UNITY_6000_4_OR_NEWER
+        private void HierarchyOnGUI(EntityId itemId, Rect selectionRect)
+#else
+        private void HierarchyOnGUI(int itemId, Rect selectionRect)
+#endif
         {
             icon.Dispose();
-            icon.ID = instanceId;
             icon.iconRect = selectionRect;
-            icon.gameObject = (GameObject)EditorUtility.InstanceIDToObject(icon.ID);
+#if UNITY_6000_3_OR_NEWER
+            icon.gameObject = EditorUtility.EntityIdToObject(itemId) as GameObject;
+#else
+            icon.gameObject = EditorUtility.InstanceIDToObject(itemId) as GameObject;
+#endif
             if (icon.gameObject == null) return;
             icon.Display();
             icon.nameRect = icon.iconRect;
@@ -155,7 +170,6 @@ namespace UnityToolkit.Editor
 
         private class HierarchyIcon
         {
-            public int ID;
             public Rect iconRect;
             public Rect nameRect;
             public GameObject gameObject;
@@ -178,7 +192,6 @@ namespace UnityToolkit.Editor
 
             public void Dispose()
             {
-                ID = int.MinValue;
                 iconRect = Rect.zero;
                 nameRect = Rect.zero;
                 gameObject = null;

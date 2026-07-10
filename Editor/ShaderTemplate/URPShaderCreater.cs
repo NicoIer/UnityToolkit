@@ -21,7 +21,12 @@ namespace UnityToolkit.Editor
         public static void CreateUnlitShaderEditor()
         {
             // 拿到当前在Project视图中选中的文件夹 或者 文件 或者当前所在文件夹
-            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(
+#if UNITY_6000_3_OR_NEWER
+                EntityId.None,
+#else
+                0,
+#endif
                 ScriptableObject.CreateInstance<MyDoCreateScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New Unlit.shader",
                 null,
@@ -31,7 +36,12 @@ namespace UnityToolkit.Editor
         [MenuItem("Assets/Create/Shader/URP/FullScreen Shader", false, 0)]
         public static void CreateFullScreenShaderEditor()
         {
-            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(
+#if UNITY_6000_3_OR_NEWER
+                EntityId.None,
+#else
+                0,
+#endif
                 ScriptableObject.CreateInstance<MyDoCreateScriptAsset>(),
                 GetSelectedPathOrFallback() + "/New FullScreen.shader",
                 null,
@@ -58,9 +68,17 @@ namespace UnityToolkit.Editor
         }
 
 
+#if UNITY_6000_4_OR_NEWER
+        class MyDoCreateScriptAsset : AssetCreationEndAction
+#else
         class MyDoCreateScriptAsset : EndNameEditAction
+#endif
         {
+#if UNITY_6000_4_OR_NEWER
+            public override void Action(EntityId entityId, string pathName, string resourceFile)
+#else
             public override void Action(int instanceId, string pathName, string resourceFile)
+#endif
             {
                 UnityEngine.Object o = CreateScriptAssetFromTemplate(pathName, resourceFile);
                 ProjectWindowUtil.ShowCreatedAsset(o);

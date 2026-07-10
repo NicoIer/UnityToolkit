@@ -128,7 +128,11 @@ namespace UnityToolkit.Editor
                 return canvas.gameObject;
 
             // No canvas in selection or its parents? Then use just any canvas..
+#if UNITY_6000_0_OR_NEWER
+            canvas = Object.FindAnyObjectByType(typeof(Canvas)) as Canvas;
+#else
             canvas = Object.FindObjectOfType(typeof(Canvas)) as Canvas;
+#endif
             if (canvas != null && canvas.gameObject.activeInHierarchy)
                 return canvas.gameObject;
 

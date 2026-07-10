@@ -11,9 +11,17 @@ namespace UnityToolkit.Editor
     public static class UIDataBaseAssetHandler
     {
         [OnOpenAsset]
-        public static bool OnOpenAsset(int instanceId, int line)
+#if UNITY_6000_5_OR_NEWER
+        public static bool OnOpenAsset(EntityId assetId, int line)
+#else
+        public static bool OnOpenAsset(int assetId, int line)
+#endif
         {
-            if (EditorUtility.InstanceIDToObject(instanceId) is UIDatabase asset)
+#if UNITY_6000_3_OR_NEWER
+            if (EditorUtility.EntityIdToObject(assetId) is UIDatabase asset)
+#else
+            if (EditorUtility.InstanceIDToObject(assetId) is UIDatabase asset)
+#endif
             {
                 Debug.LogWarning("Open UIPanelDatabase not implemented yet.");
                 // UIDataBaseEditorWindow.ShowWindow(asset);

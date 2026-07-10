@@ -23,7 +23,11 @@ namespace UnityToolkit.Editor
 
         private static Assembly GetAssembly(string name)
         {
+#if UNITY_6000_7_OR_NEWER
+            var assemblies =   UnityEngine.Assemblies.CurrentAssemblies.GetLoadedAssemblies();
+#else
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+#endif
             return assemblies.FirstOrDefault(assembly => assembly.GetName().Name == name);
         }
 

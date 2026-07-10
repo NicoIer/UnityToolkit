@@ -2015,6 +2015,14 @@ namespace UnityToolkit
         /// <summary>
         /// Called by the layout system.
         /// </summary>
+        public virtual float maxWidth
+        {
+            get { return float.PositiveInfinity; }
+        }
+
+        /// <summary>
+        /// Called by the layout system.
+        /// </summary>
         public virtual float preferredWidth
         {
             get { return -1; }
@@ -2034,6 +2042,14 @@ namespace UnityToolkit
         public virtual float minHeight
         {
             get { return -1; }
+        }
+
+        /// <summary>
+        /// Called by the layout system.
+        /// </summary>
+        public virtual float maxHeight
+        {
+            get { return float.PositiveInfinity; }
         }
 
         /// <summary>
